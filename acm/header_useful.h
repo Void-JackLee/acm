@@ -43,6 +43,18 @@ using namespace std;
 #define fre(a) freopen(a,"r",stdin)
 
 #define cio ios::sync_with_stdio(false); // Do not use it with "scanf" and other c input!
+#define pb push_back
+#define rep(i,a,b) for (int i = a;i <= b;i ++)
+#define pre(i,a,b) for (int i = a;i >= b;i --)
+#define REP(i,a,b) for (int i = a;i < b;i ++)
+
+#define read(a,s,n) rep(i,s,n) scanf("%d",a + i);
+#define READ(a,s,n) REP(i,s,n) scanf("%d",a + i);
+
+#define read_ll(a,s,n) rep(i,s,n) scanf("%lld",a + i);
+#define READ_ll(a,s,n) REP(i,s,n) scanf("%lld",a + i);
+
+#define _T_(T) int T;scanf("%d",&T);while (T --)
 
 #define itn int
 #define nit int
