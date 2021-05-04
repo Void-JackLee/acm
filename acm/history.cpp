@@ -15365,77 +15365,6 @@ int main()
 */
 
 
-///////kmp
-/*
-string str;
-string p;
-ulong n;
-ulong m;
-
-int ok = 0;
-
-void make(int *n)
-{
-    n[0] = 0;
-    n[1] = 0;
-    for (int i = 1,k = 0;i < m;i ++)
-    {
-        if (p[i] == p[k])
-        {
-            n[i + 1] = ++ k;
-        } else {
-            n[i + 1] = (k = n[k]);
-        }
-        //printf("%d=%d %d=%d\n",i,n[i],k,n[k]);
-    }
-}
-
-void kmp()
-{
-
-    int nxt[1000010];
-
-    make(nxt);
-//    for (int i = 0;i < m + 1;i ++)
-//    {
-//        printf("%d ",nxt[i]);
-//    }
-//    printf("\n");
-    //int f = 0;
-    for (int i = 0,j = 0;i < n;)
-    {
-//        cout << i << " " << j << endl;
-        if (str[i] == p[j]) {
-            j ++;
-            i ++;
-            if (j == m) {
-                //printf("Found: %lu\n",i - m);
-                ok ++;
-                //f = 1;
-                j = nxt[j];
-            }
-        }
-        else {
-            if (j == 0) i ++;
-            j = nxt[j];
-        }
-        
-    }
-    //if (!f) printf("Not Found!\n");
-}
-
-int main()
-{
-    getline(cin,str);
-    getline(cin,p);
-    n = str.size();
-    m = p.size();
-    kmp();
-    printf("%d\n",ok);
-    return 0;
-}
-*/
-
 /*
 int str[1000010],p[10010];
 int n;
@@ -19125,6 +19054,14 @@ inline ll dis(int a,int b)
     return (x[a] - x[b]) * (x[a] - x[b]) + (y[a] - y[b]) * (y[a] - y[b]) + (z[a] - z[b]) * (z[a] - z[b]);
 }
 
+void init(int n)
+{
+    for (int i = 0;i < n;i ++) {
+        g[i] = i;
+        d[i] = 1;
+    }
+}
+
 int main()
 {
     int T;
@@ -19132,10 +19069,8 @@ int main()
     while (T --) {
         ll n,h,r;
         scanf("%lld%lld%lld",&n,&h,&r);
-        for (int i = 0;i < n;i ++) {
-            g[i] = i;
-            d[i] = 1;
-        }
+ 
+        init(n);
         
         for (int i = 0;i < n;i ++) scanf("%lld%lld%lld",x + i,y + i,z + i);
         for (int i = 0;i < n;i ++) {
@@ -23164,5 +23099,40703 @@ int main()
     cout << s -> div() << endl;
     delete s;
     return 0;
+}
+*/
+
+/// ----------- prime模版 -----------
+/*
+struct Node {
+    int n;
+    ll w;
+    int operator<(const Node &o) const {
+        return w > o.w;
+    }
+};
+
+vector<Node> g[200010];
+
+ll dis[200010];
+int vis[200010] = {0};
+
+void prime(int s)
+{
+    mem(dis,-1);
+    
+    priority_queue<Node> q;
+    q.push({s,dis[s] = 0});
+    
+    Node current;
+    ll k;
+    
+    ll ans = 0;
+    
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (vis[current.n]) continue;
+        vis[current.n] = 1;
+        
+        ans += current.w;
+        
+        for (auto to : g[current.n]) {
+            k = to.w;
+            if (dis[to.n] == -1 || dis[to.n] > k) {
+                q.push({to.n,dis[to.n] = k});
+            }
+        }
+    }
+    
+    printf("%lld\n",ans);
+}
+*/
+/// ---------------------------------
+
+/*
+char a[1010][1010];
+int vis[1010][1010] = {0};
+int vis2[1010][1010] = {0};
+
+int dx[] = {0,1,0,-1};
+int dy[] = {1,0,-1,0};
+int n,m;
+int sum = 0;
+
+void dfs(int x,int y,int d)
+{
+//    printf(">>%d %d\n",x,y);
+    if (vis2[y][x]) return;
+    vis2[y][x] = 1;
+    sum ++;
+    int xx,yy;
+    for (int i = 0;i < 4;i ++) {
+        xx = x + dx[i];
+        yy = y + dy[i];
+        if (xx >= 0 && xx < n && yy >= 0 && yy < n) {
+            if ((a[y][x] ^ 48) ^ (a[yy][xx] ^ 48)){
+                dfs(xx,yy,d + 1);
+            }
+        }
+    }
+}
+
+void dfs2(int x,int y)
+{
+    if (vis[y][x]) return;
+    vis[y][x] = sum;
+    int xx,yy;
+    for (int i = 0;i < 4;i ++) {
+        xx = x + dx[i];
+        yy = y + dy[i];
+        if (xx >= 0 && xx < n && yy >= 0 && yy < n) {
+            if ((a[y][x] ^ 48) ^ (a[yy][xx] ^ 48)){
+                dfs2(xx,yy);
+            }
+        }
+    }
+}
+
+int main()
+{
+
+    scanf("%d%d",&n,&m);
+    for (int i = 0;i < n;i ++) {
+        scanf("%s",a[i]);
+    }
+    for (int i = 0;i < n;i ++) {
+        for (int j = 0;j < n;j ++) {
+            if (!vis[i][j]) {
+                sum = 0;
+                dfs(j,i,0);
+                dfs2(j,i);
+            }
+
+        }
+    }
+
+    int u,v;
+    for (int i = 0;i < m;i ++) {
+        scanf("%d%d",&u,&v);
+        printf("%d\n",vis[u - 1][v - 1]);
+    }
+
+//    for (int i = 0;i < n;i ++) {
+//        for (int j = 0;j < n;j ++) {
+//            printf("%c",a[i][j]);
+//        }
+//        printf("\n");
+//    }
+
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int T;
+    scanf("%d",&T);
+    ll n,k;
+    while (T --)
+    {
+        scanf("%lld%lld",&n,&k);
+        if (n % 2) {
+            // odd
+            ll x = 0;
+            for (ll i = 2;i <= n;i ++) {
+                if (n % i == 0) {
+                    x = i;
+                    break;
+                }
+            }
+            n += x;
+            printf("%lld\n",n + (k - 1) * 2);
+        } else {
+            printf("%lld\n",n + k * 2);
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+int n;
+int s[100010];
+int vis[100010] = {0};
+int b[100010];
+int m = 1;
+
+void dfs(int x,int d,int k)
+{
+    
+    if (vis[x] && k == 1) return;
+    vis[x] = 1;
+    int o = -1,oo = -1;
+    if (d != 0) {
+        o = d;
+        if (s[x] > b[d - 1]) b[d ++] = s[x];
+        else {
+            int *t = upper_bound(b, b + d, s[x]);
+            if ((t - b) + 1 != d + 1) {
+                d = (int) (t - b) + 1;
+                oo = *t;
+                *t = s[x];
+            }
+        }
+        
+    } else {
+        b[d ++] = s[x];
+    }
+    m = max(m,d);
+    printf(">>%d %d=\n",x,d);
+    for (int i = 0;i < d;i ++) printf("%d ",b[i]);
+    printf("\n");
+    for (int j = 2,i = x * j;i <= n;j ++,i = x * j)
+    {
+        printf("..x=%d,j=%d,i=%d\n",x,j,i);
+        dfs(i,d,k + 1);
+    }
+    if (o != -1) {
+        d = o;
+    }
+    if (oo != -1) {
+        b[d - 1] = oo;
+    }
+}
+
+int main()
+{
+    int T;
+    scanf("%d",&T);
+    
+//    int d[100010];
+    while (T --) {
+        m = 1;
+        mem(vis,0);
+        scanf("%d",&n);
+        for (int i = 1;i <= n;i ++) {
+            scanf("%d",s + i);
+        }
+        printf("-----------\n");
+        dfs(1,0,0);
+        printf("%d\n",m);
+//        for(int i = 1;i <= n;i ++)
+//        {
+//            d[i] = 1;
+//            for(int j = 1;j < i;j ++)
+//            {
+//                if(s[j] <= s[i] && i % j == 0 && (d[j] + 1) >= d[i])
+//                    d[i] = d[j] + 1;
+//            }
+//            m = max(m,d[i]);
+//        }
+//
+//        printf("%d\n",m);
+        
+        
+    }
+    return 0;
+}
+*/
+
+/*
+int n;
+int s[100010];
+int vis[100010] = {0};
+int a[100010];
+int b[100010];
+int m = 1;
+
+void dfs(int x,int d)
+{
+    m = max(m,d);
+    for (int j = 2,i = x * j;i <= n;i = x * j,j ++)
+    {
+//        printf(">>%d\n",i);
+        if (s[i] > s[x])
+            dfs(i,d + 1);
+    }
+}
+
+int main()
+{
+    int T;
+    scanf("%d",&T);
+    
+//    int d[100010];
+    while (T --) {
+        m = 1;
+        scanf("%d",&n);
+        for (int i = 1;i <= n;i ++) {
+            scanf("%d",s + i);
+        }
+        for (int i = 1;i <= n / 2;i ++) dfs(i,1);
+        printf("%d\n",m);
+//        for(int i = 1;i <= n;i ++)
+//        {
+//            d[i] = 1;
+//            for(int j = 1;j < i;j ++)
+//            {
+//                if(s[j] <= s[i] && i % j == 0 && (d[j] + 1) >= d[i])
+//                    d[i] = d[j] + 1;
+//            }
+//            m = max(m,d[i]);
+//        }
+//
+//        printf("%d\n",m);
+        
+        
+    }
+    return 0;
+}
+*/
+
+/*
+vector<int> g[100010];
+int vis[100010] = {0};
+int f = 1;
+
+void dfs(int n)
+{
+    if (vis[n]) return;
+    vis[n] = 1;
+    if (f) f = 0;
+    else printf(" ");
+    printf("%d",n);
+    for (auto i : g[n]) {
+        dfs(i);
+    }
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    for (int i = 0;i < m;i ++) {
+        scanf("%d%d",&u,&v);
+        g[u].push_back(v);
+    }
+    for (int i = 1;i <= n;i ++) {
+        sort(g[i].begin(),g[i].end());
+    }
+    dfs(1);
+    printf("\n");
+    mem(vis,0);
+    queue<int> q;
+    q.push(1);
+    f = 1;
+    int t;
+    while (!q.empty())
+    {
+        t = q.front();
+        q.pop();
+        if (vis[t]) continue;
+        vis[t] = 1;
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",t);
+        for (auto i : g[t]) {
+            q.push(i);
+        }
+    }
+    printf("\n");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int T;
+    scanf("%d",&T);
+    int n,m;
+    while (T --) {
+        scanf("%d%d",&n,&m);
+        if (n == 1) printf("0\n");
+        else if (n == 2) printf("%d\n",m);
+        else {
+            printf("%d\n",m * 2);
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int T;
+    scanf("%d",&T);
+    int n,k;
+    int a[50],b[50];
+    while (T --)
+    {
+        scanf("%d%d",&n,&k);
+        for (int i = 0;i < n;i ++) scanf("%d",a + i);
+        for (int i = 0;i < n;i ++) scanf("%d",b + i);
+        sort(a,a + n);
+        sort(b,b + n,greater<int>());
+        for (int i = 0,j = 0;i < k && j < n;j ++) {
+            if (b[i] > a[i]) {
+                swap(a[i],b[i]);
+                i ++;
+            }
+        }
+        int sum = 0;
+        for (int i = 0;i < n;i ++) sum += a[i];
+        printf("%d\n",sum);
+
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int T;
+    scanf("%d",&T);
+    int n;
+    ll sum = 0;
+    while (T --) {
+        scanf("%d",&n);
+        sum = 0;
+        for (ll i = 1,j = 2;i <= n / 2;i ++,j += 2) {
+            sum += i * j * 4;
+        }
+        printf("%lld\n", sum);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int T;
+    scanf("%d",&T);
+    int n;
+    int a[200010];
+    struct A
+    {
+        int length;
+        int index;
+
+        bool operator< (const A &other) const {
+            if (other.length == length) return index > other.index;
+            return length < other.length;
+        }
+    };
+    A f;
+    int i = 1;
+    int x;
+    while (T --) {
+        scanf("%d",&n);
+        priority_queue<A> q;
+        q.push({n,1});
+        i = 1;
+        while (!q.empty()) {
+            f = q.top();
+            q.pop();
+            x = (f.index * 2 + f.length - 1) / 2;
+            a[x] = i ++;
+            if (x > f.index) {
+                q.push({x - f.index,f.index});
+            }
+            if (x < f.index + f.length - 1) {
+                q.push({f.index + f.length - 1 - x,x + 1});
+            }
+        }
+        x = 1;
+        for (int i = 1;i <= n;i ++) {
+            if (x) x = 0;
+            else printf(" ");
+            printf("%d",a[i]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+*/
+
+
+//
+//int main()
+//{
+//    ull n;
+//    scanf("%llu",&n);
+//    string str_in;
+//    cin >> str_in;
+//
+////    ull u = 0;
+////    int a['z' + 1] = {0};
+////    for (int i = 0;str_in[i];i ++) a[str_in[i]] ++;
+////    for (int i = 'a';i <= 'z';i ++) if (a[i]) u ++;
+//
+//
+//    string str1,str2 = "";
+//    str2 += str_in[0];
+//    for (int i = 1;i < n;i ++) {
+//        if (i % 2) {
+//            str1 = "";
+//            for (int j = 0;str2[j];j ++) {
+//
+//                str1 += str_in[i];
+//                str1 += str2[j];
+//            }
+//            str1 += str_in[i];
+//        } else {
+//            str2 = "";
+//            for (int j = 0;str1[j];j ++) {
+//
+//                str2 += str_in[i];
+//                str2 += str1[j];
+//            }
+//            str2 += str_in[i];
+//        }
+//    }
+//    string str;
+//    if (n % 2) {
+//        str = str2;
+//    } else {
+//        str = str1;
+//    }
+//    map<ull,int> dp;
+//    map<int,int> last;
+//    map<int,int> h;
+//    int mod = 998244353;
+//    n = str.size();
+//    for (int i = 1;i <= n;++ i) {
+//        last[i]=h[str[i]];
+//        h[str[i]]=i;
+//    }
+//    for(int i=1;i<=n;++i){
+//        if (!last[i]) dp[i] = dp[i - 1] * 2 + 1;
+//        else dp[i] = dp[i-1]+dp[i-1]-dp[last[i]-1];
+//        if (dp[i] < 0) dp[i] += mod;
+//        dp[i] %= mod;
+//    }
+//    printf("%d\n",dp[n]);
+//
+//    return 0;
+//}
+//
+
+/*
+int quickpow(int a, int b)
+{
+    int ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans;
+        a = a * a;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int x = 1;
+int dp[1010][1010];
+
+int main()
+{
+    
+    
+    int n,m;
+    map<int,int> c;
+    scanf("%d%d",&n,&m);
+    int a = 2;
+    while (m > 1) {
+        while (m % a == 0) {
+            m /= a;
+            c[a] ++;
+        }
+        a ++;
+    }
+    
+    for (auto i : c) {
+//        printf("%d: %d\n",i.first,i.second);
+        x *= quickpow(i.first, i.second / 2);
+    }
+    
+    int mod = 998244353;
+    dp[0][0] = 1;
+    for (int i = 1;i <= n;i ++)
+        for (int j = 0;j <= x;j ++)
+            if (j >= i) dp[i][j] = (dp[i][j - i] + dp[i - 1][j]) % mod;
+            else dp[i][j] = dp[j][j];
+    printf("%d\n",dp[n][x]);
+    return 0;
+}
+*/
+
+/*
+pair<int,int> find(ll n)
+{
+    ll m = 10,M = -1;
+    while (n != 0) {
+        m = min(m,n % 10);
+        M = max(M,n % 10);
+        n /= 10;
+    }
+    return make_pair((int)m, (int)M);
+}
+
+int main()
+{
+    ll n,k;
+    int t;
+    pair<int, int> x;
+    int v;
+    scanf("%d",&t);
+    while (t --) {
+        scanf("%lld%lld",&n,&k);
+        for (int i = 0;i < k - 1;i ++) {
+            x = find(n);
+            v = x.first * x.second;
+            if (v == 0) break;
+            n += v;
+        }
+        printf("%lld\n",n);
+        
+    }
+//    scanf("%d",&n);
+//    for (int i = 0;i < 100;i ++) {
+//        pair<int,int> j = find(n);
+//        printf("%d %d = ",n,j.first*j.second);
+//        printf("%d\n",n += j.first*j.second);
+//    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int T,n;
+    int a[200010];
+    int k;
+    int t;
+    int m;
+    for (scanf("%d",&T);T --;)
+    {
+        scanf("%d",&n);
+        for (int i = 0;i < n;i ++) scanf("%d",a + i);
+        sort(a,a + n);
+        k = 0;
+        t = 0;
+        m = 0;
+        for (int i = 0;i < n;i ++) {
+            m = max(m,a[i]);
+            t ++;
+            if (m == t) {
+                m = 0;
+                t = 0;
+                k ++;
+            }
+        }
+        printf("%d\n",k);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    scanf("%d%d",&n,&k);
+    n --;
+    k -= n;
+    n ++;
+    if (n < k) {
+        printf("YES\n");
+        int f = 1;
+        for (int i = 0;i < n - 1;i ++){
+            if (f) f = 0;
+            else printf(" ");
+            printf("1");
+        }
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d\n",k);
+        printf("%d\n",n);
+    } else printf("NO\n");
+    return 0;
+}
+*/
+
+//ll a,b,c,d;
+//void solve()
+//{
+//    ll x = 0;
+//    ll l,r;
+//    for (ll i = c + 1;i <= c + d;i ++)
+//    {
+//        l = max(a , i - c);
+//        r = min(b , i - b);
+//        if (r < l) continue;
+//        x += (r - l + 1) * (min(d + 1 , i) - c);
+//    }
+//    printf("%lld\n",x);
+//}
+//
+//int main()
+//{
+//    scanf("%lld%lld%lld%lld",&a,&b,&c,&d);
+//    solve();
+//    return 0;
+//}
+
+
+//int main()
+//{
+//    int T;
+//    scanf("%d",&T);
+//    string str;
+//    int s;
+//    while (T --) {
+//        cin >> str;
+//        s = (int) str.size();
+//        rp(i,0,s) {
+//
+//        }
+//    }
+//    return 0;
+//}
+
+//int main()
+//{
+//    int T;
+//    scanf("%d",&T);
+//    string str;
+//    int x,l,X;
+//    int lt,rt;
+//    vector<int> k;
+//    int s;
+//    while (T --) {
+//        cin >> str;
+//        k.clear();
+////        x = 0;
+//        l = 0;
+//        s = (int) str.size();
+//        rp(i,0,s) {
+//            if (str[i] == 'x') {
+////                x ++;
+//            } else {
+//                l ++;
+//                k.pb(i);
+//            }
+//        }
+//        X = 0;
+//
+//        int ans = 0;
+//        REP (i,0,s) {
+//            if (str[i] == 'x') {
+//                X ++;
+////                x --;
+////                if (X >= 3) {
+////                    lt = X - 2;
+////                    rt = l - 1;
+////                    if (rt >= 1) {
+////                        if (lt < rt) {
+////                            str[i] = 'l';
+////                            X --;
+////                        } else {
+////                            str[*(k.end() - 1)] = 'x';
+////                            k.erase(k.end() - 1);
+////                            l --;
+////                        }
+////                        ans ++;
+////                    }
+////
+////                }
+//            } else {
+//                if (X >= 3) {
+//
+//                }
+//                l --;
+//            }
+//            cout << str << endl;
+//        }
+//        printf("%d\n",ans);
+//    }
+//    return 0;
+//}
+
+
+//int a[1000][1000];
+/*
+int main()
+{
+    fre("/Users/jackli/Downloads/problem_520/small.csv");
+//    freopen("/Users/jackli/Downloads/problem_520/k.csv", "w+", stdout);
+//    int m = 1830;
+    string str;
+    string s;
+    int w = 0;
+    int h = 0;
+    FILE *f = fopen("a.raw","w");
+    while (getline(cin,str))
+    {
+        s = "";
+        for (int i = 0;str[i];i ++) {
+            if (str[i] == ',') s += ' ';
+            else s += str[i];
+        }
+        stringstream ss(s);
+        double x;
+//        int f = 1;
+        w = 0;
+        uchar a;
+        while (ss >> x) {
+//            m = min(x,m);
+//            if (f) f = 0;
+//            else printf(",");
+//            if (x - m < 5600) printf("");
+//            else printf("0000");
+//            printf("%d",x - m);
+//            fwrite(&x, sizeof(int), 1, f);
+//            a[w][h] = x;
+            
+            a = x;
+            if (a) a = 255;
+            fwrite(&a, sizeof(uchar), 1, f);
+            
+            w ++;
+        }
+        h ++;
+//        printf("\n");
+    }
+//    for (int i = 0;i < w;i ++) {
+//        for (int j = 0;j < h;j ++) {
+//            fwrite(&a[i][j] - 2000, sizeof(int), 1, f);
+//        }
+//    }
+//
+    printf("%d %d\n",w,h);
+    return 0;
+}
+*/
+
+//int main()
+//{
+////    fre("/Users/jackli/Downloads/problem_520/small.csv");
+
+//fclose(f);
+//    return 0;
+//}
+
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    while (n >= 10) {
+        n %= 10;
+    }
+//    printf("%d\n",n);
+    if (n == 2 || n == 4 || n == 5 || n == 7 || n == 9) printf("hon\n");
+    else if (n == 0 || n == 1 || n == 6 || n == 8) printf("pon\n");
+    else if (n == 3) printf("bon\n");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int k;
+    string s;
+    cin >> k >> s;
+    if (s.size() <= k) cout << s << endl;
+    else {
+        REP (i,0,k) {
+            printf("%c",s[i]);
+        }
+        printf("...\n");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    double a,b,h,m;
+    scanf("%lf%lf%lf%lf",&a,&b,&h,&m);
+    double ha = m + h * 60;
+    ha *= 0.5;
+    double ma = 6 * m;
+    double c = abs(ha - ma);
+    c = min(360 - c,c);
+    double ans = a * a + b * b - 2 * a * b * cos(c * pi / 180);
+    printf("%.20f\n",sqrt(ans));
+    return 0;
+}
+*/
+
+/*
+vector<int> g[100010];
+
+int dis[100010];
+int vis[100010] = {0};
+int f[100010];
+struct Node {
+    int n,w,f;
+    int operator<(const Node &o) const {
+        return w > o.w;
+    }
+};
+
+void dij(int s) {
+    mem(dis,-1);
+    mem(f,-1);
+    
+    priority_queue<Node> q;
+    q.push({s,dis[s] = 0,-1});
+    
+    Node current;
+    int k;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        f[current.n] = current.f;
+        if (vis[current.n]) continue;
+        vis[current.n] = 1;
+        
+        for (auto to : g[current.n]) {
+            k = dis[current.n] + 1;
+            if (dis[to] == -1 || dis[to] > k) {
+                q.push({to,dis[to] = k,current.n});
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    REP (i,0,m) {
+        scanf("%d%d",&u,&v);
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+    dij(1);
+    int ok = 1;
+    rep (i,1,n) {
+        if (dis[i] == -1) {
+            ok = 0;
+            break;
+        }
+    }
+    if (ok) {
+        printf("Yes\n");
+        rep (i,2,n) {
+            printf("%d\n",f[i]);
+        }
+    } else printf("No\n");
+    return 0;
+}
+*/
+ 
+//int main()
+//{
+//    int n;
+//    scanf("%d",&n);
+//    ll a,b;
+//    double x[200010];
+//    double k[200010];
+//    REP (i,0,n) {
+//        scanf("%lld%lld",&a,&b);
+//        x[i] = a / (double) b;
+//        k[i] = (-b) / (double) a;
+//    }
+//    sort(k, k + n);
+//    REP (i,0,n) {
+//
+//    }
+//    return 0;
+//}
+
+//class A {
+//    int a,b;
+////    friend class B;
+//public:
+//
+//    A(int a,int b):a(a),b(b){}
+//    void aa()
+//    {
+//        cout << "aaa" << endl;
+//    }
+//};
+//
+//class B : private A {
+//public:
+//    B(int a,int b):A(a,b)
+//    {
+//
+//    }
+//
+//    void out()
+//    {
+////        cout << a << b << endl;
+//        aa();
+//    }
+//};
+//
+//int main()
+//{
+//    B b(1,2);
+//    b.out();
+//
+//    return 0;
+//}
+
+/*
+int x[100];
+int y[100];
+
+int getDis(int x1,int y1,int x2,int y2)
+{
+    return abs(x1 - x2) + abs(y1 - y2);
+}
+
+int n;
+
+int main()
+{
+    int w,h;
+    int xs,ys;
+    int a[100];
+
+    _T_(T) {
+        scanf("%d%d",&w,&h);
+        scanf("%d%d",&xs,&ys);
+        scanf("%d",&n);
+        REP(i,0,n) scanf("%d%d",x + i,y + i);
+        int sum = 0;
+        int m = INT_INF;
+        REP(i,0,n) a[i] = i;
+        do {
+            sum = 0;
+            REP(i,1,n) {
+                sum += getDis(x[a[i - 1]], y[a[i - 1]], x[a[i]], y[a[i]]);
+            }
+            sum += getDis(xs, ys, x[a[0]], y[a[0]]);
+            sum += getDis(xs, ys, x[a[n - 1]], y[a[n - 1]]);
+            m = min(m,sum);
+        } while (next_permutation(a, a + n));
+        printf("The shortest path has length %d\n",m);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int x,y;
+    scanf("%d%d",&x,&y);
+    double v = y * log(x) - x * log(y);
+    if (fabs(v) < 1e-10) printf("=\n");
+    else if (v < 0) printf("<\n");
+    else printf(">\n");
+    return 0;
+}
+*/
+
+/*
+vector<int> g[100010];
+
+int cnt = 0;
+int dfn[100010] = {0};
+int low[100010] = {0};
+
+int sum = 0;
+
+void Tarjan(int n,int from)
+{
+    dfn[n] = low[n] = ++ cnt;
+    for (auto i : g[n]) {
+        if (!dfn[i]) {
+            Tarjan(i,n);
+            low[n] = min(low[n],low[i]);
+            if (low[i] > dfn[n]) sum ++;
+        } else if (i != from) low[n] = min(low[n],low[i]);
+    }
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    REP(i,0,m) {
+        scanf("%d%d",&u,&v);
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+    Tarjan(1,0);
+    printf("%d\n",m - sum);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    double gg = 0,mm = 0,all = 0;
+    int sg = 0,sm = 0,sa = 0;
+    int m,s;
+    _T_(T) {
+        cin >> m >> s;
+        if (m == 0) {
+            sm ++;
+            mm += s;
+        } else {
+            sg ++;
+            gg += s;
+        }
+        sa ++;
+        all += s;
+    }
+    printf("%.1f",all / sa);
+    if (sg != 0) {
+        printf(" %.1f",gg / sg);
+    } else printf(" X");
+    if (sm != 0) {
+        printf(" %.1f",mm / sm);
+    } else printf(" X");
+    printf("\n");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll a,b;
+    cin >> a >> b;
+    ll c = a + b;
+    int f = 0;
+    if (c < 0) f = 1;
+    c = abs(c);
+    if (c == 0) {
+        printf("0\n");
+        return 0;
+    }
+    char x[100];
+    int i = 0;
+    while (c > 0) {
+        x[i ++] = (c % 10) ^ 48;
+        c /= 10;
+    }
+    if (f) printf("-\n");
+    pre(j,i - 1,0) {
+        printf("%c\n",x[j]);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string a,b;
+    cin >> a;
+    while (cin >> b) {
+        if (b == "-1") break;
+        if (b.size() != a.size()) {
+            printf("No\n");
+            continue;
+        }
+        int x = 0;
+        int t = 0;
+        for (int i = 0;b[i];i ++) {
+            if (a[i] != b[i]) {
+                t ++;
+                x = abs(a[i] - b[i]);
+            }
+            if (t >= 2) {
+                break;
+            }
+        }
+        if (t >= 2 || x > 1) printf("No\n");
+        else printf("Yes\n");
+    }
+    return 0;
+}
+*/
+
+/*
+string all[3] = {"JianDao","Bu","ChuiZi"};
+
+string ying(string x)
+{
+    if (x == all[0]) return all[2];
+    else if (x == all[1]) return all[0];
+    else return all[1];
+}
+
+string shu(string x)
+{
+    if (x == all[2]) return all[0];
+    else if (x == all[0]) return all[1];
+    else return all[2];
+}
+
+int main()
+{
+    int n;
+    int k[20];
+    cin >> n;
+    READ(k,0,n);
+    string str;
+    int t = 0;
+    int i = 0;
+    while (cin >> str) {
+        if (str == "End") break;
+        t ++;
+        if (t <= k[i]) {
+            cout << ying(str) << endl;
+        } else {
+            cout << shu(str) << endl;
+            t = 0;
+            i ++;
+            if (i >= n) i = 0;
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,p;
+    int a[100010];
+    scanf("%d%d",&n,&p);
+    READ(a,0,n);
+    sort(a,a + n);
+
+//    REP(i,0,n) printf("%d ",a[i]);
+//    printf("\n");
+
+    int *l,*r;
+    ll sum = 0;
+    REP (i,0,n) {
+
+        l = upper_bound(a + i + 1, a + n, abs(a[i] - p));
+        if (l >= a + n) continue;
+        r = lower_bound(a + i + 1, a + n, a[i] + p);
+        if (r == a + i) continue;
+        r --;
+        if (r < l) continue;
+//        printf("..%d\n",a[i]);
+//        printf(">>%d %d\n",abs(a[i] - p),a[i] + p);
+//        printf("%d %d %lu\n",*l,*r,r - l + 1);
+        sum += r - l + 1;
+    }
+    printf("%lld\n",sum);
+    return 0;
+}
+*/
+
+//int main()
+//{
+//    int n,k;
+//    scanf("%d%d",&n,&k);
+//    ll x = 1;
+//    ll mod = 1;
+//    ll p = 0;
+//    REP (i,0,k) {
+//        mod *= 10;
+//    }
+//
+//    ll m = 1000000000;
+//
+//    rep (i,1,n) {
+//        x *= i;
+//        while (x % 10 == 0) {
+//            x /= 10;
+//            p ++;
+//        }
+//        x %= m;
+//    }
+//    x %= mod;
+//    string a = "%0";
+//    a += (k ^ 48);
+//    a += "lld %lld\n";
+//    printf(a.c_str(),x,p);
+//    return 0;
+//}
+
+/*
+int main()
+{
+    ll n,m,k;
+    ll x,ans;
+    _T_(T) {
+        scanf("%lld%lld%lld",&n,&m,&k);
+        if (n < 2) {
+            printf("0\n");
+            continue;
+        }
+        x = n / 2;
+        ans = x * (n - x) * m * k;
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+vector<int> g[200010];
+
+int vis[200010] = {0};
+int dis[200010] = {0};
+
+int ans = 0;
+void dfs(int n,int d,int f) {
+    if (d == 1) {
+        ans += g[n].size() - 1;
+        return;
+    }
+    for (auto i : g[n]) {
+        if (i != f) dfs(i,d + 1,n);
+    }
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int u,v;
+    REP(i,0,n - 1) {
+        scanf("%d%d",&u,&v);
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+    dfs(1,0,-1);
+    rep(i,1,n) {
+        ans = 0;
+        dfs(i,0,-1);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    const int mod = 1e9 + 7;
+//    map<pair<int,int>,int> all;
+    int n;
+    scanf("%d",&n);
+    ll a[200010];
+    read_ll(a,1,n);
+    ll ans = 0;
+    a[0] = 0;
+
+    ll b[200010];
+    b[0] = 0;
+    for (int i = 1,j = n;i <= n;i ++,j --) b[i] = (a[i] * j) % mod;
+
+    ll c[200010];
+    c[1] = b[1];
+    c[0] = 0;
+    rep(i,2,n) c[i] = c[i - 1] + b[i];
+
+    ll x;
+    ll p;
+    rep(i,1,n) {
+        p = c[n] - c[i - 1];
+        x = (p * i % mod) * a[i];
+        ans = (ans + x % mod) % mod;
+    }
+    printf("%lld\n",ans);
+    
+//    rep(l,1,n) {
+//        rep(r,l,n) {
+//            rep(i,l,r) {
+//                rep(j,i,r) {
+////                    printf("%lld %lld\n",a[i],a[j]);
+//                    all[make_pair(a[i], a[j])] ++;
+//                    ans += a[i] * a[j] % mod;
+//                }
+//            }
+//        }
+//    }
+//    for (auto i : all) {
+//        printf("%d %d: %d\n",i.first.first,i.first.second,i.second);
+//    }
+//    printf("%lld\n",ans);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int a[110][110];
+    REP(i,0,n) {
+        REP(j,0,m) {
+            scanf("%d",&a[i][j]);
+        }
+    }
+    int h,w;
+    scanf("%d%d",&h,&w);
+    int b[110][110];
+    REP(i,0,h) {
+        REP(j,0,w) {
+            scanf("%d",&b[i][j]);
+        }
+    }
+    
+    vector<ll> ans[210];
+    int v = 0;
+    ll k;
+    rep(i,0,n - h) {
+        rep(j,0,m - w) {
+            k = 0;
+            REP(y,0,h) {
+                REP(x,0,w) {
+                    k += b[y][x] * a[i + y][j + x];
+                }
+            }
+            ans[i].pb(k);
+        }
+        v ++;
+    }
+    int f = 1;
+    REP(i,0,v) {
+        f = 1;
+        for (auto j : ans[i]) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%lld",j);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+#define MAX 1000000000
+    int l = -MAX;
+    int r = MAX;
+    int m;
+    string resp;
+    while (l <= r) {
+        m = (l + r) / 2;
+        cout << m << endl;
+        cin >> resp;
+        if (resp == "big") {
+            r = m - 1;
+        } else if (resp == "small") {
+            l = m + 1;
+        } else return 0;
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    string str;
+    scanf("%d",&n);
+    REP(i,0,n) cin >> str;
+    scanf("%d",&m);
+    REP(i,0,m) cin >> str;
+    if (n > m) printf("Cuber QQ\n");
+    else printf("Quber CC\n");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    scanf("%d%d",&n,&k);
+    REP(i,0,k - 1) printf("b");
+    printf("a");
+    REP(i,0,n - k) printf("z");
+    printf("\n");
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    string name;
+    map<string,Node*> nxt;
+};
+
+int ans = 0;
+const string k = "joe.";
+
+inline bool judge(string str)
+{
+    int x = 0,ok = 1;
+    if (str.size() < 4) return false;
+    for (auto j = str.rbegin();j != str.rend() && x < 4;j ++,x ++) {
+        if (k[x] != *j) {
+            ok = 0;
+            break;
+        }
+    }
+    return ok;
+}
+
+void dfs(Node *root) {
+    if (root -> nxt.size() == 0) {
+        if (judge(root -> name)) ans ++;
+        return;
+    }
+    for (auto i : root -> nxt) {
+        dfs(i.second);
+    }
+}
+
+int main()
+{
+    string str,child;
+    int last;
+    Node *root = new Node();
+    root -> name = "/";
+    
+    Node *crt;
+    Node *node;
+    
+    _T_(n) {
+        cin >> str;
+        crt = root;
+        last = 1;
+        for (int i = 0;str[i];i ++) {
+            if (str[i] == '/') {
+                if (i + 1 != 1) {
+                    child = str.substr(last,i - last);
+                    if (crt -> nxt.find(child) != crt -> nxt.end()) {
+                        crt = crt -> nxt[child];
+                    } else {
+                        node = new Node();
+                        node -> name = child;
+                        crt -> nxt[child] = node;
+                        crt = node;
+                    }
+                }
+                last = i + 1;
+                
+            }
+        }
+        child = str.substr(last);
+        if (crt -> nxt.find(child) == crt -> nxt.end()) {
+            node = new Node();
+            node -> name = child;
+            crt -> nxt[child] = node;
+            crt = node;
+        }
+    }
+    
+    dfs(root);
+    printf("%d\n",ans);
+    return 0;
+}
+
+*/
+
+//
+//int n;
+//
+//
+//    void up(int i)
+//    {
+//        int p = i / 2;
+//        while (p != 0 && a[i] < a[p])
+//        {
+//            swap(a[i], a[p]);
+//            i = p;
+//            p /= 2;
+//        }
+//    }
+//
+//    void down(int i)
+//    {
+//        int k = i * 2;
+//        if (k + 1 <= n && a[k + 1] < a[k]) k ++;
+//        while (k <= n && a[i] > a[k])
+//        {
+//            swap(a[i], a[k]);
+//            i = k;
+//            k *= 2;
+//            if (k + 1 <= n && a[k + 1] < a[k]) k ++;
+//        }
+//    }
+//
+//    void push(int num)
+//    {
+//        a[++ n] = num;
+//        up(n);
+//    }
+//
+//    void pop()
+//    {
+//        if (n > 0)
+//        {
+//            swap(a[1], a[n --]);
+//            down(1);
+//        }
+//    }
+//
+//    int top()
+//    {
+//        return a[1];
+//    }
+
+/*
+inline int read(){
+    int x = 0, f = 1;
+    char ch = getchar();
+    while(ch < '0' || ch > '9'){
+        if (ch == '-')
+            f = -1;
+        ch = getchar();
+    }
+    while(ch >= '0' && ch <= '9'){
+        x = (x<<1) + (x<<3) + (ch^48);
+        ch = getchar();
+    }
+    return x * f;
+}
+
+int n,k;
+
+int a[5000010];
+
+int partition(int *nums, int left, int right)
+{
+    int temp = nums[left];
+    while (left < right)
+    {
+        while (left < right && temp >= nums[right]) right --;
+        nums[left] = nums[right];
+        while (left < right && temp < nums[left]) left ++;
+        nums[right] = nums[left];
+    }
+    nums[left] = temp;
+    return left;
+}
+
+int quickSort_k(int *nums, int left, int right, int k)
+{
+    if (left <= right)
+    {
+        int pos = partition(nums, left, right);
+        if (pos == k - 1) return nums[pos];
+        else if (pos > k - 1) return quickSort_k(nums, left, pos - 1, k);
+        else if (pos < k - 1) return quickSort_k(nums, pos + 1, right, k);
+    }
+    return -1;
+}
+
+
+int main()
+{
+    _T_(T)
+    {
+        scanf("%d%d",&n,&k);
+        REP(i,0,n) {
+            a[i] = read();
+        }
+        printf("%d\n",quickSort_k(a, 0, n - 1, n - k + 1));
+    }
+    return 0;
+}
+*/
+
+/*
+class A {
+public:
+    A(){cout << "123" << endl;}
+    
+    void f(){cout << 'a' << endl;}
+};
+
+class B {
+public:
+    B(){cout << 33333 << endl;}
+    
+    void f(){cout << 'b' << endl;}
+};
+
+class C: public A,public B {
+public:
+    C()
+    {
+        cout << 2333 << endl;
+    }
+};
+
+int main()
+{
+    C c;
+    c.A::f();
+    c.B::f();
+    
+    return 0;
+}
+*/
+
+
+/*
+int main()
+{
+    fre("/Users/jackli/Documents/IdeaProjects/ExamQuery/stuff/_exam_data_20_2.csv");
+    FILE *exam = fopen("/Users/jackli/Documents/IdeaProjects/ExamQuery/stuff/exam_data_20_2.csv", "w");
+    FILE *major = fopen("/Users/jackli/Documents/IdeaProjects/ExamQuery/stuff/exam_major_20_2.csv", "w");
+    int id = 1;
+
+    string line, str, save;
+    getline(cin, line);
+
+
+    map<string,set<int>> all;
+
+
+    while (getline(cin, line)) {
+        int d = 0;
+        str = "";
+        save = to_string(id) + ",";
+        for (int i = 0;line[i];i ++) {
+            if (line[i] == ',') {
+                d ++;
+                if (d == 4) {
+                    str = "";
+                } else if (d == 5) {
+                    all[str].insert(id);
+                    str = "";
+                }
+            } else
+            if (d == 4) {
+                if (line[i] != ';') {
+                    str += line[i];
+                } else {
+                    all[str].insert(id);
+                    str = "";
+                }
+            }
+            if (d != 4) save += line[i];
+        }
+//        cout << save << endl;
+        fprintf(exam, "%s\n",save.c_str());
+        id ++;
+
+    }
+    
+    id = 1;
+    for (auto i : all) {
+        line = to_string(id ++) + "," + i.first + ",";
+        for (auto j : i.second) {
+            line += to_string(j) + ";";
+        }
+        fprintf(major, "%s\n",line.c_str());
+    }
+    
+    
+    fclose(major);
+    fclose(exam);
+    return 0;
+}
+
+*/
+
+/*
+ll cal(ll x,ll y,ll z) {
+    return x * x + y * y + z * z;
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    ll x,y,z;
+    ll m = -1;
+    REP(i,0,n) {
+        scanf("%lld%lld%lld",&x,&y,&z);
+        if (m == -1) m = cal(x,y,z);
+        else m = min(m,cal(x,y,z));
+    }
+    printf("%.3f\n",sqrt(m));
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll n,m,x,y;
+    _T_(T) {
+        scanf("%lld%lld%lld%lld",&n,&m,&x,&y);
+        if (x <= y) printf("%lld\n",m);
+        else {
+            printf("%lld\n",min(m,(n + (m - 1) * y) / x));
+        }
+    }
+    return 0;
+}
+*/
+
+
+/// unique函数
+/*
+int cmp(const string &a,const string &b)
+{
+    return a.size() < b.size();
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    string str;
+    vector<string> k;
+    REP(i,0,m) {
+        cin >> str;
+        k.pb(str);
+    }
+    sort(k.begin(),k.end());
+    auto end = unique(k.begin(), k.end());
+    sort(k.begin(),end,cmp);
+    int x = 0;
+    int f = 1;
+    int t;
+    for (auto i = k.begin();i != end;i ++) {
+        t = (int) i -> size();
+        if (f) f = 0;
+        else t ++;
+        
+        if (n >= t) {
+            n -= t;
+            x ++;
+        } else break;
+    }
+    printf("%d\n",x);
+    return 0;
+}
+*/
+
+/// prime记路径+离散化
+/*
+int cmp(const pair<int,int> &a,const pair<int,int> &b) {
+    if (a.second == b.second) {
+        return a.first > b.first;
+    }
+    return a.second > b.second;
+}
+
+struct Node {
+    int f;
+    int n;
+    ll w;
+    int operator<(const Node &o) const {
+        return w > o.w;
+    }
+};
+
+vector<Node> g[200010];
+vector<int> h[200010];
+
+ll dis[200010];
+int vis[200010] = {0};
+
+void prime(int s)
+{
+    mem(dis,-1);
+    
+    priority_queue<Node> q;
+    q.push({-1,s,dis[s] = 0});
+    
+    Node current;
+    ll k;
+    
+    
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (vis[current.n]) continue;
+        vis[current.n] = 1;
+        
+        if (current.f != -1) {
+            h[current.n].pb(current.f);
+            h[current.f].pb(current.n);
+        }
+        
+        for (auto to : g[current.n]) {
+            k = to.w;
+            if (dis[to.n] == -1 || dis[to.n] > k) {
+                q.push({current.n,to.n,dis[to.n] = k});
+            }
+        }
+    }
+}
+
+int vis2[200010] = {0};
+int d[200010] = {0};
+
+
+void dfs(int n) {
+    if (vis2[n]) return;
+    
+//    printf(">>%d\n",n);
+    
+    vis2[n] = 1;
+    for (auto i : h[n]) {
+        d[n] ++;
+        dfs(i);
+    }
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    pair<int,int> pth[200010];
+    rep(i,1,m) {
+        scanf("%d%d",&u,&v);
+        pth[i] = make_pair(min(u,v), max(u,v));
+    }
+    sort(pth + 1,pth + m + 1,cmp);
+    rep(i,1,m) {
+//        printf("%d %d %d\n",pth[i].first,pth[i].second,m - i + 1);
+        g[pth[i].first].pb({-1,pth[i].second,m - i + 1});
+        g[pth[i].second].pb({-1,pth[i].first,m - i + 1});
+    }
+    prime(1);
+    dfs(1);
+    int md = -1;
+    rep(i,1,n) md = max(md,d[i]);
+    printf("%d\n",md);
+    return 0;
+}
+*/
+
+//int main()
+//{
+//    const int mod = 998244353;
+////    ll x = 1000000000000000000ll;
+////    cout << (x%mod) * 10 % mod << endl;
+//    int n,m,k;
+//    scanf("%d%d%d",&n,&m,&k);
+//    ll a[510][510];
+//
+//    ll sr[510] = {0};
+//    ll sc[510] = {0};
+//
+//    rep (i,1,n) {
+//        rep (j,1,m) {
+//            scanf("%lld",&a[i][j]);
+//            sc[j] = (a[i][j] + sc[j]) % mod;
+//            sr[i] = (a[i][j] + sr[i]) % mod;
+//        }
+//    }
+//
+////    rep (i,1,n) printf("%lld ",sr[i]);
+////    printf("\n");
+////    rep (i,1,m) printf("%lld ",sc[i]);
+////    printf("\n");
+//
+//    ll sum = 0;
+//    ll sub = 0;
+//
+//    char in;
+//    ll ti;
+//    int x;
+//
+//    char l = 'x';
+//    // x init
+//    // 'r' r
+//    // 'c' c
+//
+//    ll t[510][510] = {0};
+//
+//    queue<pair<int,ll>> nodes;
+//
+//    ll tr[510] = {0};
+//    ll tc[510] = {0};
+//    pair<int,ll> top;
+//
+//    REP(i,0,k) {
+//        scanf(" %c%d%lld",&in,&x,&ti);
+//        if (i != 0) {
+//            if (l != in) {
+//
+//                if (in == 'r') {
+//                    while (!nodes.empty()) {
+//                        top = nodes.front();
+//                        nodes.pop();
+//
+//                        sub = (sub + (a[x][top.first] % mod) * ((top.second - t[x][top.first]) % mod) % mod) % mod;
+//
+////                        cout << "..." << t[x][top.first] << endl;
+////                        cout << ">>" << top.second - t[x][top.first] << endl;
+//
+////                        printf(">>%lld\n",(ti - top.second));
+//                        t[x][top.first] = top.second;
+//                    }
+//                } else if (in == 'c') {
+//                    while (!nodes.empty()) {
+//                        top = nodes.front();
+//                        nodes.pop();
+//
+//                        sub = (sub + (a[top.first][x] % mod) * ((top.second - t[top.first][x]) % mod) % mod) % mod;
+//
+////                        cout << "..." << t[top.first][x] << endl;;
+////                        cout << ">>" << top.second - t[top.first][x] << endl;
+//                        t[top.first][x] = top.second;
+//                    }
+//                }
+//
+//            }
+//        }
+//        l = in;
+//        nodes.push(make_pair(x, ti));
+//
+//        if (in == 'r') {
+//            sum = (sum + ((sr[x] * ((ti - tr[x]) % mod)) % mod)) % mod;
+////            nodes.push(make_pair(x, ti - tr[x]));
+//            tr[x] = ti;
+//        } else if (in == 'c') {
+//            sum = (sum + ((sc[x] * ((ti - tc[x]) % mod)) % mod)) % mod;
+//
+//            tc[x] = ti;
+//        }
+//    }
+////    printf("%lld %lld\n",sum,sub);
+//    printf("%lld\n",((sum + mod) - sub) % mod);
+//    return 0;
+//}
+
+
+//int main()
+//{
+//    int a[10];
+//    int cnt;
+//    int ok = 0;
+//    int t;
+//    int l[] = {0,20,12,32,40,24,44,52,60,16,36,64,56,72,76,80,28,84,68,88,92,96};
+//    _T_(T) {
+//        cnt = 0;
+//        REP(i,0,10) {
+//            scanf("%d",a + i);
+//            cnt += a[i];
+//        }
+//
+//
+//
+//        int x[100] = {0};
+//        if (a[0] >= 2) {
+//            x[0] = 1;
+//        }
+//        if (a[2] >= 1 && a[0] >= 1) {
+//            x[20] = 1;
+//        }
+//        if (a[1] >= 1 && a[2] >= 1) {
+//            x[12] = 1;
+//        }
+//        if (a[3] >= 1 && a[2] >= 1) {
+//            x[32] = 1;
+//        }
+//        if (a[4] >= 1 && a[0] >= 1) {
+//            x[40] = 1;
+//        }
+//        if (a[2] >= 1 && a[4] >= 1) {
+//            x[24] = 1;
+//        }
+//        if (a[4] >= 2) {
+//            x[44] = 1;
+//        }
+//        if (a[5] >= 1 && a[2] >= 1) {
+//            x[52] = 1;
+//        }
+//        if (a[6] >= 1 && a[0] >= 1) {
+//            x[60] = 1;
+//        }
+//        if (a[1] >= 1 && a[6] >= 1) {
+//            x[16] = 1;
+//        }
+//        if (a[3] >= 1 && a[6] >= 1) {
+//            x[36] = 1;
+//        }
+//        if (a[6] >= 1 && a[4] >= 1) {
+//            x[64] = 1;
+//        }
+//        if (a[5] >= 1 && a[6] >= 1) {
+//            x[56] = 1;
+//        }
+//        if (a[7] >= 1 && a[2] >= 1) {
+//            x[72] = 1;
+//        }
+//        if (a[7] >= 1 && a[6] >= 1) {
+//            x[76] = 1;
+//        }
+//        if (a[8] >= 1 && a[0] >= 1) {
+//            x[80] = 1;
+//        }
+//        if (a[2] >= 1 && a[8] >= 1) {
+//            x[28] = 1;
+//        }
+//        if (a[8] >= 1 && a[4] >= 1) {
+//            x[84] = 1;
+//        }
+//        if (a[6] >= 1 && a[8] >= 1) {
+//            x[68] = 1;
+//        }
+//        if (a[8] >= 2) {
+//            x[88] = 1;
+//        }
+//        if (a[9] >= 1 && a[2] >= 1) {
+//            x[92] = 1;
+//        }
+//        if (a[9] >= 1 && a[6] >= 1) {
+//            x[96] = 1;
+//        }
+//        ok = 0;
+//        if (cnt >= 3) {
+//            for (auto i : l) {
+//                if (x[i]) {
+//                    t = i;
+//                    if (t == 0) a[0] -= 2;
+//                    else {
+//                        while (t != 0) {
+//                            a[t % 10] --;
+//                            t /= 10;
+//                        }
+//                    }
+//                    pre(j,9,0) {
+//                        while (a[j] != 0) {
+//                            printf("%d",j);
+//                            a[j] --;
+//                        }
+//                    }
+//                    if (i == 0) printf("00\n");
+//                    else printf("%d\n",i);
+//                    ok = 1;
+//                    break;
+//                }
+//            }
+//        } else {
+//            pre(i,100,0) {
+//                if (x[i]) {
+//                    ok = 1;
+//                    printf("%d\n",i);
+//                    break;
+//                }
+//            }
+//        }
+//
+//
+//        if (!ok) {
+//            if (a[8] >= 1) printf("8\n");
+//            else if (a[4] >= 1) printf("4\n");
+//            else if (a[0] >= 1) printf("0\n");
+//            else printf("-1\n");
+//        }
+//    }
+//    return 0;
+//}
+
+//
+//
+//inline bool has(int *a,int n) {
+//    if (n == 0) return a[0] >= 2;
+//    if (n == 44) return a[4] >= 2;
+//    if (n == 88) return a[8] >= 2;
+//    int ok = 1;
+//    while (n != 0) {
+//        if (a[n % 10] < 1) {
+//            ok = 0;
+//            break;
+//        }
+//        n /= 10;
+//    }
+//    return ok;
+//}
+//
+//int main()
+//{
+//    int a[10];
+//    int cnt;
+//    int b[10];
+//    string x;
+//    int n;
+//    ll ans = -1;
+//    _T_(T) {
+//        cnt = 0;
+//        REP(i,0,10) {
+//            scanf("%d",a + i);
+//        }
+//        vector<string> all;
+//        rep(i,0,99) {
+//            if (i % 4 == 0 && has(a,i)) {
+//                x = "";
+//                REP(i,0,10) b[i] = a[i];
+//                n = i;
+//                if (n == 0) b[0] -= 2;
+//                else while (n != 0) {
+//                    b[n % 10] --;
+//                    n /= 10;
+//                }
+//                pre(j,9,0) {
+//                    while (b[j] != 0) {
+//                        x += b[j] ^ 48;
+//                        b[j] --;
+//                    }
+//                }
+//
+//
+//                all.pb(x);
+//            }
+//        }
+//
+//    }
+//}
+//
+
+/*
+ /// 还得看看
+int main()
+{
+    int n;
+    int a[1010];
+    int b[1010];
+    int cnt;
+    _T_(T) {
+        scanf("%d",&n);
+        REP(i,0,n) scanf("%d",a + i);
+        REP(i,0,n) scanf("%d",b + i);
+        sort(a,a + n);
+        sort(b,b + n);
+        int m = -INT_INF;
+        pre (k,n - 1,0) {
+            cnt = 0;
+            for (int i = n - 1,j = k;i >= 0 && j >= 0;j --,i --) {
+                if (a[i] > b[j]) {
+                    cnt ++;
+                }
+            }
+            m = max(m,cnt);
+        }
+        printf("%d\n",m);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[100010];
+    ll sum = 0;
+    ll sub = 0;
+    _T_(T) {
+        scanf("%d",&n);
+        sum = 0;
+        sub = 0;
+        REP(i,0,n) {
+            scanf("%d",a + i);
+            if (i != 0) {
+                if (a[i] < a[i - 1]) {
+                    sum += a[i - 1] - 1;
+                    sub += a[i] - 1;
+                }
+            }
+        }
+        sum += a[n - 1] - 1;
+        printf("%lld\n",sum - sub);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    itn j;
+    int m = 0;
+    _T_(T) {
+        cin >> str;
+        j = 0;
+        m = 0;
+        for (int i = 1;str[i];i ++) {
+            if (str[i] == str[j]) j ++;
+            else {
+                m = max(m,j);
+                j = 0;
+                if (str[i] == str[j]) j ++;
+            }
+        }
+        m = max(m,j);
+        printf("%d\n",m);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    const int r = 91;
+    ull f[100];
+    f[1] = 1;
+    f[2] = 2;
+    
+    ull a = 1,b = 1,c;
+    rep(i,3,r) {
+        c = a + b;
+        a = b;
+        b = c;
+        f[i] = f[i - 1] + c;
+    }
+    
+//    rep(i,1,r) printf("%llu ",f[i]);
+    ull x,*i;
+    _T_(T) {
+        scanf("%llu",&x);
+        i = upper_bound(f + 1, f + 1 + r, x);
+        printf("%lu\n", i - f - 1);
+    }
+    return 0;
+}
+*/
+
+//struct Node {
+//    int n,w;
+//};
+//
+//vector<Node> g[1000010];
+//int a[1000010];
+//int vis[1000010];
+//int dis[1000010];
+//
+//vector<ll> all;
+//
+//void dfs(int x,int k)
+//{
+//    if (vis[x]) return;
+//    vis[x] = 1;
+//    dis[x] = k + a[x];
+//    for (auto i : g[x]) {
+//        dfs(i.n,k + i.w);
+//    }
+//}
+//
+//int main()
+//{
+//    itn n;
+//    int u,w;
+//    _T_(T) {
+//        scanf("%d",&n);
+//        rep(i,2,n) {
+//            scanf("%d%d",&u,&w);
+//            g[u].pb({i,w});
+//            g[i].pb({u,w});
+//        }
+//        rep(i,1,n) scanf("%d",a + i);
+//        mem(vis,0);
+//        dfs(1,0);
+////        rep(i,1,n) printf("%d ",dis[i]);
+////        printf("\n");
+//        sort(dis + 1,dis + n + 1,greater<int>());
+//
+//    }
+//    return 0;
+//}
+
+//const int mod = 1000000007;
+//
+//ll quickpow(ll a, ll b)
+//{
+//    ll ans = 1;
+//    while (b)
+//    {
+//        if (b & 1) ans = a * ans % mod;
+//        a = a * a % mod;
+//        b >>= 1;
+//    }
+//    return ans;
+//}
+//
+//int main()
+//{
+//    printf("%lld",((36*7)*quickpow(128,mod-2))%mod);
+//    return 0;
+//}
+
+//const int N=5000080;
+//const int inf=1e9+1;
+//const ll mod=1e9+7;
+//using namespace std;
+//int n,x,y,z,ans=0,A,B;
+//ll jie[N],jieni[N];
+//ll qpow(ll a,ll x)
+//{
+//    ll res=1,u=x;
+//    while(u){
+//        if(u&1) res=(res*a)%mod;
+//        a=(a*a)%mod;
+//        u>>=1;
+//    }
+//    return res;
+//}
+//ll Cnm(int n,int m)
+//{
+//    ll res=(jie[n]*jieni[n-m])%mod;
+//    res=(res*jieni[m])%mod;
+//    return res;
+//}
+//int main()
+//{
+//    int i,t,n,m,k;
+//    jie[0]=1;
+//    jieni[0]=1;
+//    for(i=1;i<=100000;i++)
+//    {
+//        ll o=i;
+//        jieni[i]=(jieni[i-1]*qpow(o,mod-2))%mod;
+//        jie[i]=(jie[i-1]*i)%mod;
+//    }
+//    scanf("%d",&t);
+//    while(t--)
+//    {
+//        scanf("%d %d %d",&n,&m,&k);
+//        if(n-k<m) printf("0\n");
+//        else{
+//
+//        ll A=0ll,B=0ll,ans;
+//        A=Cnm(n,k)%mod;
+//        for(i=m;i<=n;i++) B=(B+Cnm(n,i))%mod;
+//
+//            cout << A << endl << B << endl;
+//        B=qpow(B,mod-2)%mod;
+//        ans=A*B%mod;
+//        printf("%lld\n",ans);
+//    }
+//    }
+//    return 0;
+//}
+
+/*
+int main()
+{
+    ll n;
+    scanf("%lld",&n);
+    ll cnt = 0;
+//    ll i = 2;
+    ll p = n;
+    map<ll,int> all;
+    for (ll i = 2;i * i <= n && p != 1;i ++) {
+        while (p % i == 0) {
+            p /= i;
+            all[i] ++;
+        }
+    }
+    if (p != 1) all[p] ++;
+    
+    int k;
+    int x;
+    for (auto i : all) {
+//        printf("%lld: %d\n",i.first,i.second);
+        k = i.second;
+        x = sqrt(k * 2 + 0.25) - 0.5;
+        cnt += x;
+    }
+    printf("%lld\n",cnt);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int a[200010];
+    int b[200010];
+    rep(i,1,n) scanf("%d%d",a + i,b + i);
+    sort(a + 1,a + n + 1);
+    sort(b + 1,b + n + 1);
+    if (n % 2) {
+        printf("%d\n",b[(n + 1) / 2] - a[(n + 1) / 2] + 1);
+    } else {
+        printf("%d\n",b[n / 2] + b[n / 2 + 1] - a[n / 2] - a[n / 2 + 1] + 1);
+    }
+    
+}
+*/
+
+//class A {
+//protected:
+//    int a,b;
+//public:
+//    A(int a,int b):a(a),b(b) {
+//
+//    }
+//
+//    void out()
+//    {
+//        printf("%d\n",a + b);
+//    }
+//};
+//
+//class B : public A {
+//    int c;
+//public:
+//    B(int a,int b,int c):A(a,b),c(c) {
+//
+//    }
+//
+//    void out() {
+//        cout << a  << " " << b  << " " << c << endl;
+//    }
+//};
+//
+//int main()
+//{
+//    A a(1,2);
+//    B b(1,2,3);
+//    A *c = new B(1,2,3);
+//    B *d = (B*) c;
+//    c -> out();
+//    d -> out();
+//}
+
+
+/*int main()
+{
+    int n;
+    int a;
+    int b;
+    
+    int sum = 0;
+    _T_(T) {
+        sum = 0;
+        scanf("%d",&n);
+        REP(i,0,n) {
+            scanf("%d %d",&a,&b);
+            sum += a * b;
+        }
+        printf("%d\n",sum);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int t;
+    scanf("%d",&n);
+    int c = 0;
+    int nn = 0;
+    while (n --) {
+        scanf("%d",&t);
+        if (t % 2) {
+            if (t != 1) {
+                c += 1;
+                nn ++;
+            }
+        } else nn ++;
+    }
+    if (nn != 0) c += nn - 1;
+    if (c % 2) printf("Alice\n");
+    else printf("Bob\n");
+    return 0;
+}
+*/
+
+/*
+inline bool has7(int n)
+{
+    int ok = 0;
+    while (n != 0)
+    {
+        if (n % 10 == 7) {
+            ok = 1;
+            break;
+        }
+        n /= 10;
+    }
+    return ok;
+}
+
+int main()
+{
+    int x,h,m;
+    int n;
+    _T_(T) {
+        scanf("%d %d:%d",&x,&h,&m);
+        n = 0;
+        while (!has7(h) && !has7(m)) {
+            if (m >= x) m -= x;
+            else {
+                if (h == 0) h = 23;
+                else h --;
+                m += 60 - x;
+            }
+            n ++;
+        }
+        printf("%d %02d:%02d\n",n,h,m);
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll a[1000010];
+    a[1] = 2;
+    const int mod = 1000000007;
+    rep(i,2,1000000) {
+        a[i] = ((a[i - 1] * 3) % mod + 2) % mod;
+    }
+    
+    int n;
+    _T_(T) {
+        scanf("%d",&n);
+        printf("%lld\n",a[n]);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    ll a[n];
+    REP(i,0,n) {
+        scanf("%lld",a + i);
+    }
+    ll last = a[0];
+    ll sum = a[0];
+    REP(i,1,n) {
+        last = max(a[i],a[i] + last);
+        sum = max(sum,last);
+    }
+    printf("%lld\n",sum);
+    return 0;
+}
+*/
+
+/*
+ll a[1000010];
+ll s[1000010];
+int main()
+{
+    int n,k;
+    
+    scanf("%d%d",&n,&k);
+    rep(i,1,n) scanf("%lld",a + i);
+    
+    s[1] = a[1];
+    s[0] = 0;
+    rep(i,2,n) s[i] = a[i] + s[i - 1];
+    int l,r;
+    REP (i,0,k) {
+        scanf("%d%d",&l,&r);
+        printf("%lld\n",s[r] - s[l - 1]);
+    }
+    return 0;
+}
+*/
+
+/*int main()
+{
+    const int mod = 1000000007;
+    ll c[110][110];
+    c[1][0] = 1;
+    c[1][1] = 1;
+    for (int i = 2;i <= 100;i ++) {
+        c[i][0] = 1;
+        c[i][i] = 1;
+        for (int j = 1;j < i;j ++) {
+            c[i][j] = (c[i - 1][j - 1] + c[i - 1][j]) % mod;
+        }
+    }
+
+    int n,m;
+    int a[] = {1,2,3,5,9};
+    int s[] = {1,6,31,156,781,3906,19531,97656,488281,2441406,12207031,61035156,305175781};
+    int *v,l,k;
+    _T_(T) {
+        scanf("%d%d",&n,&m);
+        k = (int) c[n][m];
+        v = upper_bound(s, s + 13, k);
+        v --;
+        l = (int) (v - s) + 1;
+        k = k - *v;
+        vector<int> x;
+        while (k != 0) {
+            x.pb(k % 5);
+            k /= 5;
+        }
+        REP(i,0,l - x.size()) {
+            printf("%d",a[0]);
+        }
+        for (auto i = x.rbegin();i != x.rend();i ++) {
+            printf("%d",a[*i]);
+        }
+        printf("\n");
+    }
+
+}
+*/
+
+/// 快速组合数
+/*
+const int MAXN = 3000010;
+const int mod = 911451407;
+
+ll da[MAXN];
+
+void init()
+{
+    int i;
+    da[0] = 1;
+    da[1] = 1;
+    for(i = 2;i < MAXN;i ++)
+        da[i] = i * da[i - 1] % mod;
+}
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+
+ll c(ll a, ll b)
+{
+    return (da[a] % mod) * (quickpow(da[b] * da[a - b] % mod,mod - 2)) % mod;
+}
+
+int main()
+{
+    init();
+    int l,x;
+    _T_(T) {
+        scanf("%d%d",&l,&x);
+//        printf("%d %d\n",l + x - 2,x - 1);
+        printf("%lld\n",c(l + x - 2,x - 1));
+    }
+    return 0;
+}
+*/
+
+/*
+int tp(char k)
+{
+    if (k >= 'A' && k <= 'Z') return 1;
+    return 0;
+}
+
+int main()
+{
+    string str;
+    cin >> str;
+    int t = 1;
+    int cnt = 0;
+    for (int i = 0;str[i];i ++) {
+        if (tp(str[i]) != t) {
+            t=tp(str[i]);
+            cnt ++;
+        }
+    }
+    printf("%d\n",cnt);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[100010];
+    _T_(T) {
+        scanf("%d",&n);
+        REP(i,0,n) scanf("%d",a + i);
+        sort(a,a + n);
+        ll cnt = 0;
+        ll last = 0;
+        REP(i,0,n - 1) {
+            last += a[i];
+            cnt += last;
+        }
+        printf("%.2f\n",cnt / (double) n);
+    }
+    return 0;
+}
+*/
+
+/*
+const int mod = 1000000007;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    int n;
+    ll x;
+    _T_(T){
+        scanf("%d",&n);
+        x = quickpow(2, n - 1);
+        x = x * n % mod;
+        printf("%lld\n",x);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,a,b;
+    _T_(T) {
+        scanf("%d%d%d",&n,&a,&b);
+        if (n % 2) {
+            // odd
+            if (a > b) {
+                if (b % 2) printf("DOWN\n");
+                else printf("UP\n");
+            } else {
+                if (a % 2 == 0) printf("DOWN\n");
+                else printf("UP\n");
+            }
+        } else {
+            // even
+            printf("ALL\n");
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int x,m,n;
+    _T_(T) {
+        scanf("%d%d%d",&x,&m,&n);
+        
+        priority_queue<int,vector<int>,greater<int>> q;
+        stack<int> tmp;
+        int k = 1;
+        q.push(k);
+        m --;
+        int t;
+        while (!q.empty() && k < n) {
+            t = k - q.top();
+            if (t > 12) q.pop();
+            else {
+                while (t >= 7 && t <= 12) {
+                    if (m <= 0) break;
+                    for (int i = 0;i < x && m > 0;i ++,m --) q.push(k);
+                    tmp.push(q.top());
+                    q.pop();
+                    if (q.empty()) break;
+                    t = k - q.top();
+                }
+                while (!tmp.empty()) {
+                    q.push(tmp.top());
+                    tmp.pop();
+                }
+            }
+            k ++;
+        }
+//        printf(">>%d\n",k);
+        int cnt = 0;
+        while (!q.empty()) {
+//            printf("..%d\n",q.front());
+            t = k - q.top();
+            if (t >= 7 && t <= 12) cnt ++;
+            q.pop();
+        }
+        printf("%d\n",cnt);
+    }
+    reutnr 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int w[510];
+    vector<int> ws;
+    rep(i,1,n) scanf("%d",w + i);
+    int u,v;
+    ll a = 0;
+    ll b = 0;
+    int x = -1;
+    while (m --)
+    {
+        scanf("%d%d",&u,&v);
+        if (w[u] != -1 && w[v] != -1) {
+            a += w[u] ^ w[v];
+        } else {
+            if (w[u] != -1) {
+                ws.pb(w[u]);
+                x = v;
+            }
+            if (w[v] != -1) {
+                ws.pb(w[v]);
+                x = u;
+            }
+        }
+    }
+    sort(ws.begin(),ws.end());
+//    if (ws.size() != 0) {
+//        w[x] = *ws.begin();
+//        for (auto i : ws) {
+//            a += w[x] ^ i;
+//        }
+//    }
+    
+    int k = log2(*(ws.end() - 1)) + 1;
+    int bin[40][2] = {0};
+    int h;
+    int j;
+    for (auto i : ws) {
+        j = i;
+        h = 0;
+        while (j != 0) {
+            bin[h ++][j & 1] ++;
+            j >>= 1;
+        }
+        for (;h < k;h ++) bin[h][0] ++;
+    }
+    ll fin = 0;
+    //    for (int i = 0;i < 40;i ++) printf("%d ",bin[i][0]);
+    //    printf("\n");
+    //    for (int i = 0;i < 40;i ++) printf("%d ",bin[i][1]);
+    //    printf("\n");
+    for (ll i = 0;i < 40;i ++) {
+        if (bin[i][0] < bin[i][1]) {
+            fin += 1LL << i;
+        }
+    }
+//    printf("%lld\n",fin);
+    
+    for (auto i : ws) {
+        a += fin ^ i;
+    }
+    w[x] = (int) fin;
+    
+    
+    rep(i,1,n) b += w[i];
+    printf("%lld\n%lld\n",a,b);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int L;
+    scanf("%d",&L);
+    double x1,x2,x3,y1,y2,y3,z1,z2,z3;
+    double X,Y,Z;
+    scanf("%lf%lf%lf",&X,&Y,&Z);
+    scanf("%lf%lf%lf",&x1,&y1,&z1);
+    scanf("%lf%lf%lf",&x2,&y2,&z2);
+    scanf("%lf%lf%lf",&x3,&y3,&z3);
+    double A = (y2 - y1)*(z3 - z1) - (z2 -z1)*(y3 - y1);
+    double B = (x3 - x1)*(z2 - z1) - (x2 - x1)*(z3 - z1);
+    double C = (x2 - x1)*(y3 - y1) - (x3 - x1)*(y2 - y1);
+    double D = -(A * x1 + B * y1 + C * z1);
+    double k = abs(A * X + B * Y + C * Z + D) / sqrt(A * A + B * B + C * C);
+    printf("%.10f\n",k * k * k * pi / 6.0 / L);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int id;
+    int r,g,b;
+    pair<ll,int> a[110];
+    REP (i,0,n) {
+        scanf("%d%d%d%d",&id,&r,&g,&b);
+        a[id] = make_pair(r + g * 2 + b * 3,id);
+    }
+    sort(a + 1,a + n + 1);
+    printf("%d %lld\n",a[n].second,a[n].first);
+    
+    return 0;
+}
+*/
+
+/*
+ll mod = 2;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    ll y,p;
+    _T_(T) {
+        scanf("%lld%lld",&y,&p);
+        double k = y / (double) p;
+        if (y / p == k) printf("-1\n");
+        else if (p == 1) printf("-1\n");
+        else {
+            mod = p;
+            printf("%lld\n",quickpow(y, p - 2) % mod);
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1000010;
+const int mod = 1000000007;
+
+int p[MAXN];
+int nd[MAXN] = {0};
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+struct Node {
+    int n,w;
+    int operator<(const Node &o) const {
+        return w > o.w;
+    }
+};
+
+vector<Node> g[MAXN];
+int dis[MAXN];
+int vis[MAXN] = {0};
+
+
+ll sum = 0;
+
+void dij(int s) {
+    mem(dis,-1);
+    
+    priority_queue<Node> q;
+    q.push({s,dis[s] = 0});
+    
+    Node current;
+    int k;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (vis[current.n]) continue;
+        vis[current.n] = 1;
+        for (auto to : g[current.n]) {
+            k = dis[current.n] + to.w;
+            if (dis[to.n] == -1 || dis[to.n] > k) {
+                q.push({to.n,dis[to.n] = k});
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    REP(i,0,m) {
+        scanf("%d%d",&u,&v);
+        g[u].pb({v,1});
+        g[v].pb({u,1});
+    }
+    dij(1);
+    
+    rep(i,2,n) {
+        nd[dis[i]] ++;
+    }
+    
+    
+    rep(i,1,n) {
+        if (nd[i]) {
+            sum = (sum + ((nd[i] % mod) * (quickpow(2, i) % mod) % mod)) % mod;
+        }
+    }
+    
+    printf("%lld\n",sum);
+    return 0;
+}
+*/
+
+
+/*
+int main()
+{
+    int a[110];
+    int n;
+    int ok = 1;
+    int f;
+    int *m;
+    
+    _T_(T) {
+        scanf("%d",&n);
+        ok = 1;
+        REP(i,0,n) scanf("%d",a + i);
+        f = a[0] % n;
+        REP(i,1,n) {
+            if (a[i] % n != f) {
+                ok = 0;
+                break;
+            }
+        }
+        
+        int okk = 1;
+        REP(i,1,n) if (a[i] != a[i - 1]) {
+            okk = 0;
+            break;
+        }
+        if (okk) printf("Yes\n");
+        else if (ok) {
+            sort(a,a + n);
+            m = upper_bound(a, a + n, a[0]);
+            if (a[0] >= (m - a) - 1) printf("Yes\n");
+            else printf("No\n");
+        }
+        else printf("No\n");
+        
+    }
+    return 0;
+}
+*/
+
+//struct Node {
+//    int st,ed;
+//};
+//
+//int main()
+//{
+//    int n;
+//    int a[100010];
+//    int vis[100010];
+//    _T_(T) {
+//        mem(vis,0);
+//        scanf("%d",&n);
+//        REP(i,0,n) scanf("%d",a + i);
+//        vector<Node> all;
+//        int s = -1;
+//
+//        REP(i,0,n) {
+//            if (a[i] == -1) {
+//                if (s == -1) s = i;
+//            } else {
+//                if (s != -1) {
+//                    all.pb({s,i});
+//                    s = -1;
+//                }
+//            }
+//        }
+//        if (s != -1) {
+//            all.pb({s,n});
+//        }
+//        ll ans = 0;
+//        int reduced = 0;
+//        int l;
+//
+//        for (auto i : all) {
+//            l = i.ed - i.st;
+////            printf("%d -> %d\n",i.st,i.ed);
+//            ans += l / 2;
+//
+//            if (l % 2) {
+//                reduced = 0;
+//
+//                // left
+//                if (i.st != 0) {
+//                    if (a[i.st - 1] == 0 && vis[i.st - 1] == 0) {
+//                        vis[i.st - 1] = 1;
+//                        reduced = 1;
+//                    }
+//                }
+//
+//                // right
+//                if (!reduced) {
+//                    if (i.ed != n) {
+//                        if (a[i.ed] == 0 && vis[i.ed] == 0) {
+//                            vis[i.ed] = 1;
+//                            reduced = 1;
+//                        }
+//                    }
+//                }
+//
+//                if (!reduced) ans --;
+//            }
+//
+//        }
+//
+//        REP(i,0,n) if (a[i] == 1) ans ++;
+//        printf("%lld\n",ans);
+//    }
+//
+//    reutnr 0;
+//}
+
+/*
+int main()
+{
+    int n;
+    string str;
+    int cnt = 0;
+    int ok;
+    _T_(T) {
+        scanf("%d",&n);
+        ok = 0;
+        REP(j,0,n) {
+            cnt = 0;
+            cin >> str;
+            for (int i = 0;str[i];i ++) {
+                if (str[i] == '1') cnt ++;
+            }
+            if (cnt % 2) ok = 1;
+        }
+        
+        if (ok) printf("sdzNB\n");
+        else printf("kgNB\n");
+    }
+    return 0;
+}
+*/
+
+/*
+class A {
+    
+public:
+    int x;
+    A(int x):x(x){}
+    
+};
+
+class B : public A {
+    int x;
+public:
+    B(int x):x(x),A(10){}
+    void show(){
+        printf("%d\n",A::x);
+    }
+    
+    friend void aaa();
+    void bbb();
+};
+
+void aaa()
+{
+    printf("123\n");
+}
+
+void B::bbb()
+{
+    aaa();
+}
+
+
+int main()
+{
+    B b(100);
+    b.show();
+    b.bbb();
+    return 0;
+}
+*/
+
+//
+//vector<int> g[100010];
+//
+//int vis[100010] = {0};
+//int c[100010];
+//int deep[100010];
+//
+//int dfs(int n,int d) {
+//    if (vis[n]) return 0;
+//    vis[n] = 1;
+//    deep[n] = d;
+//    int x = 0;
+//    for (auto i : g[n]) {
+//        x += dfs(i,d + 1);
+//    }
+//    c[n] = x;
+//    return x + 1;
+//}
+//
+//vector<int> all;
+//
+//void dfs2(int n, int d)
+//{
+//    if (vis[n]) return;
+//    vis[n] = 1;
+//
+//    for (auto i : g[n]) {
+//        if (!vis[i]) {
+//            all.pb(d + c[i]);
+//            dfs2(i,d + c[n] - c[i] - 1);
+//        }
+//    }
+//
+//
+//}
+//
+//int main()
+//{
+//    int n;
+//    scanf("%d",&n);
+//    int u,v;
+//    REP(i,0,n - 1) {
+//        scanf("%d%d",&u,&v);
+//        g[u].pb(v);
+//        g[v].pb(u);
+//    }
+//    dfs(1,0);
+//    mem(vis,0);
+//    dfs2(1,0);
+//
+//    rep(i,1,n) printf("%d ",c[i]);
+//    printf("\n");
+//    rep(i,1,n) printf("%d ",deep[i]);
+//    printf("\n");
+//    for (auto i : all) {
+//        printf("%d ",i);
+//    }
+//    reutnr 0;
+//}
+//
+
+//class AirCondition {
+//    string brand;
+//    string type;
+//    double in;
+//    double out;
+//public:
+//    AirCondition(string brand,string type,double prize_in,double prize):brand(brand),type(type),in(prize_in),out(prize) {}
+//
+//    double getPrize() {
+//        return out;
+//    }
+//
+//    double getBasic() {
+//        return in;
+//    }
+//
+//    string getName() const
+//    {
+//        return brand + "-" + type;
+//    }
+//
+//    bool operator<(AirCondition o) const {
+//        return brand + "-" + type < o.brand + "-" + type;
+//    }
+//};
+//
+//struct ACInf {
+//    int num;
+//    double out;
+//    double in;
+//
+//    ACInf():num(0),out(0),in(0){}
+//};
+//
+//void print_ac(map<AirCondition,ACInf> &ac_inf)
+//{
+//    const AirCondition *a;
+//    const ACInf *b;
+//    for (auto i : ac_inf) {
+//        a = &(i.first);
+//        b = &(i.second);
+//        printf("--------Information of %s air-conditioner--------\n",a -> getName().c_str());
+//        printf("sold: %d\n",b -> num);
+//        printf("average: %f\n",b -> out / b -> num);
+//        printf("profit: %f\n",b -> out - b -> in);
+//    }
+//
+//}
+//
+//class Employee {
+//    int id;
+//    string name;
+//    double basic;
+//    vector<AirCondition> acs;
+//
+//public:
+//    double plug;
+//    Employee(int id, string name, double basic, int num):
+//        id(id),name(name),basic(basic),plug(0) {}
+//
+//    unsigned long getNum() {
+//        return acs.size();
+//    }
+//
+//    vector<AirCondition> &getAirs() {
+//        return acs;
+//    }
+//
+//    void print()
+//    {
+//        printf("--------Information of employee--------\n");
+//        printf("id: %d\n",id);
+//        printf("name: %s\n",name.c_str());
+//        printf("sold: %lu\n",acs.size());
+//        printf("income: %f\n",basic + plug);
+//    }
+//
+//
+//};
+//
+//class Manager : Employee {
+//public:
+//    Manager(int id, string name, double basic, double plug):
+//        Employee(id, name, basic, 0) {
+//            this -> plug = plug;
+//        }
+//};
+//
+//
+//
+//int main()
+//{
+//    // generate data
+//
+//    // make type & prize
+//    vector<AirCondition> acs;
+//    for (int i = 1;i <= 5;i ++) {
+//        for (int j = 1;j <= 10;j ++) {
+//            int out = rand() % 10000;
+//            acs.push_back(AirCondition("AC" + to_string(i),to_string(j),rand() % (out - 1000),out));
+//        }
+//    }
+//
+//    map<AirCondition,ACInf> ac_inf;
+//
+//    vector<Employee> emps;
+//    int num,type;
+//    for (int i = 1;i <= 20;i ++) {
+//        num = rand() % 300;
+//        emps.push_back(Employee(i,"emp" + to_string(i),(max(2,rand() % 5)) * 1000,num));
+//        for (int j = 1,last = 0;j <= num;last = j,j += max(1,rand() % (max(1,num - j)))) {
+//            type = rand() % acs.size();
+//            for (int k = 0;k < j - last;k ++)
+//            {
+//                emps[i - 1].getAirs().push_back(acs[type]);
+//            }
+//            ac_inf[acs[type]].num += j - last;
+//            ac_inf[acs[type]].in += acs[type].getBasic() * (j - last);
+//            ac_inf[acs[type]].out += acs[type].getPrize() * (j - last) * ((j - last) > 10 ? 0.95 : 1);
+//
+//            if (num > 100) emps[i - 1].plug += 0.03 * (acs[type].getPrize() * (j - last) * ((j - last) > 10 ? 0.95 : 1) - acs[type].getBasic() * (j - last));
+//        }
+//    }
+//
+//    vector<Manager> mgrs;
+//    for (int i = 1;i <= 10;i ++) {
+//        mgrs.push_back(Manager(i,"mgr" + to_string(i),rand() % 10000,rand() % 1000));
+//    }
+//
+//
+//
+//    // out
+//
+//    long long max_num = -1;
+//    Employee max_emp(-1,"emp",rand() % 10000,rand() % 100);
+//
+//    for (auto i : emps) {
+//        i.print();
+//        if (((long long) i.getNum()) > max_num) {
+//            max_num = i.getNum();
+//            max_emp = i;
+//        }
+//    }
+//
+//    print_ac(ac_inf);
+//
+//
+//    printf("-----Best employee----\n");
+//    max_emp.print();
+//
+//    return 0;
+//}
+
+/*string trim(string str) {
+    string f;
+    int ok = 0;
+    for (int i = 0;str[i];i ++) {
+        if (!ok) {
+            if (str[i] != ' ' && str[i] != '\n' && str[i] != '\r' && str[i] != '\b') {
+                f += str[i];
+                ok = 1;
+            }
+        } else f += str[i];
+        
+    }
+    
+    if (f.size() != 0)
+    while (*(f.end() - 1) == ' ' || *(f.end() - 1) == '\n' || *(f.end() - 1) == '\r' || *(f.end() - 1) == '\b') f.erase(f.end() - 1);
+    return f;
+}
+
+int main()
+{
+    fre("/Users/jackli/sum.txt");
+    string line;
+    
+    while (getline(cin,line))
+    {
+        line = trim(line);
+        if (line != "") printf("<p style='text-indent: 0;'>%s</p>\n",line.c_str());
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n,ta;
+    scanf("%d%d",&n,&ta);
+    int tb = ta;
+    int a,b;
+    scanf("%d%d",&a,&b);
+    int x = 0,y = 0;
+    ll u,v;
+    ll t[100010];
+    ll na[100010];
+    REP (i,0,n) scanf("%lld",t + i);
+    REP (i,0,n) scanf("%lld",na + i);
+    REP (i,0,n) {
+        u = t[i];
+        v = na[i];
+        if (v < a) {
+            if (u <= ta) {
+                ta -= u;
+                x ++;
+            }
+        }
+        
+        if (v < b) {
+            if (u <= tb) {
+                tb -= u;
+                y ++;
+            }
+        } else {
+            if (u * 2 <= tb) {
+                tb -= u * 2;
+                y ++;
+            }
+        }
+    }
+//    cout << ta << endl << tb << endl;
+    printf("%d %d\n",x,y);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int a[100010];
+    ll sum = 0;
+    REP(i,0,n) {
+        scanf("%d",a + i);
+        if (i != 0) {
+            if (a[i] < a[i - 1]) {
+                sum += a[i - 1];
+                sum -= a[i];
+            }
+        }
+    }
+    sum += a[n - 1];
+    printf("%lld\n",sum);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+ 
+    int v1,v2,t,s,l;
+    scanf("%d%d%d%d%d",&v1,&v2,&t,&s,&l);
+    int h = 0,m = 0;
+    int p = -1;
+    int ans = 0;
+    while (h < l && m < l) {
+        if (m - h >= t && p == -1) p = 0;
+        if (p == -1) m += v1;
+        else {
+            p ++;
+            if (p == s) p = -1;
+        }
+        h += v2;
+        ans ++;
+    }
+    string a;
+    if (h >= l && m >= l) a = "Tie";
+    else if (h >= l) a = "Hong";
+    else if (m >= l) a = "Ming";
+    printf("%s %d\n",a.c_str(),ans);
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e7;
+int x[MAXN + 10];
+int k[MAXN + 10] = {0};
+int s[MAXN + 10];
+
+int main()
+{
+    
+    rep(i,1,MAXN) x[i] = i;
+    REP(i,2,MAXN) {
+        if (!k[i])
+            for (int j = i + i;j <= MAXN;j += i) {
+                k[j] = 1;
+            }
+    }
+    
+    k[1] = 1;
+    s[1] = 0;
+    s[0] = 0;
+    rep(i,2,MAXN) {
+        s[i] = s[i - 1] + (k[i] == 0 ? 1 : 0);
+    }
+    
+    int a,b;
+    _T_(T) {
+        scanf("%d%d",&a,&b);
+        printf("%d\n",s[b] - s[a - 1]);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[200010];
+    scanf("%d",&n);
+    READ(a,0,n);
+    sort(a,a + n);
+    int m = 0;
+    for (int i = 0,j = 0;j < n;j ++) {
+        while (a[j] - a[i] > 5) i ++;
+        m = max(j - i + 1,m);
+    }
+    printf("%d\n",m);
+    return 0;
+}
+*/
+
+/*
+int dx[] = {0,1,0,-1};
+int dy[] = {1,0,-1,0};
+
+int ddx[] = {1,1,-1,-1};
+int ddy[] = {1,-1,1,-1};
+
+char a[55][55];
+int n,m;
+int vis[55][55];
+
+int ans = -1;
+
+void dfs(int x,int y,int d)
+{
+//    printf(">>%d\n",d);
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            cout << vis[i][j];
+//        }
+//        cout << endl;
+//    }
+//    cout << endl;
+    if (vis[y][x] != -1 && vis[y][x] <= d) return;
+    vis[y][x] = d;
+    
+    if (a[y][x] == 'E') {
+        if (ans == -1) ans = d;
+        else ans = min(ans,d);
+        return;
+    }
+    
+    int xx,yy;
+    REP (i,0,4) {
+        xx = x + dx[i];
+        yy = y + dy[i];
+        if (xx >= 0 && xx < m && yy >= 0 && yy < n && a[yy][xx] != '*' && a[yy][xx] != 'x') {
+            dfs(xx,yy,d + 1);
+        }
+    }
+}
+
+int main()
+{
+    scanf("%d%d",&n,&m);
+    REP(i,0,n) {
+        scanf("%s",a[i]);
+    }
+    int xx,yy;
+    int sx = 0,sy = 0;
+
+    REP(i,0,n) {
+        REP(j,0,m) {
+            if (a[i][j] == 'S') {
+                sx = j;
+                sy = i;
+            } else if (a[i][j] == '*') {
+                REP(k,0,4) {
+                    xx = j + dx[k];
+                    yy = i + dy[k];
+                    if (xx >= 0 && xx < m && yy >= 0 && yy < n) {
+                        if (a[yy][xx] != '*') a[yy][xx] = 'x';
+                    }
+                    
+                    xx = j + ddx[k];
+                    yy = i + ddy[k];
+                    if (xx >= 0 && xx < m && yy >= 0 && yy < n) {
+                        if (a[yy][xx] != '*') a[yy][xx] = 'x';
+                    }
+                }
+            }
+        }
+    }
+    
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            cout << a[i][j];
+//        }
+//        cout << endl;
+//    }
+    
+    
+        mem(vis,-1);
+        dfs(sx,sy,0);
+        
+        if (ans == -1) printf("Impossible\n");
+        else printf("%d\n",ans);
+    
+    
+    
+
+
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            cout << vis[i][j] << ' ';
+//        }
+//        cout << endl;
+//    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll a;
+    scanf("%lld",&a);
+    int l = log2(a) + 1;
+    ll x = 0;
+    for (ll i = 0;i < l;i ++) {
+        x += 1LL << i;
+    }
+    if (a == 1) printf("0\n");
+    else printf("%lld\n",x);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int a[110];
+    double sum = 0;
+    int mx = -1,mn = INT_INF;
+    _T_ (T) {
+        int n;
+        scanf("%d",&n);
+        sum = 0;
+        mx = -1;
+        mn = INT_INF;
+        REP (i,0,n) {
+            scanf("%d",a + i);
+            mx = max(mx,a[i]);
+            mn = min(mn,a[i]);
+            sum += a[i];
+        }
+        printf("MAX:%d\nMIN:%d\nAVG:%.2f\n",mx,mn,sum / n);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    _T_(T) {
+        cin >> str;
+        int a = 0,c = 0,m = 0;
+        for (int i = 0;str[i];i ++) {
+            if (str[i] == 'A') a ++;
+            if (str[i] == 'C') c ++;
+            if (str[i] == 'M') m ++;
+        }
+        if (!a) printf("A\n");
+        else if (!c) printf("C\n");
+        else if (!m) printf("M\n");
+        else printf("-1\n");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5;
+int a[MAXN + 10] = {0};
+int k[MAXN + 10] = {0};
+
+
+int main()
+{
+    mem(a,-1);
+    REP(i,2,MAXN) {
+        if (!k[i]) {
+            for (int j = i + i;j <= MAXN;j += i) {
+                k[j] = 1;
+                if (j % (i * i) != 0) a[j] = 0;
+                else if (a[j] != 0) a[j] = 1;
+            }
+        }
+    }
+
+    vector<int> all;
+    rep(i,1,MAXN) {
+        if (a[i] == 1 && a[i - 1] == 1) {
+            all.pb(i - 1);
+            all.pb(i);
+        }
+    }
+
+    sort(all.begin(),all.end());
+
+    int l,r;
+    int ok;
+    while (~scanf("%d %d",&l,&r)) {
+        ok = 0;
+        for (vector<int>::iterator i = all.begin();i != all.end() - 1;i ++) {
+            if (*i >= l && *i <= r && *(i + 1) >= l && *(i + 1) <= r && *i == *(i + 1) - 1) {
+                printf("%d %d\n",*i,*(i + 1));
+                ok = 1;
+            }
+        }
+        if (!ok) puts("no find");
+    }
+
+
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    ll k;
+    const int MAXN = 1e6 + 10;
+    ll a[MAXN];
+    ll cnt;
+    _E_(scanf("%d%lld",&n,&k)) {
+        READ_ll(a,0,n);
+        sort(a,a + n);
+        int i = n / 2;
+        cnt = 0;
+        pre(j,i - 1,0) {
+            cnt += abs((a[j + 1] - k) - a[j]);
+            a[j] = a[j + 1] - k;
+        }
+        REP(j,i + 1,n) {
+            cnt += abs((a[j - 1] + k) - a[j]);
+            a[j] = a[j - 1] + k;
+        }
+        printf("%lld\n",cnt);
+    }
+    return 0;
+}
+*/
+
+
+//int t,n,m;
+//char a[30][30];
+//struct Animal {
+//    int x,y;
+//    char type;
+//    int alive;
+//};
+//
+//set<Animal*> pos[30][30];
+//int an = 0;
+//Animal animals[900];
+//
+//int grass_days[30][30] = {0};
+//// -2 - *
+//// 3 - #
+//// [0, 2] - .
+//
+//
+//inline void move()
+//{
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            pos[i][j].clear();
+//        }
+//    }
+//    Animal *a;
+//    REP(i,0,an) {
+//        a = animals + i;
+//        if (a -> type == 'S') {
+//            if (a -> alive) {
+//                a -> y ++;
+//                if (a -> y == n) a -> y = 0;
+//                if (grass_days[a -> y][a -> x] == 3) {
+//                    grass_days[a -> y][a -> x] = 0;
+//                    a -> alive = 5;
+//                    pos[a->y][a->x].insert(a);
+//                } else {
+//                    if (a -> alive > 0) a -> alive --;
+//                    if (a -> alive == 0) {
+//                        grass_days[a -> y][a -> x] = -2;
+//                    } else {
+//                        pos[a->y][a->x].insert(a);
+//                    }
+//                }
+//            }
+//        } else if (a -> type == 'W') {
+//            if (a -> alive) {
+//                a -> x ++;
+//                if (a -> x == m) a -> x = 0;
+//
+//                if (a -> alive > 0) a -> alive --;
+//                pos[a->y][a->x].insert(a);
+//            }
+//        }
+//    }
+//}
+//
+//inline void eat()
+//{
+//    Animal *a = NULL,*b = NULL;
+//    set<Animal*>::iterator x;
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            if (pos[i][j].size() == 1) {
+//                a = *pos[i][j].begin();
+//                if (a -> type == 'W') {
+//                    if (a -> alive == 0) {
+//                        grass_days[a -> y][a -> x] = -2;
+//                    }
+//                }
+//            } else if (pos[i][j].size() == 2) {
+//                x = pos[i][j].begin();
+//                if ((*x) -> type == 'W') a = *x;
+//                if ((*x) -> type == 'S') b = *x;
+//                x ++;
+//                if ((*x) -> type == 'W') a = *x;
+//                if ((*x) -> type == 'S') b = *x;
+//
+//                a -> alive = 10;
+//                b -> alive = 0;
+//                grass_days[b -> y][b -> x] = -2;
+//            }
+//
+//        }
+//    }
+//}
+//
+//inline void update()
+//{
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            if (grass_days[i][j] >= 0 && grass_days[i][j] <= 2) {
+//                grass_days[i][j] ++;
+//            }
+//        }
+//    }
+//}
+//
+//inline void print()
+//{
+//    char x[50][50];
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            switch (grass_days[i][j]) {
+//                case -2:
+//                    x[i][j] = '*';
+//                    break;
+//                case 3:
+//                    x[i][j] = '#';
+//                    break;
+//                default:
+//                    x[i][j] = '.';
+//                    break;
+//            }
+//        }
+//    }
+//
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            printf("%c",x[i][j]);
+//        }
+//        puts("");
+//    }
+//
+//    puts("");
+//
+//    Animal *a;
+//    REP(i,0,an) {
+//        a = animals + i;
+//        if (!a -> alive) continue;
+//        x[a -> y][a -> x] = a -> type;
+//    }
+//
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            printf("%c",x[i][j]);
+//        }
+//        puts("");
+//    }
+//
+//    puts("-------------");
+//}
+//
+//int main()
+//{
+//    scanf("%d%d%d",&t,&n,&m);
+//    REP(i,0,n) {
+//        scanf("%s",a[i]);
+//    }
+//
+//    REP(i,0,n) {
+//        REP(j,0,m) {
+//            if (a[i][j] == 'S') {
+//                animals[an ++] = {j,i,'S',5};
+////                pos[i][j].insert({j,i,'S',5});
+//            }
+//            else if (a[i][j] == 'W') {
+//                animals[an ++] = {j,i,'W',10};
+////                pos[i][j].insert({j,i,'W',0});
+//            }
+//        }
+//    }
+//
+//    REP(i,0,t) {
+//        update();
+//        move();
+//        eat();
+//        print();
+//    }
+//
+//
+//    return 0;
+//}
+
+/*
+int g[1010];
+int d[1010];
+
+int find(int a)
+{
+    if (g[a] == a) return a;
+    return g[a] = find(g[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (d[x] >= d[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        g[y] = x; // 改变b节点的根的根为a的根
+        if (d[x] == d[y]) { // 俩根深度一样
+            if (x != y) d[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else g[x] = y;
+}
+
+void init(int n)
+{
+    rep(i,1,n) {
+        g[i] = i;
+        d[i] = 1;
+    }
+}
+
+int main()
+{
+    int n,m,t;
+    scanf("%d%d%d",&n,&m,&t);
+    int u,v;
+    init(n);
+    while (m --) {
+        scanf("%d%d",&u,&v);
+        bind(u,v);
+    }
+    while (t --) {
+        scanf("%d%d",&u,&v);
+        if (find(u) == find(v)) printf("YES\n");
+        else printf("NO\n");
+    }
+    return 0;
+}
+*/
+
+// 01背包1维+记录数量
+/*
+int main()
+{
+    int n,s;
+    int v[10010],w[10010];
+    int dp[10010];
+    int cnt[10010];
+    _T_(T)
+    {
+        mem(dp,0);
+        mem(cnt,0);
+        scanf("%d%d",&n,&s);
+        REP(i,0,n) {
+            scanf("%d%d",w + i,v + i);
+        }
+
+        for (int i = 0; i < n; i++) {
+            pre(j,s,w[i]) {
+                if (dp[j - w[i]] + v[i] > dp[j]) {
+                    dp[j] = dp[j - w[i]] + v[i];
+                    cnt[j] = cnt[j - w[i]] + 1;
+                }
+                
+            }
+        }
+        printf("%d %d\n",dp[s],cnt[s]);
+    }
+    return 0;
+}
+*/
+
+/*
+char a[510][510];
+int vis[510][510] = {0};
+int n,m;
+int ok = 0;
+
+int dx[] = {1,-1,0,0};
+int dy[] = {0,0,1,-1};
+
+void dfs(int x,int y)
+{
+    if (vis[y][x]) return;
+    vis[y][x] = 1;
+    if (a[y][x] == 'g') {
+        ok = 1;
+        return;
+    }
+    int xx,yy;
+    for (int i = 0;i < 4;i ++) {
+        xx = x + dx[i];
+        yy = y + dy[i];
+        if (xx >= 0 && xx < m && yy >= 0 && yy < n && a[y][x] != '#') {
+            dfs(xx,yy);
+        }
+    }
+}
+
+int main()
+{
+    
+    scanf("%d%d",&n,&m);
+    int sx = 0,sy = 0;
+    REP(i,0,n) {
+        scanf("%s",a[i]);
+        REP(j,0,m) {
+            if (a[i][j] == 's') {
+                sx = j;
+                sy = i;
+            }
+        }
+    }
+    dfs(sx,sy);
+    puts(ok ? "Yes" : "No");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    set<pair<double,double>> cross;
+    int n;
+    scanf("%d",&n);
+    ll k[110];
+    ll b[110];
+    REP(i,0,n) {
+        scanf("%lld%lld",k + i,b + i);
+    }
+    double m;
+    REP(i,0,n) {
+        REP(j,i + 1,n) {
+            if (k[i] == k[j]) continue;
+            m = k[i]-k[j];
+            cross.insert(make_pair((b[j]-b[i])/m, (k[i]*b[j]-b[i]*k[j])/m));
+        }
+    }
+    if (cross.size()) printf("%lu\n",cross.size());
+    else puts("No Fire Point.");
+    return 0;
+}
+*/
+
+/*
+inline bool okk(int *ss,int *tt)
+{
+    int ok = 0;
+    rep(i,'a','z') {
+        if (ss[i] == tt[i]) continue;
+        if (abs(ss[i] - tt[i]) == 1) ok ++;
+        else return 0;
+    }
+    if (ok == 2 || ok == 0) return 1;
+    return 0;
+}
+
+int main()
+{
+    string t,s;
+    int tt['z' + 10];
+    int ss['z' + 10];
+    int cnt;
+    _T_(T) {
+        cin >> s >> t;
+        mem(tt,0);
+        mem(ss,0);
+        for (int i = 0;t[i];i ++) tt[t[i]] ++;
+        for (int i = 0;t[i];i ++) ss[s[i]] ++;
+        cnt = 0;
+        for (int i = 0,j = (int) t.size() - 1;s[j];j ++,i ++) {
+            if (i != 0) {
+                ss[s[i - 1]] --;
+                ss[s[j]] ++;
+            }
+            if (okk(ss,tt)) cnt ++;
+        }
+        printf("%d\n",cnt);
+    }
+    return 0;
+}
+*/
+
+//
+//inline bool hasVis(string str) {
+//    int ok = 0;
+//    for (int i = 0;str[i];i ++) {
+//        if (str[i] != ' ' && str[i] != '\n' && str[i] != '\r') ok = 1;
+//    }
+//    return ok;
+//}
+//
+//int main()
+//{
+//    fre("/Users/jackli/思修-课程题库.csv");
+//    string str;
+//    getline(cin,str);
+//    int idx = 0;
+//    string k;
+//    int x = 1;
+//    int st = 0;
+//    string d = "";
+//    char c = 'A';
+//    st = 0;
+//    int tab = 0;
+//    while (getline(cin, str))
+//    {
+//        if (!st) {
+//            idx = 0;
+//            c = 'A';
+//        } else {
+//            k += "\n";
+//            if (tab) k += "\t   ";
+//        }
+//        for (int i = 0;str[i];i ++) {
+//            if (str[i] == '\"') {
+//                if (st) tab = 0;
+//                st = !st;
+//            }
+//            else if (str[i] == ',' && !st) {
+//                idx ++;
+//                if (idx == 6 || idx == 7) {
+//                    k = "";
+//                    continue;
+//                } else if (idx == 4) {
+//                    d = "\n【答案】" + k;
+//                    k = "";
+//                    continue;
+//                } else if (idx == 5) {
+//                    if (k != "") d += " 解析：" + k;
+//                } else if (idx >= 8) {
+//                    if (k != "") {
+//                        printf("\n\t%c. ",c ++);
+//                        cout << k;
+//                        tab = 1;
+//                    }
+//                    k = "";
+//                    continue;
+//                }
+//                if (idx == 2) printf("\n%d.【",x ++);
+//                if (k != "") cout << k;
+//                if (idx == 2) printf("】");
+//
+//                k = "";
+//            } else {
+//                k += str[i];
+//            }
+//        }
+//        if (!st)  {
+//            if (hasVis(k)) {
+//                printf("\n\t%c.",c ++);
+//                cout << k;
+//            }
+//
+//            cout << endl << d << endl;
+//        }
+//
+////        printf(" >>%d\n",idx);
+//    }
+//    return 0;
+//}
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    ll a[1000010];
+    READ_ll(a,0,n);
+    sort(a,a+n);
+    n = (int) (unique(a, a + n) - a);
+    vector<ll> k;
+    ll mm = -1;
+    ll t;
+    REP(i,0,n - 1) {
+        k.pb(abs(a[i] - a[i + 1]));
+    }
+    ll l = *k.begin();
+    for (auto i = k.begin() + 1;i != k.end();i ++) {
+        l = gcd(l,*i);
+    }
+    if (l == 1 || a[0] % l == 0) mm = 0;
+    else {
+        mm = -1;
+        REP(i,0,n) {
+            if (a[i] > 0) t = l - a[i] % l;
+            else t = -a[i] % l;
+            if (mm == -1 || t < mm) {
+                mm = t;
+            }
+        }
+    }
+    printf("%lld %lld\n",l,mm);
+    return 0;
+}
+*/
+
+
+//int main()
+//{
+//    int n,m,k;
+//    int a,b,c;
+//
+//    _T_(T) {
+//        scanf("%d%d%d",&n,&m,&k);
+//
+//        REP(i,0,k) {
+//            scanf("%d%d%d",&a,&b,&c);
+//
+//        }
+//    }
+//    return 0;
+//}
+
+/*
+ll quick_gcd(ll a, ll b)
+{
+    if(a == 0) return b;
+    if(b == 0) return a;
+    if(!(a & 1) && !(b & 1)) // a % 2 == 0 && b % 2 == 0;
+        return quick_gcd(a >> 1, b >> 1) << 1;
+    else if(!(b & 1))
+        return quick_gcd(a, b >> 1);
+    else if(!(a & 1))
+        return quick_gcd(a >> 1, b);
+    else
+        return quick_gcd(abs(a - b), min(a, b));
+}
+int main()
+{
+    ll a,b;
+    int i = 1;
+    _T_(T) {
+        scanf("%lld%lld",&a,&b);
+        printf("Case %d: %lld\n",i ++,a / quick_gcd(a, b) * b);
+    }
+    
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    cin >> str;
+    int l = (int) str.size();
+    string x;
+    string ans = "";
+    rep(i,1,l / 3) {
+        x = str.substr(0,i);
+        if (x != str.substr(l - i)) {
+            continue;
+        }
+        if (str.substr(i,l - i - 1).find(x) != string::npos) {
+            
+            ans = x;
+        }
+    }
+    cout << ans << endl;
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,q;
+    scanf("%d%d",&n,&q);
+    int a[1000010];
+    int vis[2000010];
+    rep(i,1,n) {
+        scanf("%d",a + i);
+        vis[a[i]] = 1;
+    }
+    int k,x,y;
+    REP(i,0,q) {
+        scanf("%d%d%d",&k,&x,&y);
+        if ((a[x] ^ a[y]) == k) printf("1\n");
+        else if (a[x] == a[y] && vis[a[x] ^ k]) {
+            printf("2\n");
+        } else printf("-1\n");
+    }
+    return 0;
+}
+*/
+
+/*
+class Solution {
+public:
+    int solve(int n, int m) {
+        // write code here
+        if (m <= n) return n - m;
+        int l = sqrt(m);
+        int r = l + 1;
+        int x = (m - l * l < r * r - m) ? l : r;
+        return min(m - n,solve(n,x) + 1 + abs(m - x * x));
+    }
+};
+
+int main()
+{
+    int a,b;
+    cin >> a >> b;
+    Solution s;
+    cout << s.solve(a, b) << endl;
+    return 0;
+}
+*/
+
+/// ---------- 差分模版 ----------
+
+/*
+int p[1000] = {0};
+int a[1000];
+int n;
+
+void pls(int l,int r,int k)
+{
+    p[l] += k;
+    p[r + 1] -= k;
+}
+
+void init()
+{
+//    p[0] = a[0];
+//    rep(i,1,n - 1) {
+//        p[i] = a[i] - a[i - 1];
+//    }
+    REP(i,0,n) {
+        pls(i,i,a[i]);
+    }
+}
+
+int main()
+{
+    scanf("%d",&n);
+    
+    READ(a,0,n);
+    init();
+    
+    Tprint(p,0,n);
+    printf("\n");
+    
+    int q;
+    scanf("%d",&q);
+    int l,r;
+    while (q --) {
+        scanf("%d%d",&l,&r);
+        pls(l,r,1);
+    }
+    
+    int s[1000];
+    
+    s[0] = p[0];
+    rep(i,1,n - 1) {
+        s[i] = s[i - 1] + p[i];
+    }
+    
+    rep(i,0,n - 1) printf("%d ",s[i]);
+    return 0;
+}
+*/
+
+/// -------- 二维前缀和模版 --------
+/*
+int main()
+{
+    int arr[1000][1000] = {0};
+    int sum[1000][1000] = {0};
+    int n,m;
+    scanf("%d%d",&n,&m);
+    rep(i,1,n) {
+        rep(j,1,m) {
+            scanf("%d",&arr[i][j]);
+        }
+    }
+    
+    rep(i,1,n) {
+        rep(j,1,m) {
+            printf("%d ",arr[i][j]);
+        }
+        printf("\n");
+    }
+    
+    puts("");
+    
+    sum[1][1] = arr[1][1];
+//    rep(i,1,m) sum[0][i] = sum[0][i - 1] + arr[0][i];
+//    rep(i,1,n) sum[i][0] = sum[i - 1][0] + arr[i][0];
+    
+    rep(i,1,n) {
+        rep(j,1,m) {
+            sum[i][j] = sum[i - 1][j] + sum[i][j - 1] - sum[i - 1][j - 1] + arr[i][j];
+        }
+    }
+    
+    // sum up
+    rep(i,1,n) {
+        rep(j,1,m) {
+            printf("%d ",sum[i][j]);
+        }
+        printf("\n");
+    }
+    
+    // obtain
+    int q;
+    scanf("%d",&q);
+    int a,b,x,y;
+    while (q --) {
+        scanf("%d%d%d%d",&a,&b,&x,&y);
+        printf("%d\n",sum[x][y] - sum[a - 1][y] - sum[x][b - 1] + sum[a - 1][b - 1]);
+    }
+    
+    return 0;
+}
+*/
+
+/// -------------- 二维差分 --------------
+
+/*
+int p[1000][1000] = {0};
+int a[1000][1000];
+
+void pls(int a,int b,int x,int y,int k)
+{
+    p[a][b] += k;
+    p[x + 1][y + 1] += k;
+    p[x][y + 1] -= k;
+    p[x + 1][y] -= k;
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    rep(i,1,n) {
+        rep(j,1,m) {
+            scanf("%d",&a[i][j]);
+        }
+    }
+    
+    rep(i,1,n) {
+        rep(j,1,m) {
+            pls(i,j,i,j,a[i][j]);
+        }
+    }
+    
+    rep(i,1,n) {
+        rep(j,1,m) {
+            printf("%d ",p[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+    
+    int sum[1000][1000] = {0};
+    sum[1][1] = p[1][1];
+    
+    rep(i,1,n) {
+        rep(j,1,m) {
+            sum[i][j] = sum[i - 1][j] + sum[i][j - 1] - sum[i - 1][j - 1] + p[i][j];
+        }
+    }
+    
+    rep(i,1,n) {
+        rep(j,1,m) {
+            printf("%d ",sum[i][j]);
+        }
+        printf("\n");
+    }
+    
+    
+    return 0;
+}
+
+*/
+
+/*
+struct A {
+    int a,b,x,y;
+};
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int a,b,x,y;
+    
+    A k[100010];
+    
+    rep(i,0,n - 1) {
+        scanf("%d%d%d%d",&a,&b,&x,&y);
+        k[i] = {a,b,x,y};
+    }
+    scanf("%d%d",&x,&y);
+    int id = -1;
+    rep(i,0,n - 1) {
+        if (x >= k[i].a && x <= k[i].a + k[i].x && y >= k[i].b && y <= k[i].y + k[i].b) {
+            id = i + 1;
+        }
+    }
+    printf("%d\n",id);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int a,b;
+    double sum;
+    _T_(T) {
+        scanf("%d%d",&n,&m);
+        vector<int> chair;
+        vector<int> all;
+        rep(i,0,n - 1) {
+            scanf("%d%d",&a,&b);
+            if (b) chair.pb(a);
+            all.pb(a);
+        }
+        sum = 0;
+        sort(all.begin(),all.end(),greater<int>());
+        for (auto i = all.begin();i != all.end();i ++) sum += *i;
+        rep(i,0,min(m - 1,(int) chair.size() - 1)) sum -= all[i] / 2.0;
+        printf("%.1f\n",sum);
+    }
+    return 0;
+}
+*/
+
+/*
+int a[110][110];
+int n,m;
+
+int dp[110][110] = {0};
+
+int dfs(int x,int y)
+{
+    if (n - x > m - y) return 0;
+    if (y >= m || x >= n || x < 0) return 0;
+    if (dp[x][y]) return dp[x][y];
+    int k = 0;
+    k = max(k,dfs(x - 1,y + 1));
+    k = max(k,dfs(x,y + 1));
+    k = max(k,dfs(x + 1,y + 1));
+    return dp[x][y] = (k + a[x][y]);
+}
+
+int main()
+{
+    scanf("%d%d",&n,&m);
+    rep(i,0,n - 1) {
+        rep (j,0,m - 1) {
+            scanf("%d",&a[i][j]);
+        }
+    }
+    cout << dfs(0,0) << endl;
+    return 0;
+}
+*/
+
+
+/// ---------- 求树的重心 ----------
+/// 求法：删掉某一个点i，求剩余连通块的节点个数，求出一个w[i]=max(每个连通块的节点个数)，那么所有点中最小的w[i]，那么这个点i便是树的重心
+
+/// 性质：
+/// 1. 树中所有点到某个点的距离和中，到重心的距离和是最小的，如果有两个距离和，他们的距离和一样。
+/// 2. 把两棵树通过一条边相连，新的树的重心在原来两棵树重心的连线上。
+
+/// 3. 一棵树添加或者删除一个节点，树的重心最多只移动一条边的位置。
+/// 4. 一棵树最多有两个重心，且相邻
+
+/*
+int num,m;
+
+vector<int> g[50010];
+int vis[50010] = {0};
+//int ch[50010] = {0};
+int w[50010] = {0};
+
+int gravity(int n)
+{
+    if (vis[n]) return 0;
+    vis[n] = 1;
+    int c = 0;
+    int x = -1;
+    int t;
+    for (auto i : g[n]) {
+        c += (t = gravity(i));
+        x = max(t,x);
+    }
+    x = max(x,num - c - 1);
+//    ch[n] = c;
+    w[n] = x;
+    return c + 1;
+}
+
+int main()
+{
+    
+    scanf("%d%d",&num,&m);
+    int u,v;
+    while (m --) {
+        scanf("%d%d",&u,&v);
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+    
+    gravity(1);
+//    Tprint(ch,1,num + 1);
+//    puts("");
+//    Tprint(w,1,num + 1);
+//    puts("");
+    int m = INT_INF;
+    rep(i,1,num) m = min(m,w[i]);
+    int f = 1;
+    rep(i,1,num) {
+        if (m == w[i]) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",i);
+        }
+    }
+    puts("");
+    
+}
+*/
+
+/*
+const int mod = 998244353;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+ll a[2000010];
+
+int main()
+{
+    a[1] = 1;
+    rep(i,2,2000010) a[i] = (a[i - 1] * i) % mod;
+    int n;
+    while (~scanf("%d",&n)) {
+        printf("%lld\n",quickpow(((a[2 * n + 1] * quickpow(a[n], mod - 2)) % mod) * quickpow(a[n], mod - 2) % mod,mod - 2));
+    }
+    return 0;
+}
+*/
+
+
+/*
+int main()
+{
+    int h,m,s;
+    int hh,mm,ss;
+    scanf("%d:%d:%d",&h,&m,&s);
+    scanf("%d:%d:%d",&hh,&mm,&ss);
+    ll a = s + m * 60 + h * 60 * 60;
+    ll b = ss + mm * 60 + hh * 60 * 60;
+    printf("%lld\n",abs(a-b));
+    return 0;
+}
+*/
+
+//ll cal(ll x,ll y,ll a,ll b) {
+//    return (x - a) * (x - a) + (y - b) * (y - b);
+//}
+//
+//int main()
+//{
+//    int n;
+//    scanf("%d",&n);
+//    int x[2010],y[2010];
+//    set<int> xx,yy;
+//    rep(i,1,n) {
+//        scanf("%d%d",x + i,y + i);
+//        xx.insert(x[i]);
+//        yy.insert(y[i]);
+//    }
+//
+//    ll s = -1;
+//    ll mm = -1;
+//    ll m = -1;
+//    ll k;
+//    rep(i,1,n) {
+//        s = -1;
+//        mm = -1;
+//        rep(j,1,n) {
+//            if (i == j) continue;
+//
+//            k = cal(x[i],y[i],x[j],y[j]);
+////            printf("...%lld,%d,%d\n",k,i,j);
+//            if (k > mm) {
+//                mm = k;
+//                s = 1;
+//            } else if (k == mm) {
+//                s ++;
+//            }
+////            printf(">>%lld\n",s);
+//            m = max(m,s);
+//        }
+//    }
+//    printf("%lld\n",xx.size() == 1 && yy.size() == 1 ? n : m);
+//    return 0;
+//}
+
+//using namespace std;
+//const int maxm = 5e3+2;
+//const int maxn = 5e3+2;
+//
+//int a, b, n,logn;
+////int grid[maxm][maxm];
+//int maxv[maxm][maxm];
+//int gcd(int a,int b)
+//{
+//    return b==0?a:gcd(b,a%b);
+//}
+//
+//int query (int x, int y){
+//    int _max = 0;
+//    _max = max(maxv[x][y],
+//               max(maxv[x+n-(1<<logn)][y+n-(1<<logn)],
+//                   max(maxv[x+n-(1<<logn)][y],
+//                       maxv[x][y+n-(1<<logn)])));
+//    return _max;
+//}
+//
+//int main()
+//{
+//    scanf("%d %d %d",&a,&b,&n);
+//    for (int i = 0; i < a; i++)
+//        for (int j = 0; j < b; j++) {
+//            maxv[i][j] = (i + 1) * (j + 1) / gcd(i + 1,j + 1);
+//        }
+//
+//    for (logn = 0;(1 << (logn + 1)) <= n;logn ++);
+//
+//    for (int k = 0;k < logn;k ++)
+//        for (int i = 0;i + (1 << k) < a;i ++)
+//            for (int j = 0;j + (1 << k) < b;j ++) {
+//                maxv[i][j] = max(maxv[i][j], max(maxv[i+(1<<k)][j+(1<<k)], max(maxv[i+(1<<k)][j], maxv[i][j+(1<<k)])));
+//            }
+//
+//    long long sum=0;
+//    for (int i = 0; i <= a-n; i++)
+//        for (int j = 0; j <= b-n; j++)
+//            sum += query(i,j);
+//
+//   printf("%lld\n",sum);
+//    return 0;
+//}
+
+/*
+const int MAXN = 200010;
+
+vector<int> g[MAXN];
+
+int n;
+
+int root = 1;
+int min_w = -1;
+int vis[MAXN] = {0};
+
+int gravity(int s)
+{
+    if (vis[s]) return 0;
+    vis[s] = 1;
+    int c = 0;
+    int x = -1;
+    int t;
+    for (auto i : g[s]) {
+        c += (t = gravity(i));
+        x = max(t,x);
+    }
+    x = max(x,n - c - 1);
+    
+    if (min_w == -1 || x < min_w) {
+        min_w = x;
+        root = s;
+    }
+    
+    return c + 1;
+}
+
+vector<int> l;
+
+void dfs(int s)
+{
+    if (vis[s]) return;
+    vis[s] = 1;
+    
+    if (g[s].size() == 1) {
+        // leave
+        l.pb(s);
+    }
+    for (auto i : g[s]) {
+        dfs(i);
+    }
+    
+}
+
+int main()
+{
+    
+    scanf("%d",&n);
+    int u,v;
+    rep(i,1,n - 1) {
+        scanf("%d%d",&u,&v);
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+    
+    gravity(1);
+    
+//    printf(">>%d\n",root);
+    
+    mem(vis,0);
+    dfs(root);
+    
+    int k = (int) l.size();
+    int t = k / 2;
+    int md = 0;
+    if (k & 1) md = k / 2 + 1;
+    else md = k / 2;
+    
+    vector<pair<int,int>> w;
+    for (int i = 1;i <= md;i ++){
+        int tt = t + i;
+        if(tt > k) tt = k;
+        w.push_back(make_pair(l[i - 1],l[tt - 1]));
+    }
+    printf("%lu\n",w.size());
+    for(auto it : w){
+        printf("%d %d\n",it.first,it.second);
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int a[10010];
+    read(a,1,n);
+    priority_queue<pair<int,int>,vector<pair<int, int>>,greater<pair<int, int>>> q;
+    q.push(make_pair(a[1],1));
+    int b[10010] = {0};
+    rep(i,2,n) {
+        while (!q.empty() && a[i] > q.top().first) {
+            b[q.top().second] = i;
+//            printf(">>%d %d\n",q.top().second,i);
+            q.pop();
+        }
+        q.push(make_pair(a[i], i));
+    }
+    int f = 1;
+    rep(i,1,n) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",b[i]);
+    }
+    printf("\n");
+    return 0;
+}
+*/
+
+/*
+ll a[1000010];
+int vis[1000010] = {0};
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    read_ll(a,1,n);
+    ll x = 0;
+    
+    pre(i,n,1) {
+        if (a[i] < 0) {
+            x += a[i] * i;
+            vis[i] = 1;
+        }
+    }
+    rep(i,0,n) {
+        if (vis[i]) continue;
+        x += a[i];
+    }
+    printf("%lld\n",x);
+    return 0;
+}
+*/
+
+/// ST表
+/*
+inline int read_int()
+{
+    int x = 0,f = 1;
+    char ch = getchar();
+    while (!isdigit(ch)) {
+        if (ch == '-') f = -1;
+        ch = getchar();
+    }
+    while (isdigit(ch))
+    {
+        x = x * 10 + ch - 48;
+        ch = getchar();
+    }
+    return x * f;
+}
+
+const int MAXN = 100010;
+
+int st[MAXN][20];
+int a[MAXN];
+
+int n,m;
+
+void init() {
+    // 定义 st[i][j] 是从i开始，到i + 2^j这一段，即[i,i + 2^j]这一段中的最大/小值
+    rep(i,1,n) st[i][0] = a[i];
+
+    for (int j = 1;(1 << j) <= n;j ++) { // 遍历所有的j，j是一个很小的数字，最大值=log2(n)
+        rep(i,1,n - (1 << j) + 1) { // 在[1,n]区间范围内，确定j的情况下，把所有的i都遍历求值一遍
+            st[i][j] = max(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]); // 套公式
+        }
+    }
+}
+
+int query(int l, int r)
+{
+    int x = log2(r - l + 1);
+    return max(st[l][x],st[r - (1 << x) + 1][x]);
+}
+
+int main()
+{
+    scanf("%d%d",&n,&m);
+    rep(i,1,n) {
+        a[i] = read_int();
+    }
+    init();
+    int l,r;
+    while (m --) {
+        scanf("%d%d",&l,&r);
+        printf("%d\n",query(l, r));
+    }
+    return 0;
+}
+*/
+
+
+/*class Solution {
+public:
+    
+    ll dfs(int n,int m,ll f)
+    {
+        if (n == 0) {
+            if (m == 0) {
+//                printf("%lld\n",f);
+                return f;
+            }
+            return 0;
+        }
+        ll s = 0;
+        for (int i = 0;m - i >= 0 && i <= 9;i ++) {
+            if (f == 0 && i == 0) continue;
+            s += dfs(n - 1,m - i,f * 10 + i);
+        }
+        return s;
+    }
+    
+    long long sum(int n, int m) {
+        // write code here
+        return dfs(n,m,0);
+    }
+};
+
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    Solution s;
+    cout << s.sum(n, m) << endl;
+    return 0;
+}
+*/
+
+/*
+class Solution {
+public:
+    
+    vector<int> g[100010];
+    int f[100010];
+    
+    
+    void dfs(int n,int fa)
+    {
+        f[n] = fa;
+        for (auto i : g[n]) {
+            if (i == fa) continue;
+            dfs(i,n);
+        }
+    }
+    
+    ll ans(int x,ll y) {
+        ll a = 0;
+        do {
+            a += (y + 2 * x) ^ (y + x);
+            a %= 998244353;
+            x = f[x];
+        } while (x != -1);
+        return a;
+    }
+    
+    
+    long long work(int n, long long seed1, long long seed2, long long seed3, int x) {
+        // write code here
+        int seed4;
+        int u,v;
+        rep(i,1,n-1) {
+            seed4=(seed1+seed2)%998244353*seed3%998244353;
+            u=i+1;
+            v=(seed4%i)+1;
+            g[u].pb(v);
+            g[v].pb(u);
+            seed3=seed2;
+            seed2=seed1;
+            seed1=seed4;
+        }
+        
+        mem(f,-1);
+        dfs(1,-1);
+        
+        ll lastans = 0,
+        ret = 0,
+        y = 0,z;
+        ll xx = 0;
+        rep(i,1,n) {
+            xx += (z=ans(x,y));
+            xx %= 998244353;
+            ret = (ret + z) % 998244353;
+            lastans = z;
+            x = ((x + lastans) ^ ret) % n + 1;
+            y = lastans;
+        }
+        return xx;
+    }
+};
+
+int main()
+{
+    ll n,a,b,c,d;
+    cin >> n >> a >> b >> c >> d;
+    Solution s;
+    cout << s.work(n, a, b, c, d) << endl;
+    return 0;
+}
+*/
+
+
+
+
+//
+//class Solution {
+//public:
+//
+//    int n;
+//    vector<int> a;
+//    int k;
+//
+//    bool check(int m)
+//    {
+//        ll d = 0;
+//        for (auto i : a) {
+//            if (i > m) d += ceil((i - m) / (double) (k - 1));
+//        }
+//        return d <= m;
+//    }
+//
+//    int solve(int n, vector<int>& a, int k) {
+//        // write code here
+//        this -> n = n;
+//        this -> a = a;
+//        this -> k = k;
+//        int l = 1;
+//        int r = 0;
+//        for (auto i : a) if (i > r) r = i;
+//        int m;
+//        while (l < r) {
+//            m = (l + r) / 2;
+//            if (check(m)) r = m;
+//            else l = m + 1;
+//        }
+//        return l;
+//    }
+//};
+//
+//
+//int main()
+//{
+//    int n;
+//    scanf("%d",&n);
+//    vector<int> a;
+//    int x;
+//    while (n --) {
+//        scanf("%d",&x);
+//        a.pb(x);
+//    }
+//    int k;
+//    scanf("%d",&k);
+//    Solution s;
+//    cout << s.solve(n, a, k) << endl;
+//    return 0;
+//}
+//
+
+/*
+int main()
+{
+    int n;
+    ll k,b;
+    scanf("%d%lld%lld",&n,&k,&b);
+    ll x,y;
+    while (n --) {
+        scanf("%lld%lld",&x,&y);
+        if (y == k * x + b) puts("Yes");
+        else puts("No");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    string str;
+    cin >> str;
+    int x = 1;
+    set<string> a;
+    string sub;
+    int ok = 1;
+    rep(i,1,n) { // len
+        a.clear();
+        ok = 1;
+        for (int j = 0;str[j + i - 1];j ++) { // pos
+            if (a.find(sub = str.substr(j,i)) == a.end()) a.insert(sub);
+            else {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok) {
+            x = i;
+            break;
+        }
+    }
+    printf("%d\n",x);
+    return 0;
+}
+*/
+
+
+
+//vector<pair<int, int>> g;
+//
+//ll ans = -1;
+//
+//ll dis(ll x1,ll y1,ll x2,ll y2) {
+//    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+//}
+//
+//void dfs(ll d,int x,int y,ll k)
+//{
+//    if (ans == -1 || ans < k) ans = k;
+//    ll t;
+//    for (auto i : g) {
+//        if (((t = dis(x,y,i.first,i.second)) < d || d == -1) && !(i.first == x && i.second == y)) {
+//            dfs(t,i.first,i.second,k + 1);
+//        }
+//    }
+//}
+//
+//int main()
+//{
+//    int n;
+//    scanf("%d",&n);
+//    int u,v;
+//    while (n--) {
+//        scanf("%d%d",&u,&v);
+//        g.pb(make_pair(u,v));
+//    }
+//    dfs(-1,0,0,0);
+//    printf("%lld\n",ans);
+//    return 0;
+//}
+
+
+//
+//const int MAXN = 10000010;
+//
+//
+//int a[MAXN];
+//int query[2][MAXN];
+//
+//int n,m;
+//
+//
+//void dd(int k,int m)
+//{
+//    int q[MAXN];
+//    int i,j;
+//    int front,rear;
+//    front=0;
+//    rear=-1;
+//    for(i=1;i<=k;i++)
+//    {
+//        for(;front<=rear&&a[i]>=a[q[rear]];rear--);
+//        q[++rear]=i;
+//    }
+//    int idx = 1;
+//    query[m][idx ++] = a[q[front]];
+//    for(j=1;i<=n;i++,j++)
+//    {
+//        if(front<=rear&&q[front]<=j)
+//            front++;
+//        for(;front<=rear&&a[i]>=a[q[rear]];rear--);
+//        q[++rear]=i;
+//        query[m][idx ++] = a[q[front]];
+//    }
+//}
+//
+//int main()
+//{
+//    int k;
+//    scanf("%d%d",&n,&k);
+//    read(a,1,n);
+//    ll all = 0,ans = 0;
+//
+//    int v = n % k;
+//
+//    dd(k,0);
+//    dd(v,1);
+//
+//
+//    if (v == 0) {
+//
+//        for (int i = 1;i + k - 1 <= n;i += k) {
+//            ans += query[0][i];
+//        }
+//        printf("%lld\n",ans);
+//        return 0;
+//    }
+//
+//
+//    all += query[1][1];
+//    for (int i = v + 1;i + k - 1 <= n;i += k) {
+//        all += query[0][i];
+//    }
+//    ans = all;
+//
+//    for (int i = 1 + k;i + v - 1 <= n;i += k) {
+////        printf("sub:[%d,%d]\n    [%d,%d]\n",i - k, i - k + v - 1,i - k + v, i + v - 1);
+////        printf("add:[%d,%d]\n    [%d,%d]\n",i - k, i - 1,i, i + v - 1);
+//        all -= query[1][i - k];
+//        all -= query[0][i - k + v];
+//        all += query[0][i - k];
+//        all += query[1][i];
+//        ans = max(ans,all);
+//    }
+//
+//    printf("%lld\n",ans);
+//
+//    return 0;
+//}
+
+
+//int a[5010][5010];
+//
+//int gcd(int a,int b)
+//{
+//    if (a % b == 0) return b;
+//    return gcd(b, a % b);
+//}
+//
+//int main()
+//{
+//    int n,m,k;
+//    scanf("%d%d%d",&n,&m,&k);
+//
+//
+//
+//    rep(i,1,n) {
+//        rep(j,1,m) {
+//            a[i][j] = i / gcd(i,j) * j;
+//            printf("%4d",a[i][j]);
+//        }
+//        printf("\n");
+//    }
+//
+//    return 0;
+//}
+
+/*
+int main()
+{
+    string str;
+    cin >> str;
+    string x = str.substr(0,6);
+    for (int i = 0;x[i];i ++) {
+        if (x[i] >= 'A' && x[i] <= 'Z') x[i] = x[i] - 'A' + 'a';
+    }
+    
+    if (x == "lovely") puts("lovely");
+    else puts("ugly");
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    cin >> str;
+    char c;
+    int x = 0;
+    int n;
+    int s = (int) str.size();
+    _T_(T) {
+        scanf(" %c %d",&c,&n);
+        if (c == 'A') {
+            printf("%c\n",str[(x + n - 1) % s]);
+        } else if (c == 'M') {
+            
+            if (n < 0) {
+                n = s + n;
+            }
+            x = (x + n) % s;
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    double x[30],y[30];
+    double p;
+    _T_(T){
+        for(int i = 0; i < 20; i++){
+            scanf("%lf %lf", x+i, y+i);
+        }
+        int i1=0,i2=1;
+        
+
+        for(int i = 0; i < 20; i++){
+            p = (x[(i - 1 + 20) % 20] - x[i]) * (x[(i - 1 + 20) % 20] - x[i])+
+                (y[i] - y[(i - 1 + 20) % 20]) * (y[i] - y[(i - 1 + 20) % 20]);
+            if(fabs(p - 81) <= 0.1){
+                i1=i;
+                i2=(i - 1 + 20) % 20;
+                break;
+            }
+        }
+
+        double d1 = (x[(i1 + 1) % 20] - x[i1]) * (x[(i1 + 1) % 20] - x[i1]) +
+                    (y[(i1 + 1) % 20] - y[i1]) * (y[(i1 + 1) % 20] - y[i1]);
+        double d2 = (x[(i2 - 1 + 20) % 20] - x[i2]) * (x[(i2 - 1 + 20) % 20] - x[i2]) +
+                    (y[(i2 - 1 + 20) % 20] - y[i2]) * (y[(i2 - 1 + 20) % 20] - y[i2]);
+        
+        int i3;
+
+        if(d1<d2){
+            i3 = (i2 - 1 + 20) % 20;
+            swap(i1,i2);
+        } else {
+            i3=(i1 + 1) % 20;
+        }
+        
+        double x1,x2,y1,y2;
+        x1=x[i3]-x[i1];
+        y1=y[i3]-y[i1];
+        x2=x[i2]-x[i1];
+        y2=y[i2]-y[i1];
+        p = x1*y2-x2*y1;
+        
+        if(p>0) printf("right\n");
+        else printf("left\n");
+    }
+
+    return 0;
+}
+*/
+
+/*
+class Solution {
+public:
+    const int mod = 998244353;
+ 
+    int work(long long n) {
+        // write code here
+        ll ans = 0;
+        ll x,k;
+        for (ll i = 1;i <= n;) {
+            x = n / i;
+            k = n / x + 1;
+            ans = (ans + ((x % mod) * ((k - i) % mod)) % mod) % mod;
+            i = k;
+        }
+        return (int) ans;
+    }
+};
+
+int main()
+{
+    ll n;
+    scanf("%lld",&n);
+    Solution s;
+    cout << s.work(n) << endl;
+    return 0;
+}
+*/
+
+
+/*
+class Solution {
+public:
+    
+    int w[300010];
+    
+    ll ans = 0;
+    
+    void dfs(int n,int f)
+    {
+        if (w[n] == -1) return;
+        ans += w[n] ^ f;
+        dfs(n * 2,w[n]);
+        dfs(n * 2 + 1,w[n]);
+    }
+    
+    long long tree1(vector<int>& a) {
+        // write code here
+        mem(w,-1);
+        int idx = 1;
+        for (auto i : a) w[idx ++] = i;
+        dfs(1,w[1]);
+        return ans;
+    }
+};
+
+int main()
+{
+    Solution s;
+    vector<int> a;
+    int n;
+    scanf("%d",&n);
+    int t;
+    rep(i,1,n) {
+        cin >> t;
+        a.pb(t);
+    }
+    cout << s.tree1(a) << endl;
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int x,y;
+    int mm = -1;
+    int xx,yy;
+    _T_(t) {
+        scanf("%d%d",&n,&m);
+        mm = -1;
+        xx = 0;
+        yy = 0;
+        while (n --)
+        {
+            scanf("%d%d",&x,&y);
+            xx = 0;
+            yy = 0;
+            int k = m / x;
+            if (m % x) k ++;
+            yy = y * k;
+            if (mm == -1 || mm > yy) mm = yy;
+        }
+        printf("%d\n",mm);
+    }
+        
+    return 0;
+}
+*/
+
+/*
+double ans = 0;
+
+void dfs(double s,int n,int k)
+{
+    if (k == 4) {
+        ans = max(s,ans);
+        return;
+    }
+    if (n >= 95) dfs(s + 4.3,n - 95,k + 1);
+    if (n >= 90) dfs(s + 4.0,n - 90,k + 1);
+    if (n >= 85) dfs(s + 3.7,n - 85,k + 1);
+    if (n >= 80) dfs(s + 3.3,n - 80,k + 1);
+    if (n >= 75) dfs(s + 3.0,n - 75,k + 1);
+    if (n >= 70) dfs(s + 2.7,n - 70,k + 1);
+    if (n >= 67) dfs(s + 2.3,n - 67,k + 1);
+    if (n >= 65) dfs(s + 2.0,n - 65,k + 1);
+    if (n >= 62) dfs(s + 1.7,n - 62,k + 1);
+    if (n >= 60) dfs(s + 1.0,n - 60,k + 1);
+    if (n >= 0) dfs(s,n,k + 1);
+    
+    
+    
+}
+
+int main()
+{
+    int n;
+    _T_(T) {
+        scanf("%d",&n);
+        dfs(0,n,0);
+        printf("%.1f\n",ans);
+        
+        
+        
+    }
+    
+    
+    return 0;
+}
+
+*/
+
+/*
+int gcd(int a,int b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+const int MAXN = 1000;
+int dp[MAXN + 10][MAXN + 10] = {0};
+
+int main()
+{
+    rep(i,1,MAXN) {
+        rep(j,1,MAXN) {
+            dp[i][j] = max(dp[i - 1][j],dp[i][j - 1]);
+            if (gcd(i,j) == 1) dp[i][j] ++;
+        }
+    }
+    int a,b;
+    _T_(T) {
+        scanf("%d%d",&a,&b);
+        printf("%d\n",dp[a][b]);
+    }
+    return 0;
+}
+*/
+
+/*
+int a[510][510];
+int b[10];
+int n,x,y;
+int h;
+
+int ans = INT_INF;
+
+void go(int i,int j)
+{
+    rep(ii,-3,3)
+    {
+        rep(jj,-3 + abs(ii),3 - abs(ii))
+        {
+            if (ii == 0 && jj == 0) continue;
+            if (i + ii >= 1 && i + ii <= n &&
+                j + jj >= 1 && j + jj <= n)
+                b[a[i + ii][j + jj]] ++;
+        }
+    }
+    
+    int step;
+    int c = 1;
+    int crt = a[i][j]; // current citizen
+    int food = 0;
+    while (c != 9)
+    {
+        if (c == 9) break;
+        food += crt;
+        if (food >= 8 * c * c)
+        {
+            step = 3;
+            // move
+            while (step != 0)
+            {
+                if (b[step] != 0)
+                {
+                    crt += step;
+                    b[step] --;
+                    break;
+                }
+                step --;
+            }
+            c ++;
+        }
+        h ++;
+    }
+    ans = min(ans, h);
+}
+
+void solve()
+{
+    scanf("%d%d%d",&n,&y,&x);
+    rep(i,1,n) {
+        rep(j,1,n) {
+            scanf("%d",&a[i][j]);
+        }
+    }
+    int l;
+    rep(i,1,n) {
+        rep(j,1,n) {
+            l = abs(j - x) + abs(i - y);
+            h = l / 2;
+            h += l % 2;
+            go(i,j);
+        }
+    }
+    printf("%d\n",ans);
+}
+
+int main()
+{
+    _T_(T) {
+        ans = INT_INF;
+        mem(b,0);
+        solve();
+    }
+    return 0;
+}
+*/
+
+//
+//const int mod = 1000000007;
+//
+//ll quickpow(ll a, ll b)
+//{
+//    ll ans = 1;
+//    while (b)
+//    {
+//        if (b & 1) ans = a * ans % mod;
+//        a = a * a % mod;
+//        b >>= 1;
+//    }
+//    return ans;
+//}
+//
+//
+//ll a[100];
+//
+//int main()
+//{
+//    int n;
+//    ll x = quickpow(4,mod - 2);
+//    _T_(T) {
+//        scanf("%d",&n);
+//        REP(i,0,n) {
+//            scanf("%lld",a + i);
+//        }
+//        ll ans = a[0] / 2;
+//        REP(i,0,n - 1) {
+//            ans += ((a[i] * a[i + 1] % mod) *
+//                    (mod + x * (quickpow(a[i],mod - 2) - quickpow(a[i + 1],mod - 2)) % mod)) % mod;
+//            ans %= mod;
+//        }
+//        printf("%lld\n",ans);
+//    }
+//    return 0;
+//}
+
+
+//
+//const int mod = 1000000007;
+//int main()
+//{
+//    ll n;
+//    ll k,ans;
+//    _T_(t) {
+//        scanf("%lld",&n);
+//        ans = 1;
+//        rep(i,2,sqrt(n)) {
+//            if (n % i == 0) {
+//                k = 1;
+//                while (n % i) {
+//                    n /= i;
+//                    k = (k * i) % mod;
+//                }
+//                ans = (ans * ((k + 1) % mod)) % mod;
+//            }
+//        }
+//        printf("%lld\n",ans);
+//    }
+//    return 0;
+//}
+//
+//
+
+/// 欧几里得扩展exgcd
+/// ax + by = gcd(a,b)
+
+/*
+ll exgcd(ll a, ll b, ll &x, ll &y)
+{
+    if (b == 0)
+    {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    ll r = exgcd(b, a % b, x, y);
+    ll t = y;
+    y = x - (a / b) * y;
+    x = t;
+    return r;
+}
+
+int gcd(int a,int b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+const int MAXN = 2000010;
+
+int not_zhi[MAXN] = {0};
+
+int main()
+{
+    rep(i,2,MAXN) {
+        for (int j = i + i;j <= MAXN;j += i) {
+            not_zhi[j] = 1;
+        }
+    }
+    vector<int> zhi;
+    rep(i,2,MAXN) if (!not_zhi[i]) zhi.pb(i);
+    
+    int a,b,g;
+    ll c,d,e,f;
+    _T_(T)
+    {
+        scanf("%d%d",&a,&b);
+        g = gcd(a, b);
+        if (g != 1) {
+            // u = a / g;
+            // v = b / g;
+            // a / b = u / v;
+            // ((u + 1) - 1) / v = u / v = a / b
+            printf("%d %d %d %d\n",a / g + 1,b / g,1,b / g);
+        } else if (g == 1) {
+            if (!not_zhi[b]) printf("-1 -1 -1 -1\n");
+            else {
+                d = 1;
+                f = 1;
+                for (auto i : zhi) {
+                    if (b % i == 0) {
+                        while (b % i == 0) {
+                            d *= i;
+                            b /= i;
+                        }
+                        f = b;
+                        break;
+                    }
+                }
+//                cout << d << " " << f << endl;
+                if (d == 1 || f == 1) printf("-1 -1 -1 -1\n");
+                else {
+                    exgcd(f, d, c, e);
+                    e = -e;
+                    // 在理解下
+                    while(c <= 0 || e <= 0){
+                        c += d ;
+                        e += f ;
+                    }
+                    printf("%lld %lld %lld %lld\n",c*a,d,e*a,f);
+                }
+            }
+        }
+    }
+    
+    return 0;
+}
+*/
+
+/*
+const int mod = 1e9 + 7;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+const int MAXN = 1000010;
+int a[MAXN] = {0};
+int num[MAXN];
+
+int main()
+{
+    rep(i,1,MAXN) num[i] = i;
+    rep(i,2,MAXN) {
+        for (int j = i + i;j <= MAXN;j += i) {
+            while (num[j] % i == 0) {
+                num[j] /= i;
+                a[j] ++;
+            }
+        }
+    }
+    rep(i,1,MAXN) if (a[i] == 0) a[i] ++;
+    
+    int c,n;
+    _T_(T){
+        scanf("%d%d",&n,&c);
+        if (n == 1) {
+            printf("1\n");
+            continue;
+        }
+        printf("%lld\n",quickpow(c, a[n]));
+    }
+    return 0;
+}*/
+
+/*
+const int MAXN = 2e5+10;
+char a[MAXN];
+bool vis[MAXN];
+bool vis2[MAXN];
+
+int n,s;
+
+int main()
+{
+    mem(a,1);
+    a[1] = 0;
+    
+    _T_(T) {
+        s = 0;
+        scanf("%d",&n);
+        memset(vis, 0, sizeof(bool) * (n + 10));
+        memset(vis2, 0, sizeof(bool) * (n + 10));
+        int cnt;
+        vector<pair<int, int>> ans;
+        int f;
+        rep(i,2,n) {
+            if (!a[i]) continue;
+            if (i * 2 > n) break;
+            cnt = 1;
+            for (int j = i + i;j <= n;j += i) {
+                a[j] = 0;
+                if (!vis[j]) {
+                    cnt ++;
+                    if (i != 2) vis[j] = 1;
+                }
+            }
+            if (i != 2) {
+                f = -1;
+                if (cnt % 2) vis2[i + i] = 1;
+                for (int j = i;j <= n;j += i) {
+                    if (!vis2[j]) {
+                        if (f == -1) {
+                            f = j;
+                        } else {
+                            ans.pb(make_pair(f, j));
+                            f = -1;
+                        }
+                        vis2[j] = 1;
+                    }
+                }
+                if (cnt % 2) vis2[i + i] = 0;
+            }
+        }
+        f = -1;
+        for (int i = 2;i <= n;i += 2) {
+            if (!vis2[i]) {
+                if (f == -1) {
+                    f = i;
+                } else {
+                    ans.pb(make_pair(f, i));
+                    f = -1;
+                }
+            }
+        }
+        printf("%lu\n",ans.size());
+        for (auto i : ans) printf("%d %d\n",i.first,i.second);
+    }
+}
+*/
+
+//int main()
+//{
+//    string s;
+//    cin >> s;
+//    string t;
+//    set<string> all;
+//    char mx;
+//    for (int i = 0; s[i]; i ++) {
+//        t = "";
+//        for (int j = i; s[j]; j ++) {
+//            if (j == i) mx = s[j];
+//            else mx = max(mx,s[j]);
+//            t += mx;
+//            cout << t << endl;
+//            all.insert(t);
+//        }
+//    }
+//    printf("%lu\n", all.size());
+//    return 0;
+//}
+
+
+
+
+
+//const int MAXN = 8e5 + 10;
+//
+//// ----- begin of 并查集 -----
+//int af[MAXN];
+//int d[MAXN];
+//
+//int find(int a)
+//{
+//    if (af[a] == a) return a;
+//    return af[a] = find(af[a]);
+//}
+//
+//inline void bind(int a,int b)
+//{
+//    int x = find(a), y = find(b);
+//    if (d[x] >= d[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+//        af[y] = x; // 改变b节点的根的根为a的根
+//        if (d[x] == d[y]) { // 俩根深度一样
+//            if (x != y) d[x] ++; // 作为a的根，自然子树的深度++
+//        }
+//    } else af[x] = y;
+//}
+//
+//void init(int n)
+//{
+//    REP(i,0,n) {
+//        af[i] = i;
+//        d[i] = 1;
+//    }
+//}
+//// ----- end of 并查集 -----
+//
+//struct Node {
+//    int n;
+//    struct Node *nxt;
+//};
+//
+//struct Link {
+//    struct Node *root;
+//    struct Node *end;
+//} link[MAXN];
+//
+//void add_node(int i,int n)
+//{
+//    struct Node *node = new struct Node();
+//    node -> n = n;
+//    node -> nxt = NULL;
+//    if (link[i].root == NULL) {
+//        link[i].root = node;
+//        link[i].end = node;
+//    } else {
+//        link[i].end -> nxt = node;
+//        link[i].end = node;
+//    }
+//}
+//
+//vector<int> g[MAXN];
+//int vis[MAXN];
+//
+//void dfs_link(int n)
+//{
+//    if (vis[n]) return;
+//    vis[n] = 1;
+//    for (auto i : g[n]) {
+//        add_node(n, i);
+//        dfs_link(i);
+//    }
+//}
+//
+//void link_init(int n)
+//{
+//    REP(i,0,n) {
+//        link[n].root = NULL;
+//        link[n].end = NULL;
+//    }
+//    memset(vis,0,sizeof(int) * (n + 5));
+//    REP(i,0,n) dfs_link(i);
+//}
+//
+//int main()
+//{
+//    int n,m;
+//    int u,v;
+//    int q;
+//    int o;
+//    Node *node,*t;
+//    _T_(T) {
+//        scanf("%d%d",&n,&m);
+//        init(n + 5);
+//        REP(i,0,m) {
+//            scanf("%d%d",&u,&v);
+//            g[u].pb(v);
+//            g[v].pb(u);
+//        }
+//
+//        link_init(n);
+//
+//
+//
+//        scanf("%d",&q);
+//        REP(i,0,q) {
+//            scanf("%d",&o);
+//            node = link[i].root;
+//            while (node != NULL) {
+//                // printf("%d ",node -> n);
+//
+//
+//
+//
+//
+//                t = node -> nxt;
+//                delete node;
+//                node = t;
+//            }
+//        }
+//    }
+//    return 0;
+//}
+
+
+/*
+ll mod;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    int n;
+    int k;
+    const int MAXN = 1e6;
+    ll f[MAXN];
+    f[0] = 0;
+    f[1] = 1;
+    rep(i,2,MAXN-1) {
+        f[i] = f[i - 1] + f[i - 2];
+    }
+    while (1) {
+        scanf("%d%d",&n,&k);
+        mod = f[n-1] * f[n-1];
+        printf("%lld %lld\n",f[k*(n - 1)+1]%mod,quickpow(f[n], k));
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int l = 2;
+    int x;
+    while (~scanf("%d",&x)) {
+        l = 2;
+        if (x == 1) l ++;
+        else if (x == 7) l --;
+        rep(i,1,9) {
+            scanf("%d",&x);
+            if (x == 1) l ++;
+            else if (x == 7) l --;
+            if (l < 0) l = 0;
+            if (l > 6) l = 6;
+        }
+        if (l == 6) puts("666");
+        else puts("777");
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll m,n;
+    scanf("%lld%lld",&m,&n);
+    ll k;
+    _T_(T) {
+        scanf("%lld",&k);
+        if (k > m) {
+            puts("0");
+            continue;
+        }
+        printf("%lld\n",n/m);
+    }
+    return 0;
+}
+*/
+
+
+//int a[1010],vis[1010] = {0};
+//int k[1010] = {0};
+//int m = 0;
+//
+//vector<int> g[1010];
+//
+//
+//void dfs(int n,int d) {
+//    if (vis[n]) return;
+//    if (d > m) m = d;
+//    vis[n] = 1;
+//    k[d] += a[n];
+//    for (auto i : g[n]) {
+//        dfs(i,d + 1);
+//    }
+//}
+//
+//int main()
+//{
+//    int n;
+//    scanf("%d",&n);
+//    rep(i,1,n) {
+//        scanf("%d",a + i);
+//    }
+//    int u,v;
+//    REP(i,1,n) {
+//        scanf("%d%d",&u,&v);
+//        g[u].pb(v);
+//        g[v].pb(u);
+//    }
+//    dfs(1,0);
+//    int ok = 0;
+//    rep(i,0,m) {
+////        printf("%d\n",k[i]);
+//        if ((ok = (k[i] & 1))) break;
+//    }
+//    if (ok) puts("First");
+//    else puts("Second");
+//    return 0;
+//}
+
+
+// dij + dp + 分层
+
+/*
+const int MAXN = 1e5 + 10;
+
+struct ST {
+    int n;
+    double w;
+    int s;
+
+    bool operator< (const ST &other) const {
+        return w > other.w;
+    }
+};
+
+double dis[MAXN][3];
+int vis[MAXN][3];
+vector<ST> g[MAXN];
+
+
+void dij(int s) {
+    rep(i,1,MAXN) dis[i][0] = dis[i][1] = dis[i][2] = -1;
+    mem(vis,0);
+    
+    
+    priority_queue<ST> q;
+    q.push({s,dis[s][0] = 0,0});
+    
+    inr step;
+    
+    ST current;
+    double k,cost;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        
+        if (vis[current.n][current.s]) continue;
+        vis[current.n][current.s] = 1;
+        
+        for (auto to : g[current.n]) {
+            
+            cost = to.w;
+            REP(i,0,current.s % 3) {
+                cost = 1 / (1 - cost);
+            }
+            cost = fabs(cost);
+            
+            step = (current.s + 1) % 3;
+            
+            k = dis[current.n][current.s] + cost;
+            if (dis[to.n][step] == -1 || dis[to.n][step] > k) {
+                q.push({to.n,dis[to.n][step] = k,step});
+            }
+        }
+    }
+}
+
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v,d;
+    while (m --) {
+        scanf("%d%d%d",&u,&v,&d);
+        g[u].pb({v,(double)d});
+        g[v].pb({u,(double)d});
+    }
+    dij(1);
+    
+    
+    double ans = -1;
+    for (int i = 0;i < 3;i ++) {
+        if (dis[n][i] == -1) continue;
+        
+        if (ans == -1) ans = dis[n][i];
+        else ans = min(ans,dis[n][i]);
+    }
+    
+    if (ans == -1) printf("-1\n");
+    else printf("%.3f\n",ans);
+    return 0;
+}
+*/
+
+/*
+map<string,int> k;
+
+string trim(string str) {
+    string f;
+    int ok = 0;
+    for (int i = 0;str[i];i ++) {
+        if (!ok) {
+            if (str[i] != ' ' && str[i] != '\n' && str[i] != '\r' && str[i] != '\b') {
+                f += str[i];
+                ok = 1;
+            }
+        } else f += str[i];
+        
+    }
+    
+    if (f.size() != 0)
+    while (*(f.end() - 1) == ' ' || *(f.end() - 1) == '\n' || *(f.end() - 1) == '\r' || *(f.end() - 1) == '\b') f.erase(f.end() - 1);
+    return f;
+}
+
+void find(string name,int l)
+{
+    name = trim(name);
+    if (k.find(name) != k.end()) {
+        cout << "重复了，名字：" << name << "，序号：";
+        printf("%d %d\n",k[name],l + 1);
+    } else k[name] = l + 1;
+}
+
+
+int main()
+{
+    fre("/Users/jackli/Downloads/本部查重.csv");
+    string line;
+    int d;
+    
+    string name;
+    int l = 0;
+    while (getline(cin,line)) {
+        d = 0;
+        for (int i = 0;line[i];i ++) {
+            if (line[i] == ',') {
+                d ++;
+                if (d == 7) {
+                    find(name, l);
+                    name = "";
+                }
+            }
+            else if (d == 6) {
+                name += line[i];
+            } else if (d == 8) {
+                if (line[i + 1] && line[i + 2] && line[i] == '\343' && line[i + 1] == '\200' && line[i + 2] == '\201') {
+                    find(name,l);
+                    name = "";
+                    i += 2;
+                } else name += line[i];
+            }
+        }
+        find(name,l);
+        name = "";
+        l ++;
+    }
+    return 0;
+}
+*/
+
+/*
+class Solution {
+public:
+    set<int> k;
+    
+    void init() {
+        rep(i,1,10000) {
+            k.insert((i * i) % 1000);
+        }
+    }
+    
+    bool solve(int x) {
+        // write code here
+        init();
+        return k.find(x) != k.end();
+    }
+};
+
+int main()
+{
+    Solution s;
+    int x;
+    scanf("%d",&x);
+    cout << s.solve(x) << endl;
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 2000010;
+ull f[MAXN + 10];
+
+int main()
+{
+    int n1,n2,n3;
+    f[1] = 1;
+    f[2] = 2;
+    rep(i,3,MAXN) {
+        f[i] = f[i - 1] + f[i - 2];
+    }
+    int t,i;
+    ull A,B,C;
+    _T_(T) {
+        A = 0;
+        B = 0;
+        C = 0;
+        scanf("%d",&n1);
+        rep(i,1,n1) {
+            scanf("%d",&t);
+            A += t * f[i];
+        }
+        scanf("%d",&n2);
+        rep(i,1,n2) {
+            scanf("%d",&t);
+            B += t * f[i];
+        }
+        A *= B;
+        scanf("%d",&n3);
+        rep(i,1,n3) {
+            scanf("%d",&t);
+            C += t * f[i];
+            
+        }
+        for (i = 1;i <= n3 && C + f[i] != A;i ++);
+        printf("%d\n",i);
+        
+    }
+    return 0;
+}
+*/
+
+
+/*const int MAXN = 1e5 + 10;
+int n,m;
+vector<int> g[MAXN];
+
+int vis[MAXN];
+int vis2[MAXN];
+int cost[MAXN];
+int a[MAXN];
+pair<int,int> b[MAXN];
+
+void dfs(int x)
+{
+//    printf("%d\n",x);
+    vis[x] = 1;
+    for (auto i : g[x]) {
+        if (!vis[i]) {
+            if (a[x] >= a[i]) {
+                dfs(i);
+            } else {
+                cost[i] = max(cost[i],a[x]);
+//                printf("//%d\n",cost[i]);
+            }
+        }
+    }
+}
+
+ll ans;
+
+
+int main()
+{
+    int u,v;
+
+    _T_(T) {
+        ans = 0;
+        scanf("%d%d",&n,&m);
+        memset(vis, 0, sizeof(int) * (n + 5));
+        memset(vis2, 0, sizeof(int) * (n + 5));
+        memset(cost, 0, sizeof(int) * (n + 5));
+
+        rep(i,1,n) {
+            scanf("%d",a + i);
+            b[i].first = a[i];
+            b[i].second = i;
+        }
+
+        sort(b + 1,b + 1 + n);
+
+        ans = 0;
+
+        rep(i,1,m) {
+            scanf("%d%d",&u,&v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+
+        pre(i,n,1) {
+//            printf("%d ",b[i].second);
+            if (!vis[b[i].second]) {
+                ans += b[i].first;
+                dfs(b[i].second);
+            }
+        }
+
+
+
+
+
+
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int a[MAXN];
+vector<int> g[MAXN];
+int vis[MAXN];
+
+ll dij(int n)
+{
+    pair<int, int> f;
+    ll ans = 0;
+    
+    priority_queue<pair<int,int>> q;
+    
+    q.push(make_pair(a[n], n));
+    ans += a[n];
+    while (!q.empty()) {
+        f = q.top();
+        q.pop();
+        if (vis[f.second]) continue;
+        vis[f.second] = 1;
+        
+        if (a[f.second] > f.first) ans += a[f.second] - f.first;
+        
+        for (auto i : g[f.second]) {
+            if (!vis[i]) q.push(make_pair(a[f.second], i));
+        }
+        
+    }
+    return ans;
+}
+
+int main()
+{
+    int n,m;
+    int u,v;
+    ll ans = 0;
+    
+    _T_(T) {
+        ans = 0;
+        scanf("%d%d",&n,&m);
+        
+        memset(vis, 0, sizeof(int) * (n + 5));
+        rep(i,1,n) g[i].clear();
+        
+        rep(i,1,n) scanf("%d",a + i);
+        rep(i,1,m) {
+            scanf("%d%d",&u,&v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+        
+        rep(i,1,n) {
+            if (!vis[i]) ans += dij(i);
+        }
+        
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+struct ZB {
+    int a,b,c,d;
+};
+
+map<int,vector<ZB>> A;
+int n,k;
+vector<ZB> x[100];
+
+ll ans = 0;
+
+void dfs(int n,int a,int b,int c,int d)
+{
+    if (n == k) {
+        ans = max(ans,(ll) (100 + a) * (100 + b) * (100 + c) * (100 + d));
+        return;
+    }
+    for (auto i : x[n]) {
+        dfs(n + 1,a + i.a,b + i.b,c + i.c,d + i.d);
+    }
+}
+
+int main()
+{
+    
+    int t,a,b,c,d;
+    _T_ (T) {
+        scanf("%d%d",&n,&k);
+        A.clear();
+        k = 0;
+        while (n --) {
+            scanf("%d%d%d%d%d",&t,&a,&b,&c,&d);
+            A[t].pb({a,b,c,d});
+        }
+        
+        
+        for (auto i : A) {
+            x[k ++] = i.second;
+        }
+        ans = 0;
+        dfs(0,0,0,0,0);
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    ll a[110];
+    ll m = -1;
+    rep(i,0,n-1) {
+        scanf("%lld",a + i);
+        m = max(m,a[i]);
+    }
+//    mm = 50 / mm;
+    ll cnt;
+    rep(i,0,n - 1) {
+        printf("+");
+        cnt = ceil(a[i] * 50 / (double) m);
+        rep(i,0,cnt-1) printf("-");
+        printf("+\n|");
+        if (m == a[i]) {
+            rep(i,0,cnt-2) printf(" ");
+            printf("*");
+        }
+        else rep(i,0,cnt-1) printf(" ");
+        printf("|%lld\n",a[i]);
+        printf("+");
+        rep(i,0,cnt-1) printf("-");
+        printf("+\n");
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[510];
+    int f[510];
+    scanf("%d",&n);
+    rep(i,1,n) {
+        scanf("%d",a + i);
+    }
+    int dp[510];
+    int maxn = 0;
+    for(int i = 1; i <= n; i++)
+    {
+        int k = 1;
+        for(int j = i; j <= n; j++) f[k++] = a[j];
+        for(int j = 1; j < i; j++) f[k++] = a[j];
+        for(int j = 1; j <= n; j++) dp[j] = 1;
+        for(int j = 1; j <= n; j++)
+        {
+            for(int q = 1; q < j; q++)
+            {
+                if(f[q]<f[j]){
+                    dp[j] = max(dp[j],dp[q]+1);
+                }
+            }
+        }
+        for(int j = 1; j <= n; j++) maxn = max(maxn,dp[j]);
+    }
+    cout << n-maxn << endl;
+    return 0;
+}
+
+
+*/
+
+
+/*
+class Solution {
+public:
+    int solve(int n, vector<int>& a) {
+        // write code here
+        set<int> x;
+        for (auto i : a) {
+            if (i % 2 == 0) x.insert(i);
+        }
+        int ans = 0;
+        int num;
+        set<int>::iterator v;
+        while (!x.empty()) {
+            num = *(-- x.end());
+            while (num % 2 == 0) {
+                v = x.find(num);
+                if (v != x.end()) x.erase(v);
+                ans ++;
+                num /= 2;
+            }
+        }
+        return ans;
+    }
+};
+
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    vector<int> x;
+    int t;
+    rep(i,1,n) {
+        scanf("%d",&t);
+        x.pb(t);
+    }
+    Solution s;
+    cout << s.solve(n, x) << endl;
+    return 0;
+}
+*/
+
+/*
+class Solution
+{
+public:
+    int solve(int n, vector<int>& array)
+    {
+        // write code here
+        int a[100005];
+        sort(array.begin(),array.end());
+        int m=0,minn = INT_INF;
+        for(int i=0; i<n/2; i++)
+        {
+            a[i]=array[m++];
+            a[n-1-i]=array[m++];
+        }
+        if(n & 1)
+            a[n/2]=array[m];
+        minn=abs(a[0]-a[n-1]);
+        for(int i=1;i<n;i++)
+        {
+            minn=max(abs(a[i]-a[i-1]),minn);
+        }
+        return minn;
+    }
+};
+*/
+
+
+
+
+/*
+int main()
+{
+    int n;
+    double m = -1;
+    double a,b;
+    _T_(T)
+    {
+        m = -1;
+        scanf("%d",&n);
+        while (n --) {
+            scanf("%lf%lf",&a,&b);
+            m = max(m,(1 - b) / (a + (1-b)));
+        }
+        printf("%.5f\n",m);
+    }
+    
+
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    double p;
+    _T_(T) {
+        scanf("%lf",&p);
+        if (p > 1) {
+            printf("No\n");
+            continue;
+        }
+        printf("Yes\n");
+    }
+    
+    return 0;
+}
+*/
+
+//int main()
+//{
+//    int n,m;
+//    _T_(T) {
+//        scanf("%d%d",&n,&m);
+//
+//    }
+//
+//    return 0;
+//}
+
+
+//
+//int main() {
+//    int n,m,vis;
+//    int x,y;
+//    _T_(T) {
+//        scanf("%d",&n);
+//        vis = m = 0;
+//        rep(i,1,n) {
+//            scanf("%d%d",&x, &y);
+//            if (x == 2) vis = 1;
+//            m = max(m,y);
+//        }
+//        m ++;
+//        if (vis) m ++;
+//        printf("%d\n",m);
+//    }
+//    return 0;
+//}
+
+
+/*
+int main() {
+    ll n,m;
+    _T_(T) {
+        scanf("%lld%lld",&n,&m);
+        if (m >= n / 2) printf("%lld\n",n * (n - 1) / 2);
+        else printf("%lld\n",((n - m) * 2 - 1) * m);
+    }
+    return 0;
+}
+*/
+
+
+//int n;
+//
+//void dfs(int m,int last)
+//{
+//
+//}
+//
+//
+//int main()
+//{
+//    int m;
+//    int space;
+//    __T {
+//        scanf("%d%d",&n,&m);
+//        space = ceil((n - 1) / 11.0);
+//        space ++;
+//        if (m > n - space) {
+//            puts("-1");
+//            continue;
+//        }
+//        dfs(m,1);
+//
+//
+//
+//    }
+//    return 0;
+//}
+//
+
+/*
+inline int kill(int &hx,int &hy,int x,int y)
+{
+    int k1,k2;
+    k1 = ceil((double) hx / y);
+    k2 = ceil((double) hy / x);
+    if (k1 < k2) {
+        hx = 0;
+        hy -= k1 * x;
+        return k1;
+    }
+    hy = 0;
+    hx -= k2 * y;
+    return k2;
+}
+
+
+int main()
+{
+    int a[3];
+    int x,y,z;
+    int hx,hy,hz;
+    int turn;
+    int ans;
+    __T {
+        ans = INT_INF;
+        rep(i,0,2) scanf("%d",a + i);
+        sort(a,a + 3);
+        x = a[2];
+        y = a[1];
+        z = a[0];
+        rep(i,1,1000) {
+            hx = hy = hz = 1000;
+            hx -= y * i;
+            hy -= x * i;
+            turn = i;
+            if (hx > 0 && hy <= 0) {
+                turn += kill(hz,hx,z,x);
+                ans = min(ans,turn);
+                break;
+            }
+            if (hx <= 0 && hy <= 0) {
+                ans = min(ans,turn);
+                break;
+            }
+            turn += kill(hy,hz,y,z);
+            if (hz > 0) turn += kill(hz,hx,z,x);
+            if (hy > 0) turn += kill(hy,hx,y,x);
+            ans = min(ans,turn);
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+*/
+
+/// xor 最小生成树
+/// CF链接: https://codeforces.com/problemset/problem/888/G
+/*
+const int MAXN = 2e5 + 10;
+
+struct Node {
+    Node *l = NULL;
+    Node *r = NULL;
+
+    Node(Node *l,Node *r):l(l),r(r) {}
+};
+
+Node *root;
+
+void insert(int n)
+{
+    Node *node = root;
+    int x;
+    pre(i,30,0) {
+        x = ((n & (1 << i)) >> i);
+        if (x) {
+            // 1
+            if (node -> r == NULL) node -> r = new Node(NULL,NULL);
+            node = node -> r;
+        } else {
+            // 0
+            if (node -> l == NULL) node -> l = new Node(NULL,NULL);
+            node = node -> l;
+        }
+    }
+}
+
+ll ans = 0;
+
+int find(Node *l,Node *r,int nl,int nr,int d)
+{
+    if (!(l -> l) && !(l -> r) && !(r -> r) && !(r -> l)) {
+        return nl ^ nr;
+    }
+    int k = INT_INF;
+    if (l -> l && !(l -> r) && r -> r && !(r -> l)) k = min(k,find(l -> l,r -> r,nl,nr + (1 << d),d - 1));
+    if (l -> r && !(l -> l) && r -> l && !(r -> r)) k = min(k,find(l -> r,r -> l,nl + (1 << d),nr,d - 1));
+    if (l -> l && r -> l) k = min(k,find(l -> l,r -> l,nl,nr,d - 1));
+    if (l -> r && r -> r) k = min(k,find(l -> r,r -> r,nl + (1 << d),nr + (1 << d),d - 1));
+    return k;
+}
+
+void dfs(Node *node,int n,int d)
+{
+    if (node -> l != NULL && node -> r != NULL) {
+        ans += find(node -> l,node -> r,n,n + (1 << d),d - 1);
+    }
+    if (node -> l != NULL) dfs(node -> l,n,d - 1);
+    if (node -> r != NULL) dfs(node -> r,n + (1 << d),d - 1);
+}
+
+
+int w[MAXN];
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    root = new Node(NULL,NULL);
+    REP(i,0,n) {
+        scanf("%d",w + i);
+        insert(w[i]);
+    }
+    dfs(root,0,30);
+    printf("%lld\n",ans);
+    
+    
+    return 0;
+}
+*/
+
+
+// xor最小生成树改编: https://ac.nowcoder.com/acm/contest/5670/B
+/*
+const int MAXN = 1e5 + 10;
+
+struct Nd {
+    int n,w;
+    bool operator<(const Nd &o) const {
+        return w > o.w;
+    }
+};
+
+struct Node {
+    Node *l = NULL;
+    Node *r = NULL;
+
+    Node(Node *l,Node *r):l(l),r(r) {}
+};
+
+
+vector<Nd> g[MAXN];
+int vis[MAXN];
+int w[MAXN];
+
+Node *root;
+
+void insert(int n)
+{
+    Node *node = root;
+    int x;
+    pre(i,30,0) {
+        x = ((n & (1 << i)) >> i);
+        if (x) {
+            // 1
+            if (node -> r == NULL) node -> r = new Node(NULL,NULL);
+            node = node -> r;
+        } else {
+            // 0
+            if (node -> l == NULL) node -> l = new Node(NULL,NULL);
+            node = node -> l;
+        }
+    }
+}
+
+ll ans = 0;
+
+int find(Node *l,Node *r,int nl,int nr,int d)
+{
+    if (!(l -> l) && !(l -> r) && !(r -> r) && !(r -> l)) {
+        return nl ^ nr;
+    }
+    int k = INT_INF;
+    if (l -> l && !(l -> r) && r -> r && !(r -> l)) k = min(k,find(l -> l,r -> r,nl,nr + (1 << d),d - 1));
+    if (l -> r && !(l -> l) && r -> l && !(r -> r)) k = min(k,find(l -> r,r -> l,nl + (1 << d),nr,d - 1));
+    if (l -> l && r -> l) k = min(k,find(l -> l,r -> l,nl,nr,d - 1));
+    if (l -> r && r -> r) k = min(k,find(l -> r,r -> r,nl + (1 << d),nr + (1 << d),d - 1));
+    return k;
+}
+
+void update(int n)
+{
+    if (vis[n]) return;
+    vis[n] = 1;
+
+    for (auto i : g[n]) {
+        w[i.n] = w[n] ^ i.w;
+        insert(w[i.n]);
+        update(i.n);
+    }
+}
+
+void dfs(Node *node,int n,int d)
+{
+    if (node -> l != NULL && node -> r != NULL) {
+        ans += find(node -> l,node -> r,n,n + (1 << d),d - 1);
+    }
+    if (node -> l != NULL) dfs(node -> l,n,d - 1);
+    if (node -> r != NULL) dfs(node -> r,n + (1 << d),d - 1);
+}
+
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int u,v,ww;
+    REP(i,1,n) {
+        scanf("%d%d%d",&u,&v,&ww);
+        g[u].pb({v,ww});
+        g[v].pb({u,ww});
+    }
+
+
+    // 处理成每个点的权值，两个点之间的xor就是每条边的w
+    mem(vis,0);
+    w[0] = 1;
+    
+    root = new Node(NULL,NULL);
+    insert(1);
+    
+    update(0);
+
+    // 跑一遍xor的最小生成树
+    dfs(root,0,30);
+    printf("%lld\n",ans);
+
+
+    return 0;
+}
+*/
+
+
+//const int MAXN = 50010;
+//
+//struct Car {
+//    int a,p;
+//    bool operator ==(const Car &o) const {
+//        return a == o.a && p == o.p;
+//    }
+//};
+//
+//int cmp(const Car &a,const Car &b) {
+//    if (a.p == b.p) {
+//        return a.a > b.a;
+//    }
+//    return a.p > b.p;
+//}
+//
+//Car c[MAXN];
+//
+//inline bool ok(Car a1,Car a2,Car i)
+//{
+//    ll deltaPos1 = a1.p - a2.p,
+//       deltaPos2 = a2.p - i.p;
+//    ll deltaAc1 = a2.a - a1.a,
+//       deltaAc2 = i.a - a2.a;
+//    return deltaPos2 * deltaAc1 > deltaPos1 * deltaAc2;
+//}
+//
+//int main()
+//{
+//    int n;
+//    int a,p;
+//    int lp;
+//    Car l;
+//    int nn;
+//    int stack[MAXN];
+//    int ans;
+//    _T_(T)
+//    {
+//        scanf("%d",&n);
+//        rep(i,1,n) {
+//            scanf("%d%d",&p,&a);
+//            c[i].a = a;
+//            c[i].p = p;
+//        }
+//        sort(c + 1,c + n + 1,cmp);
+//
+//        nn = n;
+//        n = 0;
+//
+//        rep(i,1,nn) {
+//            if (!((i >= 2 && c[i - 1] == c[i]) || (i <= nn - 1 && c[i + 1] == c[i]))) c[++ n] = c[i];
+//        }
+//
+//        nn = n;
+//        n = 0;
+//
+//        lp = c[1].p;
+//        rep(i,2,nn) {
+//            if (lp == c[i].p) continue;
+//            c[++ n] = c[i];
+//            lp = c[i].p;
+//        }
+//
+////        rep(i,1,n) {
+////            printf("%d %d\n",c[i].p,c[i].a);
+////        }
+//
+//        ans = 0;
+//        if (n > 0) stack[ans ++] = 1;
+//        if (n > 1) stack[ans ++] = 2;
+//
+//        for (int i = 3; i <= n; i++) {
+//            while (ans >= 2) {
+//                int id1 = stack[ans - 1], id2 = stack[ans - 2];
+//                int dpos1 = c[id1].p - c[i].p, dpos2 = c[id2].p - c[id1].p;
+//                int da1 = c[i].a - c[id1].a, da2 = c[id1].a - c[id2].a;
+//                if ((ll)dpos1 * da2 > (ll)da1 * dpos2) break;
+//                ans--;
+//            }
+//            stack[ans++] = i;
+//        }
+//
+//
+////        rep(i,3,n) {
+////            while (ok(stack[ans - 2],stack[ans - 1],c[i]) && ans >= 2) ans --;
+////            stack[ans ++] = c[i];
+////        }
+//
+//        printf("%d\n",ans);
+//
+//    }
+//    return 0;
+//}
+
+/*
+int main()
+{
+    int n,k;
+    ll sum;
+    
+    scanf("%d%d",&n,&k);
+    sum = (n + 1) * n / 2;
+    if (sum % n != k) {
+        puts("-1");
+        return 0;
+    }
+    if (n % 2 == 0) {
+        printf("%d %d",n,k);
+        rep(i,1,k-1) {
+            printf(" %d %d",i,n - i);
+        }
+        puts("");
+    } else {
+        printf("%d",n);
+        rep(i,1,n / 2) {
+            printf(" %d %d",i,n - i);
+        }
+        puts("");
+    }
+    
+    return 0;
+}
+*/
+
+/*
+const int mod = 1000000007;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+const int MAXN = 2e7 + 2;
+
+ll ans[MAXN];
+ll child = 1;
+ll mother = 2;
+
+
+int main()
+{
+    const ll p = quickpow(mother, mod - 2);
+
+    ll x = p;
+    ll bin = 2;
+
+    mother = x;
+    ans[1] = (child * mother) % mod;
+
+    rep(i,2,MAXN) {
+        bin *= 2;
+        bin %= mod;
+
+        x *= p;
+        x %= mod;
+
+        mother = mother * x;
+        mother %= mod;
+
+        child = child * ((bin - 1 + mod) % mod);
+        child %= mod;
+        ans[i] = (child * mother) % mod;
+
+        ans[i] ^= ans[i - 1];
+    }
+
+    int n;
+    __T
+    {
+        scanf("%d",&n);
+        printf("%lld\n",ans[n]);
+    }
+    return 0;
+}
+*/
+
+
+
+/*
+itn n,k;
+
+int a[500010];
+int vis[500010];
+unordered_map<int, int> mp;
+
+int main()
+{
+    int t;
+    int o;
+    int x;
+    int cnt;
+    int last;
+    __T {
+        scanf("%d%d",&n,&k);
+
+        last = -1;
+        x = 1;
+        
+        mp.clear();
+        
+        REP(i,0,n) {
+            scanf("%d",a + i);
+            mp[a[i]] ++;
+            if (mp[a[i]] != 1) {
+                if (last == -1) last = i - 1;
+            }
+            if (last == -1) vis[i] = 1;
+            else vis[i] = 0;
+            
+            if (a[i] > k) x = 0;
+        }
+        
+        mp.clear();
+        
+        if (!x) {
+            puts("NO");
+            continue;
+        }
+        
+        
+
+        cnt = 0;
+        o = 1;
+        
+//        printf(">>%d\n",last);
+
+        REP(i,0,n) {
+
+            if (i >= k) {
+                t = a[i - k];
+
+                mp[t] --;
+                if (mp[t] == 0) cnt --;
+            }
+
+
+            mp[a[i]] ++;
+            if (mp[a[i]] == 1) cnt ++;
+
+
+
+            if (cnt == k) {
+//                printf("%d\n",i); // test
+                vis[i] = 1;
+
+//                if (last == -1) {
+//                    rep(j,0,i - k) vis[j] = 1;
+//                }
+                if (i - k >= 0 && !vis[i - k]) {
+                    vis[i] = 0;
+                } else {
+                    last = i;
+                }
+                
+//                printf("<<%d\n",last);
+            }
+        }
+
+        mp.clear();
+        
+        REP(i,last + 1,n) {
+            mp[a[i]] ++;
+            if (mp[a[i]] != 1) {
+                o = 0;
+                break;
+            }
+        }
+        
+//        rep(i,0,n-1) printf("%d ",mp[i]);
+//        printf("\n");
+
+
+        puts(o ? "YES" : "NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,p;
+    ll t,ans;
+    int a[100010];
+    int dp[100010];
+    set<ll> x;
+    __T {
+        mem(dp,0);
+        scanf("%d%d",&n,&p);
+        rep(i,1,n) {
+            scanf("%d",a + i);
+            a[i] %= p;
+        }
+        ans = t = 0;
+        x.clear();
+        rep(i,1,n) {
+            t += a[i];
+            t %= p;
+            
+            if (dp[t] || t == 0) {
+                ans ++;
+                for (auto j : x) dp[j] = 0;
+                x.clear();
+                t = 0;
+            } else {
+                x.insert(t);
+                dp[t] ++;
+            }
+            
+            
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5+10;
+
+int main()
+{
+    string str;
+    int vis[MAXN];
+    int ok = 1;
+    __T {
+        cin >> str;
+        queue<int> star;
+        stack<int> left;
+        ok = 1;
+        memset(vis, 0, sizeof(int) * (str.size() + 5));
+        for (int i = 0;str[i];i ++) {
+            if (str[i] == '(') left.push(i);
+            else if (str[i] == '*') star.push(i);
+            else if (str[i] == ')') {
+                if (!left.empty()) {
+                    vis[left.top()] = 1;
+                    left.pop();
+                } else if (!star.empty()) {
+                    vis[star.front()] = 1;
+                    str[star.front()] = '(';
+                    star.pop();
+                } else ok = 0;
+            }
+        }
+        
+        if (!ok) {
+            puts("No solution!");
+            continue;
+        }
+        
+        while (!star.empty()) star.pop();
+        
+        pre(i,(int) str.size() - 1,0) {
+            if (str[i] == '*' && !vis[i]) star.push(i);
+        }
+        
+        pre(i,(int) str.size() - 1,0) {
+            if (str[i] == '(' && !vis[i]) {
+                
+                if (!star.empty()) {
+                    if (star.front() < i) {
+                        ok = 0;
+                        break;
+                    }
+                    str[star.front()] = ')';
+                    vis[i] = 1;
+                    star.pop();
+                } else {
+                    ok = 0;
+                    break;
+                }
+            }
+        }
+        
+        if (ok) {
+            for (int i = 0;str[i];i ++) {
+                if (str[i] != '*') printf("%c",str[i]);
+            }
+            puts("");
+        } else {
+            puts("No solution!");
+            continue;
+        }
+        
+        
+    }
+    return 0;
+}
+*/
+
+//const int MAXN = 1e5 + 10;
+//
+//int g[MAXN];
+//int d[MAXN];
+//
+//int find(int a)
+//{
+//    if (g[a] == a) return a;
+//    return g[a] = find(g[a]);
+//}
+//
+//inline void bind(int a,int b)
+//{
+//    int x = find(a), y = find(b);
+//    if (d[x] >= d[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+//        g[y] = x; // 改变b节点的根的根为a的根
+//        if (d[x] == d[y]) { // 俩根深度一样
+//            if (x != y) d[x] ++; // 作为a的根，自然子树的深度++
+//        }
+//    } else g[x] = y;
+//}
+//
+//void init(int n)
+//{
+//    rep(i,0,n) {
+//        g[i] = i;
+//        d[i] = 1;
+//    }
+//}
+//
+//
+//
+//int main()
+//{
+//    int n;
+//    int a1[MAXN];
+//    int a2[MAXN];
+//    int u,v;
+//    int t;
+//    __T {
+//        scanf("%d",&n);
+//        init(n);
+//        rep(i,1,n) {
+//            scanf("%d",&t);
+//            if (t == 1) a1[i] ++;
+//            else if (t == 2) a2[i] ++;
+//        }
+//
+//        set<int> k;
+//
+//        rep(i,1,n-1) {
+//            scanf("%d%d",&u,&v);
+//
+//            u = find(u);
+//            v = find(v);
+//
+//            bind(u,v);
+//            t = find(u);
+//            if (u != v) {
+//                printf("   %d 1:%d 2:%d\n",u,a1[u],a2[u]);
+//                printf("   %d 1:%d 2:%d\n",v,a1[v],a2[v]);
+//                a1[t] = a1[u] + a1[v];
+//                a2[t] = a2[u] + a2[v];
+//                printf("==>%d 1:%d 2:%d\n\n",t,a1[t],a2[t]);
+//                if (u != t) a1[u] = a2[u] = 0;
+//                if (v != t) a1[v] = a2[v] = 0;
+//
+//
+//
+//                int cnt1 = 0;
+//                int cnt2 = 0;
+//                vector<pair<int,int>>
+//                rep(i,1,n) {
+//                    if ((a1[i] == 1 && a2[i] == 0) || (a1[i] == 0 && a2[i] == 1)) {
+//                        cnt1 += a1[i];
+//                        cnt2 += a2[i];
+//                    } else {
+//
+//                    }
+//                }
+//
+//            }
+//
+//
+//
+//        }
+//
+//    }
+//    return 0;
+//}
+//
+//
+//
+
+
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    double sum = 0;
+    int t;
+    double j = 0;
+    rep(i,0,n-1) {
+        scanf("%d",&t);
+        sum += t;
+        if (n & 1) {
+            if (i == n / 2) {
+                j = t;
+            }
+        } else {
+            if (i == n / 2 - 1) {
+                j = t;
+            } else if (i == n / 2) {
+                j += t;
+                j /= 2;
+            }
+        }
+        
+    }
+    printf("%.0f\n",fabs(sum / n - j));
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+set<int> g1[MAXN];
+set<int> g2[MAXN];
+
+int main()
+{
+    int n;
+    scanf("%d",&n);int u,v;
+    rep(i,1,n-1) {
+        scanf("%d%d",&u,&v);
+        g1[u].insert(v);
+        g1[v].insert(u);
+    }
+    rep(i,1,n-1) {
+        scanf("%d%d",&u,&v);
+        g2[u].insert(v);
+        g2[v].insert(u);
+    }
+    
+    set<int>::iterator it;
+    
+    rep(i,1,n) {
+        for (auto j = g1[i].begin();j != g1[i].end();) {
+            if ((it = g2[i].find(*j)) != g2[i].end()) {
+                g2[i].erase(it);
+                g1[i].erase(j ++);
+            } else j ++;
+        }
+    }
+    
+    ll cnt = 0;
+    
+    rep(i,1,n) {
+        cnt += g1[i].size();
+    }
+    
+    printf("%lld\n",cnt / 2);
+    
+    return 0;
+}
+*/
+
+
+/*
+int n,m;
+
+int a[60][60];
+int dis[60][60];
+int vis[60][60];
+int dx[] = {0,1,-1,0};
+int dy[] = {1,0,0,-1};
+
+
+
+struct ST {
+    int x,y;
+    int w;
+    
+    bool operator< (const ST &other) const {
+        return w > other.w;
+    }
+};
+
+void dij(int x,int y) {
+    mem(dis,-1);
+    
+    priority_queue<ST> q;
+    q.push({x,y,dis[x][y] = 0});
+    
+    ST current;
+    int k;
+    int xx,yy;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (vis[current.x][current.y]) continue;
+        vis[current.x][current.y] = 1;
+        
+//        printf(">>%d %d %d\n",current.x,current.y,dis[current.x][current.y]);
+        
+        rep(i, 0, 3) {
+            xx = current.x + dx[i];
+            yy = current.y + dy[i];
+            if (xx >= 1 && yy >= 1 && xx <= n && yy <= m) {
+                
+                k = dis[current.x][current.y] + a[xx][yy];
+//                printf("%d\n",dis[xx][yy]);
+                if (dis[xx][yy] == -1 || dis[xx][yy] > k) {
+//                    printf("..%d %d\n",xx,yy);
+                    q.push({xx,yy,dis[xx][yy] = k});
+                }
+            }
+        }
+    }
+}
+
+
+int main()
+{
+    scanf("%d%d",&n,&m);
+    char t;
+    int x = 1,y = 1;
+    int xx = 1,yy = 2;
+    rep(i,1,n) {
+        rep(j,1,m) {
+            scanf(" %c",&t);
+            if (t == 'S') {
+                a[i][j] = 0;
+                y = j;
+                x = i;
+            } else if (t == 'E') {
+                a[i][j] = 0;
+                xx = i;
+                yy = j;
+            } else if (t >= '0' && t <= '9') {
+                a[i][j] = t ^ 48;
+            } else {
+                a[i][j] = 100;
+            }
+        }
+    }
+    
+//    rep(i,1,n) {
+//    rep(j,1,m) {
+//        printf("%d ",a[i][j]);
+//    }
+//        puts("");
+//    }
+    
+    mem(vis,0);
+    dij(x,y);
+    printf("%d\n",dis[xx][yy]);
+    
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 55;
+
+struct ST {
+    int n;
+    int w;
+    
+    bool operator< (const ST &other) const {
+        return w > other.w;
+    }
+};
+
+int dis[MAXN];
+int vis[MAXN];
+
+int mp[MAXN][MAXN];
+
+int n,k;
+int ans = -1;
+
+vector<int> g[MAXN];
+
+vector<int> dij(int s) {
+    mem(dis,-1);
+    mem(vis,0);
+    
+    vector<int> path(MAXN);
+    
+    priority_queue<ST> q;
+    q.push({s,dis[s] = 0});
+    
+    ST current;
+    int k;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (vis[current.n]) continue;
+        vis[current.n] = 1;
+        
+        for (auto to : g[current.n]) {
+            if (mp[current.n][to] == -1) continue;
+            k = dis[current.n] + mp[current.n][to];
+            if (dis[to] == -1 || dis[to] > k) {
+                path[to] = current.n;
+                q.push({to,dis[to] = k});
+            }
+        }
+    }
+    return path;
+}
+
+void dfs(int x)
+{
+    vector<int> from = dij(1);
+    if (x == k) {
+        ans = max(ans,dis[n]);
+        return;
+    }
+    int i = n;
+    int t;
+    do {
+        t = mp[i][from[i]];
+        
+        mp[i][from[i]] = -1;
+        mp[from[i]][i] = -1;
+        
+        dfs(x + 1);
+        
+        mp[i][from[i]] = t;
+        mp[from[i]][i] = t;
+        
+        i = from[i];
+    } while (i != 1);
+}
+
+
+int main()
+{
+    int u,v,w;
+    __T {
+        scanf("%d%d",&n,&k);
+        rep(i,1,n) g[i].clear();
+        rep(i,1,n * (n - 1) / 2) {
+            scanf("%d%d%d",&u,&v,&w);
+            g[u].pb(v);
+            g[v].pb(u);
+            mp[u][v] = w;
+            mp[v][u] = w;
+        }
+        ans = -1;
+        dfs(0);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    while (~scanf("%d",&n))
+    {
+    n ++;
+    pre(i,n,2) {
+        rep(j,1,i) {
+            if (j != 1) printf(" ");
+            printf("*");
+        }
+        rep(j,1,n-i+1) printf(" ");
+        puts("");
+    }
+    rep(i,1,n) {
+        rep(j,1,i) {
+            if (j != 1) printf(" ");
+            printf("*");
+        }
+        rep(j,1,n-i+1) printf(" ");
+        puts("");
+    }
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    while (~scanf("%d",&n))
+    pre(i,n,1) {
+        rep(j,1,i-1) {
+            printf(" ");
+        }
+        printf("*");
+        rep(j,1,n-i) {
+            printf(" ");
+        }
+        puts("");
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    _E_(scanf("%d",&n))
+    if (1 & n) {
+        REP(i,0,n/2) {
+            REP(j,0,i) printf(" ");
+            printf("*");
+//            cout << n - 2 - i * 2 << endl;
+            rep(j,1,n-2-i*2) printf(" ");
+            printf("*");
+            REP(j,0,i) printf(" ");
+            puts("");
+        }
+        
+        rep(i,1,n/2) printf(" ");
+        printf("*");
+        rep(i,1,n/2) printf(" ");
+        puts("");
+        
+        pre(i,n/2-1,0) {
+            REP(j,0,i) printf(" ");
+            printf("*");
+            rep(j,1,n-2-i*2) printf(" ");
+            printf("*");
+            REP(j,0,i) printf(" ");
+            puts("");
+        }
+    } else {
+                REP(i,0,n/2) {
+                    REP(j,0,i) printf(" ");
+                    printf("*");
+        //            cout << n - 2 - i * 2 << endl;
+                    rep(j,1,n-2-i*2) printf(" ");
+                    printf("*");
+                    REP(j,0,i) printf(" ");
+                    puts("");
+                }
+                
+                
+                
+                pre(i,n/2-1,0) {
+                    REP(j,0,i) printf(" ");
+                    printf("*");
+                    rep(j,1,n-2-i*2) printf(" ");
+                    printf("*");
+                    REP(j,0,i) printf(" ");
+                    puts("");
+                }
+    }
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    while (getline(cin, str))
+    {
+        int cntA = 0;
+        int cntB = 0;
+        for (int i = 0;str[i];i ++) {
+            if (str[i] == 'A') cntA ++;
+            else if (str[i] == 'B') cntB ++;
+        }
+        if (cntA > cntB) puts("A");
+        else if (cntA < cntB) puts("B");
+        else if (cntA == cntB) puts("E");
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    double w,h;
+    while (cin >> w >> h)
+    {
+        double bmi = w / (h * h) * 10000;
+        if (bmi < 18.5) cout << "Underweight" << endl;
+        else if (bmi <= 23.9) cout << "Normal" << endl;
+        else if (bmi <= 27.9) cout << "Overweight" << endl;
+        else cout << "Obese" << endl;
+    }
+    
+}
+
+*/
+
+/*
+int main()
+{
+    string str;
+    while (cin >> str) {
+        for (int i = 0;str[i];i ++) {
+            if (str[i] >= 'A' && str[i] <= 'Z') {
+                str[i] -= 'A';
+                str[i] += 'a';
+            } else if (str[i] >= 'a' && str[i] <= 'z') {
+                str[i] -= 'a';
+                str[i] += 'A';
+            }
+        }
+        cout << str << endl;
+    }
+    
+}
+*/
+
+/*
+int main()
+{
+    double a,b,d,t;
+    __T {
+        scanf("%lf%lf%lf%lf",&a,&b,&d,&t);
+        d -= 0.0000000001;
+        printf("%.20f\n",d);
+    }
+    return 0;
+}
+*/
+
+
+
+/*
+int main() {
+    __T {
+        int n;
+        scanf("%d", &n);
+        vector<int> ans;
+        for(int i = 0; i < n; i ++){
+            int a,b;
+            scanf("%d %d", &a, &b);
+            ans.push_back((ceil(100.0/a)-1)*b);
+        }
+        sort(ans.begin(),ans.end());
+        int sum = 1;
+        for(int i = 1; i < ans.size(); i ++){
+            if(ans[i] == ans[0]) sum ++;
+            else break;
+        }
+        double k = 1.0 - (sum*1.0/(2*n));
+        printf("%.8f\n", k);
+    }
+
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+struct ST {
+    int n;
+    ll w;
+    int mod;
+
+    bool operator< (const ST &other) const {
+        return w > other.w;
+    }
+};
+
+char dir[MAXN];
+ll dis[MAXN][3];
+int vis[MAXN][3];
+int x;
+vector<ST> g[MAXN];
+
+// 0 - l
+// 1 - r
+// 2 - m
+
+ll dij(int s,int d,int t) {
+    rep(i,1,MAXN) dis[i][0] = dis[i][1] = dis[i][2] = -1;
+    mem(vis,0);
+    
+    
+    priority_queue<ST> q;
+    
+    q.push({s,dis[s][d] = 0,d});
+    
+    int step;
+    
+    ST current;
+    double k,cost;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        
+        if (vis[current.n][current.mod]) continue;
+        vis[current.n][current.mod] = 1;
+        
+        for (auto to : g[current.n]) {
+            if (to.mod == 2) {
+                cost = to.w;
+                step = 0;
+                if (current.mod != step) cost += x;
+                k = dis[current.n][current.mod] + cost;
+                if (dis[to.n][step] == -1 || dis[to.n][step] > k) {
+                    q.push({to.n,dis[to.n][step] = k,step});
+                }
+                
+                cost = to.w;
+                step = 1;
+                if (current.mod != step) cost += x;
+                k = dis[current.n][current.mod] + cost;
+                if (dis[to.n][step] == -1 || dis[to.n][step] > k) {
+                    q.push({to.n,dis[to.n][step] = k,step});
+                }
+                
+            } else {
+                cost = to.w;
+                step = to.mod;
+                if (current.mod != step) cost += x;
+                k = dis[current.n][current.mod] + cost;
+                if (dis[to.n][step] == -1 || dis[to.n][step] > k) {
+                    q.push({to.n,dis[to.n][step] = k,step});
+                }
+            }
+            
+            
+        }
+    }
+    
+    ll ans;
+    if (dir[t] == 2) {
+        ans = min(dis[t][0],dis[t][1]);
+    } else {
+        ans = dis[t][dir[t]];
+    }
+    
+    return ans;
+}
+
+
+int main()
+{
+    int n,m;
+    int u,v;
+    ll d;
+    int s,t;
+    __T {
+        scanf("%d%d%d%d%d",&n,&m,&s,&t,&x);
+        scanf("%s",dir+1);
+        rep(i,1,n) {
+            if (dir[i] == 'L') dir[i] = 0;
+            else if (dir[i] == 'R') dir[i] = 1;
+            else if (dir[i] == 'M') dir[i] = 2;
+        }
+        
+        rep(i,1,n) g[i].clear();
+        
+        while (m --) {
+            scanf("%d%d%lld",&u,&v,&d);
+            g[u].pb({v,d,dir[v]});
+            g[v].pb({u,d,dir[u]});
+        }
+        ll ans;
+        if (dir[s] != 2) {
+            ans = dij(s,dir[s],t);
+        } else {
+            ans = min(dij(s,1,t),dij(s,0,t));
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+struct Point {
+    int x;
+    int y;
+};
+
+class Solution {
+public:
+    const static int MAXN = 1e5 + 10;
+    
+    vector<int> g[MAXN];
+    int w[MAXN];
+    int vis[MAXN];
+    
+    int ans = 0;
+    
+    void dfs(int n,int d)
+    {
+        
+        if (vis[n] || d < 0) return;
+        vis[n] = 1;
+        int cnt = 0;
+        for (auto i : g[n]) {
+            if (!vis[i]) cnt ++;
+            dfs(i,d - w[i]);
+            
+        }
+        if (cnt == 0) {
+            if (d >= 0) ans ++;
+        }
+    }
+
+    int solve(int n, vector<Point>& Edge, vector<int>& f) {
+        // write code here
+        int x = 1;
+        for (auto i : f) w[x ++] = i;
+        for (auto i : Edge) {
+            g[i.x].pb(i.y);
+            g[i.y].pb(i.x);
+        }
+        mem(vis,0);
+        dfs(1,2 - w[1]);
+        
+        return ans;
+    }
+};
+
+
+int main()
+{
+    Solution s;
+    itn n;
+    scanf("%d",&n);
+    int t;
+    vector<int> x;
+    rep(i,1,n) {
+        scanf("%d",&t);
+        x.pb(t);
+    }
+    int u,v;
+    vector<Point> k;
+    rep(i,1,n-1) {
+        scanf("%d%d",&u,&v);
+        k.pb({u,v});
+    }
+    cout << s.solve(n, k, x) << ednl;
+    
+    return 0;
+}
+*/
+
+/// 矩阵模版 快速幂
+/*
+const int mod = 1e9 + 7;
+
+class Matrix
+{
+    const static int MAXN = 10;
+    ll a[MAXN][MAXN];
+    
+public:
+    int w;
+    int h;
+    
+    Matrix(int h,int w):w(w),h(h)
+    {
+        mem(a,0);
+    }
+    
+    Matrix(const char format[], ...) {
+        
+        va_list args;
+        w = 0;
+        h = 0;
+        
+        char buf[1000];
+        
+        va_start(args, format);
+        vsprintf(buf, format, args);
+        va_end(args);
+        
+        stringstream ss(buf);
+        stringstream num;
+        ll n;
+        string line;
+        while (getline(ss, line)) {
+            num.clear();
+            num << line;
+            w = 0;
+            while (num >> n) {
+                a[h + 1][++ w] = n;
+            }
+            h ++;
+        }
+    }
+    
+    void E()
+    {
+        if (w == h) {
+            mem(a,0);
+            rep(i,1,w) a[i][i] = 1;
+        }
+    }
+    
+    void print()
+    {
+        int f = 1;
+        rep(i,1,h) {
+            f = 1;
+            rep(j,1,w) {
+                if (f) f = 0;
+                else printf(" ");
+                printf("%lld",a[i][j]);
+            }
+            puts("");
+        }
+    }
+    
+    void read_in()
+    {
+        rep(i,1,h) {
+            rep(j,1,w) {
+                scanf("%lld",&a[i][j]);
+            }
+        }
+    }
+    
+    Matrix operator* (const Matrix &B) const
+    {
+        if (w != B.h) return Matrix(0,0); // invalid
+        
+        Matrix ans(h,B.w);
+        rep(i,1,h) {
+            rep(j,1,B.w) {
+                rep(k,1,w) {
+//                    ans[i][j] = (ans[i][j] + a[i][k] * B[k][j]);
+                    ans[i][j] = (ans[i][j] + a[i][k] * B[k][j] % mod) % mod; // Moduled
+                }
+            }
+        }
+        return ans;
+    }
+    
+    const ll* operator[] (int i) const {
+        return a[i];
+    }
+    
+    ll* operator[] (int i) {
+        return a[i];
+    }
+};
+
+Matrix quickpow(Matrix a, ll b)
+{
+    if (a.h != a.w) return Matrix(0,0); // invalid
+    
+    Matrix ans(a.h,a.w);
+    rep(i,1,ans.h) ans[i][i] = 1; // Set ans matrix to E
+    while (b)
+    {
+        if (b & 1) ans = a * ans;
+        a = a * a;
+        b >>= 1;
+    }
+    return ans;
+}
+*/
+
+
+
+
+/*class Solution {
+public:
+    long long nthElement(long long n, long long b, long long c) {
+        // write code here
+        return (quickpow(Matrix("%lld %lld\n1 0",b,c),n - 1) * Matrix("%lld\n%lld",1,0))[1][1];
+    }
+};
+
+
+int main()
+{
+
+    ll n,b,c;
+    scanf("%lld%lld%lld",&n,&b,&c);
+    Solution s;
+    printf("%lld\n",s.nthElement(n, b, c));
+    return 0;
+}
+*/
+
+/*
+int main() {
+    ll n;
+    __T {
+        scanf("%lld",&n);
+        if (n == 1 || n == 24) puts("Fake news!");
+        else {
+            puts("Nobody knows it better than me!");
+        }
+    }
+    return 0;
+}
+*/
+
+//const int mod = 1e9 + 7;
+//
+//int main()
+//{
+//    ll n,k;
+//    scanf("%lld%lld",&n,&k);
+//    ll sum = 0;
+//    ll a,b;
+//    if (n < k) {
+//        a = n;
+//        b = n + 1;
+//        if (a % 2 == 0) a /= 2;
+//        if (b % 2 == 0) b /= 2;
+//        a %= mod;
+//        b %= mod;
+//        sum += a * b;
+//        sum %= mod;
+//
+//        sum += k - 1;
+//        sum %= mod;
+//        printf("%lld\n",sum);
+//    } else {
+//        a = k;
+//        b = k + 1;
+//        if (a % 2 == 0) a /= 2;
+//        if (b % 2 == 0) b /= 2;
+//        a %= mod;
+//        b %= mod;
+//        sum += a * b;
+//        sum %= mod;
+//
+//        sum += k - 1;
+//        sum %= mod;
+//        sum += (k % mod) * ((n - k) % mod);
+//        sum %= mod;
+//        printf("%lld\n",sum);
+//    }
+//    return 0;
+//}
+
+/*
+vector<int> ans;
+
+void gcd(int a,int b) {
+    if (b == 0) return;
+    rep(i,1,a / b * b) ans.pb(b);
+    gcd(b,a % b);
+}
+
+
+int main()
+{
+    int n,m;
+    int f = 1;
+    __T {
+        scanf("%d%d",&n,&m);
+        ans.clear();
+        gcd(n,m);
+        f = 1;
+        printf("%lu\n",ans.size());
+        for (auto i : ans) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",i);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    ll d;
+    scanf("%d%lld",&n,&d);
+    ll a,b;
+    d *= d;
+    int x = 0;
+    
+    while (n --) {
+        scanf("%lld%lld",&a,&b);
+        if (a * a + b * b <= d) x ++;
+    }
+    printf("%d\n",x);
+    return 0;
+}
+*/
+
+
+//int main(){
+//
+//    ll a;
+//    scanf("%lld",&a);
+//    if (a >= 30) puts("Yes");
+//    else puts("No");
+//
+//    return 0;
+//}
+
+/*
+int main() {
+    int k;
+    scanf("%d", &k);
+    ll n = 7;
+    int ans = 1;
+    if(k % 2 ==0 || k % 5 == 0){
+        puts("-1");
+        return 0;
+    }
+    while (1) {
+        if(n % k == 0) {
+            printf("%d\n", ans);
+            return 0;
+        }
+        ans ++;
+        n *= 10;
+        n += 7;
+        n %= k;
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    string s;
+    cin >> s;
+    int cnt = 0;
+    int ans = 0;
+    REP (i,0,n) if (s[i] == 'R') cnt ++;
+    REP (i,0,cnt) if (s[i] =='W') ans ++;
+    printf("%d\n",ans);
+    return 0;
+}
+*/
+
+
+/*
+const int MAXN = 2e5 + 10;
+int n,k;
+int a[MAXN];
+
+inline bool check(int m)
+{
+    int ans = 0;
+    rep(i,1,n) {
+        if (a[i] != m) ans += a[i] / m;
+        if (ans > k) return 0;
+    }
+    return ans <= k;
+}
+
+int main()
+{
+    scanf("%d%d",&n,&k);
+    int l = 1;
+    int r = -1;
+    rep(i,1,n) {
+        scanf("%d",a + i);
+        if (i == 1) {
+            r = a[i];
+        } else {
+            
+            r = max(r,a[i]);
+        }
+    }
+    
+//    rep(i,1,r) {
+//        printf("%d: %d\n",i,check(i));
+//    }
+    
+//    if (k == 0) {
+//        printf("%d\n",r);
+//        return 0;
+//    }
+    int m;
+    int ans = 1;
+
+    while (l < r) {
+
+        m = (l + r) / 2;
+        if (check(m)) {
+            r = m;
+            ans = m;
+        } else l = m + 1;
+    }
+    printf("%d\n",r);
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 5e5 + 10;
+
+int a[MAXN];
+int rt[MAXN];
+int lc[MAXN * 40],rc[MAXN * 40],cnt;
+ll sum[MAXN * 40];
+
+map<int,int> vis;
+
+void update(int &u, int x, int y, int p, ll v)
+{
+    sum[cnt] = sum[u] + v;
+    lc[cnt] = lc[u];
+    rc[cnt] = rc[u];
+    u = cnt;
+    cnt ++;
+    
+    if(x == y) return;
+    int m = (x + y) >> 1;
+    if(p <= m) update(lc[u],x,m,p,v);
+    else update(rc[u],m + 1,y,p,v);
+}
+
+ll query(int u, int x, int y, int ql, int qr)
+{
+    if(ql <= x && y <= qr) return sum[u];
+    int m = (x+y) >> 1;
+    ll ans = 0;
+    if(ql <= m) ans += query(lc[u],x,m,ql,qr);
+    if(qr > m) ans += query(rc[u],m + 1,y,ql,qr);
+    return ans;
+}
+
+int n,q;
+int t;
+
+void init()
+{
+    rep(i,1,n) {
+        rt[i] = rt[i - 1];
+        if(vis.find(a[i])!=vis.end())
+        {
+            t = rt[i - 1];
+            update(t,1,n,vis[a[i]],-1);
+            rt[i] = t;
+            update(rt[i],1,n,i,1);
+        } else {
+            rt[i] = rt[i-1];
+            update(rt[i],1,n,i,1);
+        }
+        vis[a[i]] = i;
+    }
+}
+
+void sve()
+{
+    int l,r;
+    while (q --){
+        scanf("%d%d",&l,&r);
+        printf("%lld\n",query(rt[r],1,n,l,r));
+    }
+}
+
+int main(){
+    
+    cnt = 1;
+    scanf("%d%d",&n,&q);
+    rep(i,1,n) scanf("%d",a + i);
+    init();
+    sve();
+    return 0;
+    
+}
+*/
+
+/*
+int main()
+{
+    int s;
+    scanf("%d",&s);
+    printf("%.3f\n",2*sqrt(s/pi));
+    return 0;
+}
+*/
+
+/*
+const int mod = 1000000007;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    ll n,m,k,a,b;
+    scanf("%lld%lld%lld%lld%lld",&n,&m,&k,&a,&b);
+    ll pa = quickpow(n + m + 1, k);
+    ll pb = quickpow(n + m, k);
+    
+    ll aa = ((b * n % mod - a * n % mod - a * m % mod) * pb % mod + ((a * (n + m) % mod) % mod * pa) % mod) % mod;
+    ll bb = b * pa % mod;
+    printf("%lld\n",(aa * quickpow(bb, mod - 2) % mod + mod) % mod);
+    return 0;
+}
+*/
+
+
+//int main()
+//{
+//    map<char,set<char>> ch[30];
+//
+//    string line;
+//    __T {
+//        getline(cin,line);
+//        if (line[1] == '.') {
+//
+//        } else {
+//
+//        }
+//    }
+//    return 0;
+//}
+//
+//const int MAXN = 1e5 + 5;
+//
+//int main()
+//{
+//
+//    ll f[100010];
+//    rep(i,1,5) {
+//        f[i] = 0;
+//    }
+//    f[6] = 1;
+//    f[7] = 1;
+//    rep(i,8,MAXN) {
+//        switch (i % 3) {
+//            case 0:
+//                f[i] = f[i - 1] + i / 3 - 1;
+//                break;
+//            case 1:
+//                f[i] = f[i - 1];
+//                break;
+//            case 2:
+//                f[i] = f[i - 1] + i / 3 - 1;
+//                break;
+//        }
+//    }
+//
+//
+//    cout << f[99999] << endl;
+//    cout << f[100000] << endl;
+//
+//    rep(i,2,MAXN) {
+//        f[i] += f[i - 1];
+//    }
+//
+//    cout << f[100000];
+//
+////    int c =1;
+////    int l,r;
+////    __T {
+////        scanf("%d%d",&l,&r);
+////        printf("Case #%d: %lld\n",c ++,f[r] - f[l - 1]);
+////    }
+//
+//
+//
+//
+//
+//    return 0;
+//}
+
+
+//int main()
+//{
+//    int last = 0;
+//    rep(n,1,100)
+//    {
+////        int cnt = 0;
+////        for(int i = 1; i < n; i++) {
+////            int c1, c2, c3;
+////            c1 = c2 = c3 = 0;
+////            if(i*3+3>n) break;
+////            int x1, x2, x3;
+////            x1 = i ;
+////            x2 = x1+1;
+////            x3 = x2+1;
+////            for(int j = 1; j <= n/i; j++) {
+////                for(int k = 1; k <= n; k++) {
+////                    for(int l = 1; l <= n; l++) {
+////                        if(j*x1+k*x2+l*x3==n) {
+////                            cnt++;
+//////                            cout << j << "*" << x1 << " " << k << "*" << x2 << " " << l << "*" << x3 << endl;
+////                        }
+////                    }
+////                }
+////            }
+////        }
+////        cout << n << ": " << cnt << " %3 " << n % 3 << endl;
+//        int cnt;
+//
+//        int ans = 0;
+////        printf(">> %d: \n",n);
+//        rep(i,3,n / 3 + 1) {
+//            cnt = 0;
+//            rep(j1,1,n) {
+//                rep(j2,1,n) {
+//                    rep(j3,1,n) {
+//                        if (j1 * (i - 2) + j2 * (i - 1) + j3 * i == n) {
+//                            if (i == 5) printf("%d * %d  %d * %d  %d * %d\n",i - 2,j1,i-1,j2,i,j3);
+//                            cnt ++;
+//                        }
+//                    }
+//                }
+//            }
+//            ans += cnt;
+//            if (i == 5) {
+////                if (n % 3 == 2) printf(">>");
+////                else printf("  ");
+//                printf("%d: %d\n",n,cnt);
+//                puts("");
+//            }
+//
+//        }
+////        if (n % 3 == 0) printf(">>");
+////        else printf("  ");
+////        cout << n << " " << ans << " " << ans - last << endl;
+////        last = ans;
+//    }
+//
+//    return 0;
+//}
+
+/*
+inline void read_lll(lll *X)
+{
+    *X = 0;
+    int w=0; char ch=0;
+    while(!isdigit(ch)) {w|=ch=='-';ch=getchar();}
+    while(isdigit(ch)) {
+        *X=((*X)<<3)+((*X)<<1)+(ch^48);
+        ch=getchar();
+    }
+    if (w) *X = -*X;
+}
+
+void print_lll(lll x)
+{
+    if (!x) return ;
+    if (x < 0) {
+        putchar('-');
+        x = -x;
+    }
+    print_lll(x / 10);
+    putchar(x % 10 + '0');
+}
+
+const int N = 1e5 + 5;
+int n;
+lll a[N], b[N];
+int main()
+{
+    int T;
+    scanf("%d", &T);
+    for (int Case = 1; Case <= T; Case++) {
+        scanf("%d", &n);
+        for (int i = 1; i <= n; i++) {
+            read_lll(a + i);
+//            scanf("%d", a + i);
+            a[i] += a[i - 1];
+        }
+        for (int i = 1; i <= n; i++)
+            read_lll(b + i);
+        lll people = b[1];
+        lll  money =  a[1] * people;
+        for (int l = 1, r = 2; r <= n; r++) {
+            people = min(people, b[r]);
+            if (a[r] - a[l] > 0) {
+                money += (a[r] - a[l]) * people;
+                l = r;
+            }
+        }
+        printf("Case #%d: ",Case);
+        // %d %lld\n", b[1], money);
+        print_lll(b[1]);
+        printf(" ");
+        print_lll(money);
+        puts("");
+    }
+
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 5e5;
+
+int g[MAXN];
+int d[MAXN];
+int cnt[MAXN];
+int cnt_e[MAXN];
+int num[MAXN * 2];
+int cnt_n;
+
+pair<int,int> pr[MAXN];
+unordered_map<int, int> mp;
+
+int find(int a)
+{
+    if (g[a] == a) return a;
+    return g[a] = find(g[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (d[x] >= d[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        g[y] = x; // 改变b节点的根的根为a的根
+        if (d[x] == d[y]) { // 俩根深度一样
+            if (x != y) d[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else g[x] = y;
+}
+
+void init(int n)
+{
+    rep(i,1,n) {
+        g[i] = i;
+        d[i] = 1;
+        cnt[i] = 1;
+        cnt_e[i] = 0;
+    }
+}
+
+
+int main()
+{
+    int n;
+    int u,v;
+    int nu,nv,eu,ev;
+    int k;
+    ll ans = 0;
+    int CASE = 1;
+    __T {
+        scanf("%d",&n);
+        ans = 0;
+        cnt_n = 0;
+        mp.clear();
+        rep(i,1,n) {
+            scanf("%d%d",&u,&v);
+            pr[i] = make_pair(u, v);
+            num[++ cnt_n] = u;
+            num[++ cnt_n] = v;
+        }
+        
+        sort(num + 1,num + cnt_n + 1);
+        
+        cnt_n = (int) (unique(num + 1, num + cnt_n + 1) - (num + 1));
+        
+        
+        init(cnt_n + 5);
+        
+        rep(i,1,cnt_n) {
+            mp[num[i]] = i;
+        }
+        
+        rep(i,1,n) {
+            u = mp[pr[i].first];
+            v = mp[pr[i].second];
+            u = find(u);
+            v = find(v);
+            
+            nu = cnt[u];
+            nv = cnt[v];
+            
+            eu = cnt_e[u];
+            ev = cnt_e[v];
+            
+            
+            bind(u,v);
+            k = find(u);
+            
+            
+            cnt[u] = cnt[v] = 0;
+            if (u != v) cnt[k] = nu + nv;
+            else cnt[k] = nu;
+            
+            cnt_e[u] = cnt_e[v] = 0;
+            if (u != v) cnt_e[k] = eu + ev;
+            else cnt_e[k] = eu;
+            cnt_e[k] ++;
+            
+//            cout << ">>" << k << endl;
+        }
+        
+        rep(i,1,cnt_n) {
+            printf("%d %d\n",cnt[i],cnt_e[i]);
+            ans += min(cnt[i],cnt_e[i]);
+        }
+        printf("Case #%d: %lld\n",CASE ++,ans);
+    }
+    return 0;
+}
+*/
+
+/*
+inline bool chk(string &a,string &b,string &c) {
+    if (a != b && b != c && a != c) return 1;
+    if (a == "*" || b == "*" || c == "*") return 1;
+    if (a == b && b == c && a == c) return 1;
+    return 0;
+}
+
+string x[500][10];
+
+int main()
+{
+    
+    string line;
+    string d;
+    int n;
+    int k = 0;
+    int CASE = 1;
+    int ok = 0;
+    __T {
+        scanf("%d",&n);
+        ok = 0;
+        rep(ii,1,n) {
+            cin >> line;
+            d = "";
+            k = 0;
+            for (int i = 0;line[i];i ++) {
+                if (line[i] == ']') {
+                    x[ii][k ++] = d;
+                    d = "";
+                } else if (line[i] != '[') {
+                    d += line[i];
+                }
+            }
+        }
+        rep(i,1,n) {
+            rep(j,i + 1,n) {
+                if (i == j) continue;
+                rep(k,j + 1,n) {
+                    if (j == k || i == k) continue;
+                    if (chk(x[i][0],x[j][0],x[k][0]) &&
+                        chk(x[i][1],x[j][1],x[k][1]) &&
+                        chk(x[i][2],x[j][2],x[k][2]) &&
+                        chk(x[i][3],x[j][3],x[k][3])) {
+                        printf("Case #%d: %d %d %d\n",CASE ++,i,j,k);
+                        ok = 1;
+                        break;
+                    }
+                }
+                if (ok) break;
+            }
+            if (ok) break;
+        }
+        
+        if (!ok) {
+            printf("Case #%d: -1\n",CASE ++);
+        }
+        
+    }
+    return 0;
+}
+*/
+
+/*
+const ll mod = 998244353;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+const ll MAXN = 6e6 + 10;
+
+ll a[MAXN];
+
+int main()
+{
+    int n;
+    a[0] = 0;
+    for (ll i = 1;i <= MAXN;i ++) {
+        a[i] = a[i - 1] + quickpow(i * i % mod, mod - 2);
+        a[i] %= mod;
+    }
+    
+    ll g,ans;
+    __T {
+        scanf("%d",&n);
+        g = quickpow(n, mod - 2);
+        ans = a[n];
+        ans *= 3;
+        ans %= mod;
+        printf("%lld\n",g * ans % mod);
+    }
+    return 0;
+}
+*/
+
+
+
+
+/*
+const int mod = 998244353;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    ll n;
+    ll ans;
+    ll k;
+    __T {
+        scanf("%lld",&n);
+        ans = quickpow(4, n);
+        k = quickpow(2, n);
+        ans += k;
+        ans %= mod;
+        ans += quickpow(3, n) * 2 % mod;
+        ans %= mod;
+        ans *= quickpow(k, mod - 2);
+        ans %= mod;
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+inline int get_pos(int i,int j,int w)
+{
+    return i * w + j;
+}
+
+int a[1000010];
+int b[1000010];
+
+int main()
+{
+    int n,k;
+    int t;
+    int f;
+    int w,h;
+    __T {
+        scanf("%d%d",&n,&k);
+        n = (1 << (k + 1)) * n;
+
+        REP(i,0,n) {
+            scanf("%d",a + i);
+        }
+        w = n;
+        h = 1;
+        t = 1;
+        f = 1;
+        rep(ii,1,k) {
+            if (t) {
+                // a -> b
+                REP(i,0,h) {
+                    REP(j,w / 2,w) {
+                        b[get_pos(i + h, j - w / 2,w / 2)] = a[get_pos(i, j,w)];
+                        b[get_pos(h - 1 - i,j - w / 2,w / 2)] = a[get_pos(i,w - 1 - j,w)];
+                    }
+                }
+            } else {
+                // b -> a
+                REP(i,0,h) {
+                    REP(j,w / 2,w) {
+                        a[get_pos(i + h, j - w / 2,w / 2)] = b[get_pos(i, j,w)];
+                        a[get_pos(h - 1 - i,j - w / 2,w / 2)] = b[get_pos(i,w - 1 - j,w)];
+                    }
+                }
+            }
+            t = !t;
+            w /= 2;
+            h *= 2;
+        }
+        
+        if (t) {
+            // a
+            REP(i,0,w) {
+                REP(j,0,h) {
+                    if (f) f = 0;
+                    else printf(" ");
+                    printf("%d",a[get_pos(j, i,w)]);
+                }
+            }
+        } else {
+            // b
+            REP(i,0,w) {
+                REP(j,0,h) {
+                    if (f) f = 0;
+                    else printf(" ");
+                    printf("%d",b[get_pos(j, i,w)]);
+                }
+            }
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+
+    int n;
+    string line;
+    double ans = 0;
+    __T {
+        scanf("%d",&n);
+        ans = 0;
+        scanf(" ");
+        rep(i,1,n) {
+            getline(cin,line);
+            for (int i = 0;line[i];i ++) {
+                if (line[i] == '2') {
+                    ans ++;
+                    break;
+                }
+            }
+        }
+        printf("%.10f\n",ans/n);
+    }
+    return 0;
+}
+*/
+
+
+/*
+const int C = 13,H = 1,O = 17;
+
+inline int getM(char c)
+{
+    if (c == 'C') return C;
+    else if (c == 'H') return H;
+    else if (c == 'O') return O;
+    return 0;
+}
+
+int main()
+{
+    ll ans = 0;
+    string str;
+    cin >> str;
+    int kStart = 0;
+    
+    
+    ll x = 0;
+    ll dig = -1;
+    int dig_s = -1;
+    for (int i = 0;str[i];i ++) {
+        if (!(str[i] >= '0' && str[i] <= '9')) {
+            if (dig != -1) {
+                if (kStart) {
+                    x += getM(str[dig_s - 1]) * (dig - 1);
+                } else {
+                    if (str[dig_s - 1] == ')') {
+                        ans += x * dig;
+                        x = 0;
+                    } else
+                        ans += getM(str[dig_s - 1]) * (dig - 1);
+                }
+                
+                dig = -1;
+                dig_s = -1;
+            }
+        }
+        if (str[i] == '(') {
+            if (i - 1 >= 0 && str[i - 1] == ')') {
+                ans += x;
+                x = 0;
+            }
+            kStart = 1;
+        }
+        else if (str[i] == ')') kStart = 0;
+        else {
+            if (str[i] == 'C' || str[i] == 'H' || str[i] == 'O') {
+                if (i - 1 >= 0 && str[i - 1] == ')') {
+                    ans += x;
+                    x = 0;
+                }
+                if (kStart) {
+                    x += getM(str[i]);
+                } else {
+                    ans += getM(str[i]);
+                }
+            } else if (str[i] >= '0' && str[i] <= '9') {
+                if (dig_s == -1) {
+                    dig_s = i;
+                    dig = 0;
+                }
+                dig = dig * 10 + (str[i] - '0');
+            }
+        }
+    }
+//    cout << dig << endl;
+//    cout << dig_s << endl;
+    
+    if (dig != -1) {
+        if (str[dig_s - 1] == ')') {
+            ans += x * dig;
+            x = 0;
+        } else
+            ans += getM(str[dig_s - 1]) * (dig - 1);
+        dig = -1;
+        dig_s = -1;
+    }
+    if (x != 0) ans += x;
+    printf("%lld\n",ans);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int u,v,cnt;
+    __T {
+        scanf("%d",&cnt);
+        rep(i,1,cnt-1) {
+            scanf("%d%d",&u,&v);
+        }
+        puts("Yes");
+    }
+    return 0;
+}
+*/
+
+
+/*
+map<ll,ll> mp;
+
+string get(char ch) {
+    switch (ch) {
+        case '0':
+            return "0000";
+        case '1':
+            return "0001";
+        case '2':
+            return "0010";
+        case '3':
+            return "0011";
+        case '4':
+            return "0100";
+        case '5':
+            return "0101";
+        case '6':
+            return "0110";
+        case '7':
+            return "0111";
+        case '8':
+            return "1000";
+        case '9':
+            return "1001";
+        case 'A':
+            return "1010";
+        case 'B':
+            return "1011";
+        case 'C':
+            return "1100";
+        case 'D':
+            return "1101";
+        case 'E':
+            return "1110";
+        case 'F':
+            return "1111";
+        default:
+            return "0000";
+    }
+}
+
+
+char get(string ch) {
+    if (ch == "0000") return '0';
+    else if (ch == "0001") return '1';
+    else if (ch == "0010") return '2';
+    else if (ch == "0011") return '3';
+    else if (ch == "0100") return '4';
+    else if (ch == "0101") return '5';
+    else if (ch == "0110") return '6';
+    else if (ch == "0111") return '7';
+    else if (ch == "1000") return '8';
+    else if (ch == "1001") return '9';
+    else if (ch == "1010") return 'A';
+    else if (ch == "1011") return 'B';
+    else if (ch == "1100") return 'C';
+    else if (ch == "1101") return 'D';
+    else if (ch == "1110") return 'E';
+    else if (ch == "1111") return 'F';
+    return '0';
+}
+
+int main()
+{
+    int n,m,p;
+    scanf("%d%d%d",&n,&m,&p);
+    ll py = 1 << (m - p); // 物理
+//    ll fy = 1 << (n - p);// 虚拟
+    ll t;
+    REP(i,0,py) {
+        scanf("%lld",&t);
+        mp[t] = i;
+    }
+    string q;
+    string bin;
+    int idx;
+    ll k;
+    string a,ans;
+    __T {
+        cin >> q;
+        bin = "";
+        a = "";
+        for (int i = 0;q[i];i ++) {
+            bin += get(q[i]);
+        }
+        
+        
+        idx = (int) bin.size() - p - 1;
+        k = 0;
+        for (int i = 0,j = idx;j >= 0;i ++,j --) {
+            k += (1LL << i) * (bin[j] - '0');
+        }
+//        cout << bin << endl;
+//        cout << k << endl;
+        if (mp.find(k) == mp.end()) {
+            puts("interrupt!");
+            continue;
+        }
+        k = mp[k];
+        rep(i,0,idx) {
+            a += (char) (((k & (1 << (idx - i))) >> (idx - i)) + '0');
+        }
+        REP(i,idx + 1,bin.size()) {
+            a += bin[i];
+        }
+        ans = "";
+//        cout << a << endl;
+        for (int i = 0;i < a.size();i += 4) {
+            ans += get(a.substr(i,4));
+        }
+        cout << ans << endl;
+    }
+    return 0;
+}
+*/
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int main()
+{
+    ll n,k;
+    ll x;
+    ll t;
+    int ok;
+    __T {
+        scanf("%lld%lld",&n,&k);
+        if (n % k) {
+            puts("-1 -1 -1");
+            continue;
+        }
+        n /= k;
+//        printf("%lld\n",n);
+        x = n / 3;
+        
+        ok = 0;
+        
+        for (ll i = 2;i <= 200;i ++) {
+            for (ll j = i;j <= 200;j ++) {
+                t = n - i - j;
+                if (t <= 1 || t >= n) break;
+                if (i!=1&&j!=1&&t!=1&&gcd(i,j) == 1 && gcd(i,t) == 1 && gcd(j,t) == 1) {
+                    ok = 1;
+                    printf("%lld %lld %lld\n",i*k,j*k,t*k);
+                    goto end;
+                }
+            }
+        }
+        end:
+        if (!ok) puts("-1 -1 -1");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 5010;
+
+struct Edge {
+    int to;
+    ll w;
+    int nxt;
+};
+
+int g[MAXN];
+Edge e[MAXN * 2];
+int cnt = 0;
+
+void add_edge(int u,int v,int w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+void add(int u,int v,int w)
+{
+    add_edge(u, v, w);
+    add_edge(v, u, 0);
+}
+
+
+
+int main()
+{
+    int n,m,s,t;
+    scanf("%d%d%d%d",&n,&m,&s,&t);
+    int u,v,w;
+    rep(i,1,m) {
+        scanf("%d%d%d",&u,&v,&w);
+        add(u,v,w);
+    }
+    
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+struct Edge {
+    int to;
+    int w;
+    int nxt;
+};
+
+int g[MAXN]; // Please memset it to -1!!!!!!!!
+Edge e[MAXN * 2];
+int cnt = 0;
+
+void add_edge(int u,int v,int w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+
+int dis[MAXN];
+int vis[MAXN];
+
+struct ST {
+    int n;
+    int w;
+    
+    bool operator< (const ST &other) const {
+        return w > other.w;
+    }
+};
+
+void dij(int s) {
+    mem(dis,-1);
+    mem(vis,0);
+    
+    priority_queue<ST> q;
+    q.push({s,dis[s] = 0});
+    
+    ST current;
+    int k,to;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (vis[current.n]) continue;
+        vis[current.n] = 1;
+        
+        for (int i = g[current.n];~i;i = e[i].nxt) {
+            to = e[i].to;
+            k = dis[current.n] + e[i].w;
+            if (dis[to] == -1 || dis[to] > k) {
+                q.push({to,dis[to] = k});
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n,m;
+    int u,v,w;
+    int s,t;
+    __T {
+        cnt = 0;
+        mem(g,-1);
+        scanf("%d%d",&n,&m);
+        while (m --) {
+            scanf("%d%d%d",&u,&v,&w);
+            add_edge(u,v,w);
+            add_edge(v,u,w);
+        }
+        scanf("%d%d",&s,&t);
+        dij(s);
+        printf("%d\n",dis[t]);
+    }
+    return 0;
+}
+*/
+
+//const int mod = 31607;
+
+
+/*
+int main()
+{
+    ll b,x;
+    __T {
+        scanf("%lld%lld",&b,&x);
+        if (b % x == 1) puts("T");
+        else puts("F");
+    }
+    return 0;
+}
+*/
+
+/*
+const int mod = 1e9 + 7;
+const int MAXN = 2e5 + 10;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+ll a[MAXN];
+ll k[MAXN];
+
+int main()
+{
+    ll n;
+    ll p;
+    ll sum;
+    ll ans,cur;
+    rep(i,1,MAXN-1) {
+        k[i] = quickpow(i, mod - 2);
+    }
+    
+    
+    __T {
+        scanf("%lld",&n);
+        p = (1 + n) * n / 2;
+        p = quickpow(p % mod, mod - 2);
+        rep(i,1,n) scanf("%lld",a + i);
+        sum = 0;
+        rep(i,1,n) {
+            sum += k[i];
+            sum %= mod;
+        }
+        ans = 0;
+        cur = sum;
+        
+        rep(i,1,n / 2) {
+            ans += ((a[i] + a[n - i + 1]) % mod) * cur % mod;
+            ans %= mod;
+            
+            sum = (sum + mod - k[i]) % mod;
+            sum = (sum + mod - k[n - i + 1]) % mod;
+            cur += sum;
+            cur %= mod;
+        }
+        
+        if (n & 1) {
+            ans += a[n / 2 + 1] * cur;
+            ans %= mod;
+        }
+        
+        printf("%lld\n",ans * p % mod);
+    }
+    return 0;
+}
+*/
+
+//const int MAXN = 10010;
+//const int mod = 998244353;
+//
+//ll quickpow(ll a, ll b)
+//{
+//    ll ans = 1;
+//    while (b)
+//    {
+//        if (b & 1) ans = a * ans % mod;
+//        a = a * a % mod;
+//        b >>= 1;
+//    }
+//    return ans;
+//}
+//
+//struct Edge {
+//    int to;
+//    int w;
+//    int nxt;
+//};
+//
+//int g[MAXN]; // Please memset it to -1!!!!!!!!
+//Edge e[MAXN * 2];
+//int vis[MAXN];
+//int cnt = 0;
+//
+//void add_edge(int u,int v,int w)
+//{
+//    e[cnt] = {v,w,g[u]};
+//    g[u] = cnt ++;
+//}
+//
+//int n,m;
+//int cc = 0;
+//ll ans = 0;
+//
+//void dfs(int k,int c,int a)
+//{
+//    printf("%d\n",k);
+//    if (c == n - 1) {
+//        cc ++;
+//        ans += a;
+//        ans %= mod;
+//        return;
+//    }
+//    int to;
+//    for (int i = g[k];~i;i = e[i].nxt) {
+//        to = e[i].to;
+//        if (vis[to]) continue;
+//        vis[to] = 1;
+//        dfs(to,c + 1,a & e[i].w);
+//        vis[to] = 0;
+//        dfs(to,c,a);
+//    }
+//
+//}
+//
+//int main()
+//{
+//
+//    int u,v,w;
+//    mem(vis,0);
+//    __T {
+//        ans = 0;
+//        cc = 0;
+//        scanf("%d%d",&n,&m);
+//        memn(g,-1,int,n + 5);
+//        rep(i,1,m) {
+//            scanf("%d%d%d",&u,&v,&w);
+//            add_edge(u,v,w);
+//            add_edge(v,u,w);
+//        }
+//        dfs(1,0,INT_INF);
+//        printf("%lld\n",ans);
+//    }
+//    return 0;
+//}
+
+/*
+class Solution {
+public:
+    const static int MAXN = 1e6+10;
+    
+    int cnt = 0;
+    
+    int r[MAXN];
+    int pos0[MAXN];
+
+    int solve(int n, int m, vector<int>& a) {
+        // write code here
+        int t;
+        for (int i = 0;i < n;i ++) {
+            if (a[i] == 0) {
+                pos0[cnt ++] = i;
+            }
+            else {
+                t = i;
+                while (a[i] == 1 && i < n) i ++;
+                r[t] = -- i;
+            }
+        }
+        if (cnt == 0) return n;
+        
+        queue<int> q;
+        int i;
+        int l = 0;
+        int k = 0;
+        for (i = 0;i < cnt && i < m;i ++) {
+            q.push(pos0[i]);
+            k++;
+        }
+        
+        t = 0;
+        while (a[t]) {
+            t ++;
+            l ++;
+        }
+        
+        int mm = 0;
+        if (q.back() + 1 < n && a[q.back() + 1]) l += r[q.back() + 1] - q.front() + 1;
+        else l += k;
+        mm = l;
+        
+        for (;i < cnt;i ++) {
+            
+            l = pos0[i] - q.front();
+            if (pos0[i] + 1 < n && a[pos0[i] + 1]) {
+                l += r[pos0[i] + 1] - pos0[i];
+            }
+            
+            q.push(pos0[i]);
+            q.pop();
+            mm = max(l,mm);
+        }
+        return mm;
+    }
+};
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    vector<int> a;
+    int t;
+    rep(i,1,n) {
+        scanf("%d",&t);
+        a.pb(t);
+    }
+    Solution s;
+    cout << s.solve(n,m,a) << endl;
+    return 0;
+}
+*/
+
+
+
+/*
+const int MAXN = 200;
+
+struct Edge {
+    int to;
+    int nxt;
+};
+
+int g[MAXN];
+Edge e[MAXN * 2];
+int cnt = 0;
+
+void add_edge(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+set<set<int>> k;
+
+int vis1[MAXN];
+int vis[MAXN];
+int pre[MAXN];
+
+void dfs(int n,int f,int num) {
+    if (num <= 0) return;
+//    printf(">>%d %d\n",n,num);
+    for (int i = g[n];~i;i = e[i].nxt) {
+//        printf("--%d\n",e[i].to);
+        if (vis[e[i].to]) {
+            if (num == 1 && e[i].to == f) {
+                set<int> x;
+                x.insert(e[i].to);
+                x.insert(n);
+                int cur = n;
+                while (pre[cur] != -1) {
+//                    printf("...%d\n",pre[cur]);
+                    x.insert(cur = pre[cur]);
+                }
+                k.insert(x);
+            }
+            continue;
+        }
+        vis[e[i].to] = 1;
+        pre[e[i].to] = n;
+        dfs(e[i].to,f,num - 1);
+        vis[e[i].to] = 0;
+    }
+}
+
+void dfs1(int n,int num)
+{
+    if (vis1[n]) return;
+    vis1[n] = 1;
+
+    pre[n] = -1;
+
+    vis[n] = 1;
+    dfs(n,n,num);
+    vis[n] = 0;
+
+
+    for (int i = g[n];~i;i = e[i].nxt) {
+
+        dfs1(e[i].to,num);
+    }
+}
+
+int main()
+{
+    mem(g,-1);
+    int n,m;
+    scanf("%d%d",&n,&m);
+
+    int u,v;
+    rep(i,1,m) {
+        scanf("%d%d",&u,&v);
+        add_edge(u, v);
+        add_edge(v, u);
+    }
+    mem(vis1,0);
+    mem(vis,0);
+    dfs1(1,5);
+
+    for (auto i : k) {
+        for (auto j : i) {
+            printf("%d ",j);
+        }
+        printf("\n");
+    }
+
+
+    return 0;
+}
+*/
+
+/// 已知一条边，快速求其两边node个数
+/*
+const int MAXN = 1e5 + 10;
+
+int all = 0;
+int nn;
+
+ll ch[MAXN];
+ll a[MAXN];
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN * 2];
+int g[MAXN]; // Please memset it to -1!!!!!!!!
+int cnt = 0;
+
+void init(int n)
+{
+    cnt = 0;
+    memn(g,-1,int,n);
+}
+
+void add_edge(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+void dfs(int n, int f)
+{
+    ch[n] ++;
+    
+    int to;
+    for (int i = g[n];~i;i = e[i].nxt) {
+        to = e[i].to;
+        if (to == f) continue;
+        dfs(to, n);
+        ch[n] += ch[to];
+    }
+    
+    for (int i = g[n];~i;i = e[i].nxt) {
+        to = e[i].to;
+        if (to == f) continue;
+        a[all ++] = ch[to] * (nn - ch[to]);
+    }
+    
+}
+
+
+int main()
+{
+    int u,v;
+    scanf("%d",&nn);
+    init(nn + 5);
+    rep(i,1,nn - 1) {
+        scanf("%d%d",&u,&v);
+        add_edge(u,v);
+        add_edge(v,u);
+    }
+    mem(ch,0);
+    dfs(1,-1);
+    sort(a, a + all);
+    nn --;
+    ll sum = 0;
+    int i = 0;
+    while (nn) {
+        sum += (nn --) * a[i ++];
+    }
+    printf("%lld\n",sum);
+    return 0;
+}
+*/
+
+
+/// 已知一条边，快速求其两边node个数
+/*
+const int MAXN = 1e5 + 10;
+const int mod = 1000000007;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+struct Edge {
+    int to;
+    ll w;
+    int nxt;
+};
+
+int g[MAXN]; // Please memset it to -1!!!!!!!!
+Edge e[MAXN * 2];
+int cnt = 0;
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+int find_set[MAXN];
+int depth[MAXN];
+
+int find(int a)
+{
+    if (find_set[a] == a) return a;
+    return find_set[a] = find(find_set[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (depth[x] >= depth[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        find_set[y] = x; // 改变b节点的根的根为a的根
+        if (depth[x] == depth[y]) { // 俩根深度一样
+            if (x != y) depth[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else find_set[x] = y;
+}
+
+int w[MAXN];
+int vis[MAXN];
+
+int ch0[MAXN];
+int ch1[MAXN];
+
+void init(int n)
+{
+    rep(i,1,n) {
+        find_set[i] = i;  // 每个种类初始状态只有自己一个点
+        depth[i] = 1;  // 初始化秩
+        g[i] = -1;
+        vis[i] = 0;
+        ch0[i] = 0;
+        ch1[i] = 0;
+    }
+}
+
+ll ans = 0;
+
+pair<int,int> dfs(int n,int f)
+{
+    ch0[n] = 0;
+    ch1[n] = 0;
+    
+    pair<int, int> t;
+    
+    for (int i = g[n];~i;i = e[i].nxt) {
+        if (e[i].to == f) continue;
+        t = dfs(e[i].to,n);
+        ch0[n] += t.first;
+        ch1[n] += t.second;
+    }
+    
+    if (w[n]) ch1[n] ++;
+    else ch0[n] ++;
+    
+    return make_pair(ch0[n], ch1[n]);
+}
+
+void dfs2(int n,int f,int c0,int c1)
+{
+    int to;
+    int t;
+    for (int i = g[n];~i;i = e[i].nxt) {
+        to = e[i].to;
+        if (to == f) continue;
+        
+        t = ((c0 + ch0[n] - ch0[to]) % mod) * ch1[to] % mod + ((c1 + ch1[n] - ch1[to]) % mod) * ch0[to] % mod;
+        t %= mod;
+        
+        ans += e[i].w * t;
+        ans %= mod;
+        dfs2(to,n,c0 + ch0[n] - ch0[to],c1 + ch1[n] - ch1[to]);
+    }
+}
+
+int main()
+{
+    int n,m;
+    int u,v;
+    __T {
+        scanf("%d%d",&n,&m);
+        cnt = 0;
+        init(n + 5);
+        rep(i,1,n) scanf("%d",w + i);
+        rep(i,1,m) {
+            scanf("%d%d",&u,&v);
+            if (find(u) != find(v)) {
+                add_edge(u, v, quickpow(2, i));
+                add_edge(v, u, quickpow(2, i));
+                bind(u,v);
+            }
+        }
+        ans = 0;
+        
+        dfs(1,-1);
+        
+        dfs2(1,-1,0,0);
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int ok;
+    int idx;
+    int a1,a2,a3;
+    __T {
+        cin >> str;
+        ok = 1;
+        idx = 0;
+        a1 = 0;
+        a2 = 0;
+        a3 = 0;
+        for (int i = 0;str[i];i ++) {
+            if (str[i] == 'P') {
+                if (idx == 0) idx ++;
+                else {
+                    ok = 0;
+                    break;
+                }
+            } else if (str[i] == 'A') {
+                if (idx == 0) a1 ++;
+                else if (idx == 1) a2 ++;
+                else if (idx == 2) a3 ++;
+            } else if (str[i] == 'T') {
+                if (idx == 1) idx ++;
+                else {
+                    ok = 0;
+                    break;
+                }
+            } else {
+                ok = 0;
+                break;
+            }
+        }
+        
+//        if (a2 == 0) ok = 0;
+//        else if (a2 == 1) ok = ok & (a1 == a3);
+//        else if (a2 >= 2) {
+//            if (a3 != a1 * (a2 - 1) + a1) ok = 0;
+//        }
+        
+        if (idx != 2) ok = 0;
+        if (a2 == 0) ok = 0;
+        else ok = ok & (a3 == a1 * a2);
+        
+        if (ok) puts("YES");
+        else puts("NO");
+    }
+    return 0;
+}
+*/
+
+/*
+typedef struct Stu {
+    int id;
+    int d,c;
+} S[4][100010];
+
+int cmp(const Stu &a,const Stu &b) {
+    if (a.d + a.c == b.d + b.c) {
+        if (a.d == b.d) return a.id < b.id;
+        return a.d > b.d;
+    }
+    return a.d + a.c > b.d + b.c;
+}
+
+int main()
+{
+    dsci(n);
+    dscii(l,h);
+    
+    S a;
+    int cnt[4] = {0};
+    int id,d,c;
+    Stu *t;
+    int type;
+    while (n --) {
+        sci(id);
+        scii(d,c);
+        if (d < l || c < l) continue;
+        
+        if (d >= h && c >= h) type = 0;
+        else if (d >= h && c < h) type = 1;
+        else if (d < h && c < h && d >= c) type = 2;
+        else type = 3;
+        
+        
+        t = &a[type][cnt[type] ++];
+        t -> id = id;
+        t -> d = d;
+        t -> c = c;
+    }
+    
+    int all = 0;
+    REP(i,0,4) {
+        sort(a[i], a[i] + cnt[i],cmp);
+        all += cnt[i];
+    }
+    printf("%d\n",all);
+    REP(i,0,4) {
+        REP(j,0,cnt[i]) {
+            printf("%d %d %d\n",a[i][j].id,a[i][j].d,a[i][j].c);
+        }
+//        puts("");
+    }
+    
+    re0;
+}
+*/
+
+/*
+const int mod = 1e9 + 7;
+
+int main()
+{
+    string str;
+    cin >> str;
+    
+    int p = 0;
+    ll a = 0;
+    ll ans = 0;
+    for (int i = 0;str[i];i ++) {
+        if (str[i] == 'P') p ++;
+        else if (str[i] == 'A') a = (a + p) % mod;
+        else if (str[i] == 'T') ans = (ans + a) % mod;
+    }
+    printf("%lld\n",ans);
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    dscdd(r1,p1);
+    dscdd(r2,p2);
+    
+    double k1 = r1 * r2 * cos(p1 + p2),
+    k2 = r1 * r2 * sin(p1 + p2);
+    
+    if (fabs(k1) < 0.01) k1 = 0;
+    if (fabs(k2) < 0.01) k2 = 0;
+    
+    if (k1 == 0 && k2 == 0) puts("0.00");
+    else printf("%.2f%+.2fi\n",k1,k2);
+    
+    re0;
+}
+*/
+
+/// 网络流-最大流模板 EK算法 前向星
+/// https://www.luogu.com.cn/problem/P3376
+/*
+const int MAXN = 5000 + 10;
+
+struct Edge {
+    int to;
+    ll w;
+    int nxt;
+} e[MAXN * 2];
+int g[MAXN];
+int cnt = 0;
+
+void init(int n)
+{
+    cnt = 0;
+    memn(g,-1,int,n);
+}
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+
+int pre[MAXN]; // record the previous node index and indicating a node whether has been visited.
+
+ll flow[MAXN];
+int n,m;
+
+ll getAgtPath(int s,int t) // method to find an augmented path
+{
+    // bfs
+    queue<int> q;
+    q.push(s);
+    
+    int current;
+    memn(pre,-1,int,n + 5);
+    
+    flow[s] = INT_INF;
+    pre[s] = 0; // sourse node has been visited
+    
+    int to;
+    while (!q.empty()) {
+        current = q.front();
+        q.pop();
+        
+        if (current == t) break;
+        
+        for (int i = g[current];~i;i = e[i].nxt) {
+            to = e[i].to;
+            if (pre[to] != -1 || e[i].w <= 0) continue;
+            
+            pre[to] = i; // record the index of current edge
+            
+            flow[to] = min(flow[current],e[i].w);
+            q.push(to);
+        }
+    }
+    
+    if (pre[t] != -1) return flow[t]; // return the terminal's flow
+    return -1; // 404 not found
+}
+
+ll EKmaxFlow(int s,int t) // source -> terminal
+{
+    if (s == t) return INT_INF;
+    
+    
+    ll flow = 0;
+    ll agt_flow;
+    int cur;
+    int edge_idx;
+    
+    while ((agt_flow = getAgtPath(s, t)) != -1) { // find augmented path until all flows are gone.
+        
+        // modify the w of path
+        cur = t;
+        while (cur != s) {
+            edge_idx = pre[cur];
+            
+            e[edge_idx].w -= agt_flow;
+            e[edge_idx ^ 1].w += agt_flow; // xor can get the reverse edge swiftly
+            
+            cur = e[edge_idx ^ 1].to;
+        }
+        
+        flow += agt_flow; // add to ans
+    }
+
+    return flow;
+}
+
+int vis[210][210];
+
+int main()
+{
+    int s,t;
+    scanf("%d%d%d%d",&n,&m,&s,&t);
+    init(n + 5);
+    mem(vis,-1);
+    int u,v,w;
+    rep(i,1,m) {
+        scanf("%d%d%d",&u,&v,&w);
+        if (vis[u][v] == -1) { // record the vised edge
+            add_edge(u, v, w);
+            add_edge(v, u, 0); // add reversed edge, which w=0;
+            vis[u][v] = cnt - 2;
+        }
+        else {
+            e[vis[u][v]].w += w; // increase the weight
+        }
+    }
+    printf("%lld\n",EKmaxFlow(s, t));
+    return 0;
+}
+*/
+
+/// 网络流-最大流模板 Dinic算法 前向星
+/// https://www.luogu.com.cn/problem/P3376
+/*
+const int MAXN = 5010;
+
+struct Edge {
+    int to;
+    ll w;
+    int nxt;
+} e[MAXN * 2];
+int g[MAXN]; // Please call init() to memset it to -1!
+int cnt = 0;
+
+void init(int n)
+{
+    cnt = 0;
+    memn(g,-1,int,n);
+}
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+int s,t,n,m;
+int dis[MAXN];
+int cur[MAXN]; // 替代g数组，记住上次dfs最后跑到的地方，优化，减少dfs的跑的次数
+
+int bfs()
+{
+    memn(dis,-1,int,n + 5);
+
+    queue<int> q;
+    q.push(s);
+    dis[s] = 0;
+
+    int to,current,k;
+
+    while (!q.empty()) {
+        current = q.front();
+        q.pop();
+
+        for (int i = g[current];~i;i = e[i].nxt) {
+            to = e[i].to;
+            k = dis[current] + 1;
+            if (dis[to] == -1 && e[i].w > 0) { // 只有没有访问过的，且该通路可以走(w > 0)
+                dis[to] = k;
+                if (to == t) return 1;
+                q.push(to);
+            }
+        }
+    }
+
+    return 0;
+}
+
+ll dfs(int node,ll flow)
+{
+    if (node == t) return flow;
+    int to;
+    ll d;
+    for (int &i = cur[node];~i;i = e[i].nxt) { // 改变i的同时，cur[node]的值也会被改变
+        to = e[i].to;
+        if (dis[node] + 1 == dis[to] && e[i].w > 0) {
+            d = dfs(to,min(e[i].w,flow));
+            if (d > 0) {
+                e[i].w -= d;
+                e[i ^ 1].w += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+ll dinic()
+{
+    ll ans = 0;
+    ll d;
+    while (bfs()) {
+        rep(i,1,n) cur[i] = g[i];
+        while ((d = dfs(s,INT_INF)))
+            ans += d;
+    }
+    return ans;
+}
+
+int main()
+{
+    scanf("%d%d%d%d",&n,&m,&s,&t);
+    int u,v;
+    ll w;
+    init(n + 5);
+    while (m --) {
+        scanf("%d%d%lld",&u,&v,&w);
+        add_edge(u, v, w);
+        add_edge(v, u, 0);
+    }
+    printf("%lld\n",dinic());
+    return 0;
+}
+*/
+
+/*
+int a[2000010];
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int k,t,mm;
+    int cnt = 0;
+    rep(i,1,n) {
+        scanf("%d",&k);
+        scanf("%d",&mm);
+        k --;
+        while (k --) {
+            scanf("%d",&t);
+            mm = min(mm,t);
+        }
+        a[cnt ++] = mm;
+    }
+    sort(a,a + cnt);
+    int l = 0,r = m - 1;
+    int ans = -1;
+    for (;r < cnt;r ++,l ++) {
+        if (ans == -1) ans = a[r] - a[l];
+        else ans = min(ans,a[r]-a[l]);
+    }
+    printf("%d\n",ans);
+    re0;
+}
+*/
+
+/*
+const int mod = 998244353;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+struct Node {
+    int base;
+    int px,py;
+};
+
+
+int yy[20][3000010];
+
+int av[20][3000010];
+
+ll eulerFunction(ll x)
+{
+    ll eulerNumbers = x;
+    for(ll i = 2; i*i <= x; i++)
+    {
+        if(x % i == 0)
+        {
+            eulerNumbers = eulerNumbers / i * (i-1);
+            while(x % i == 0)
+            {
+                x /= i;
+            }
+        }
+    }
+    if(x > 1)
+    {
+        eulerNumbers = eulerNumbers / x * (x-1);
+    }
+    return eulerNumbers;
+}
+
+
+
+int main()
+{
+    ll a,b,c,d,x,y;
+    scanf("%lld%lld%lld%lld%lld%lld",&a,&b,&c,&d,&x,&y);
+    
+    int cnt = 0;
+    
+    Node p[1000];
+    
+    ll xx = max(x,y);
+    int kx,ky;
+    
+    for (int i = 2;i * i <= xx;i ++) {
+        kx = 0;
+        ky = 0;
+        
+        
+        while (x % i == 0) {
+            x /= i;
+            kx ++;
+        }
+        
+        while (y % i == 0) {
+            y /= i;
+            ky ++;
+        }
+        
+        if (kx != 0 && ky != 0)
+        {
+            p[cnt ++] = {(int)i,kx,ky};
+        }
+    }
+    
+    if (x == y && x > 1) {
+        p[cnt ++] = {(int)x,1,1};
+    }
+    
+    
+    ll s,ss;
+    
+    REP(i,0,cnt) {
+//        printf("%d %d %d\n",p[i].base,p[i].px,p[i].py);
+        yy[i][c] = (int) quickpow(p[i].base % mod, c * p[i].py);
+        
+        s = quickpow(p[i].base % mod, p[i].py);
+        ss = s * yy[i][c];
+        ss %= mod;
+        
+        rep(j,(int) c + 1,d) {
+            
+            yy[i][j] = (yy[i][j - 1] * ss) % mod;
+            ss *= s;
+            ss %= mod;
+        }
+        
+        s = quickpow(p[i].base % mod, p[i].px);
+
+        
+        rep(j,(int) a,b) {
+            av[i][j] = 0;
+        }
+        
+    }
+    
+    ll l,r,m;
+    ll cc = d - c + 1;;
+    ll cl,cr;
+    ll v;
+    ll ans = 1;
+    for (ll i = a;i <= b;i ++) {
+        REP(j,0,cnt) {
+            l = c * p[j].py;
+            r = d * p[j].py;
+            m = i * p[j].px;
+            
+            
+            if (m - l < 0) {
+                cr = cc;
+                av[j][i] += cr;
+                
+                
+            } else {
+                cl = min((m - l) / p[j].py + 1,cc);
+                cr = cc - cl;
+                
+
+                
+                v = c + cl - 1;
+                v = yy[j][v];
+                
+
+                
+                ans *= v;
+                ans %= mod;
+                
+                av[j][i] += cr;
+
+            }
+            
+            
+            
+        }
+    }
+    
+    ll kkk = 0;
+    
+    ll aaa;
+    
+    ll mm = eulerFunction(mod);
+    
+    REP(i,0,cnt) {
+        kkk = 0;
+        s = p[i].px;
+        aaa = p[i].px * a % mm;
+        kkk += aaa * av[i][a] % mm;
+        kkk %= mm;
+            
+        rep(j,(int) a + 1,b) {
+            aaa = aaa + s;
+            aaa %= mm;
+            
+            kkk += aaa * av[i][j] % mm;
+            kkk %= mm;
+        }
+        ans *= quickpow(p[i].base % mod, kkk + mm);
+        ans %= mod;
+        
+    }
+    
+    printf("%lld\n",ans);
+    
+    return 0;
+}
+*/
+
+/*
+int n,k;
+char a[10][10];
+int vis[10];
+int ans = 0;
+
+void dfs(int j,int cnt)
+{
+    if (cnt == k) {
+        ans ++;
+        return;
+    }
+    if (j == n) {
+        return;
+    }
+    for (int i = 0;i < n;i ++) {
+        if (!vis[i]) {
+            if (a[i][j] == '#') {
+                vis[i] = 1;
+                dfs(j + 1,cnt + 1);
+                vis[i] = 0;
+            }
+        }
+    }
+    dfs(j + 1,cnt);
+}
+
+int main()
+{
+    while (1) {
+        scanf("%d%d",&n,&k);
+        if (n == -1 && k == -1) break;
+        REP(i,0,n) scanf("%s",a[i]);
+        ans = 0;
+        dfs(0,0);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int dx[] = {1,-1,0,0,0,0};
+int dy[] = {0,0,1,-1,0,0};
+int dz[] = {0,0,0,0,1,-1};
+
+int a,b,c;
+
+const int MAXN = 50;
+
+struct Node {
+    
+    int x,y,z;
+    int w;
+    
+    Node(){}
+    Node(int x,int y,int z,int w):x(x),y(y),z(z),w(w){}
+    
+    bool operator< (const Node &o) const {
+        return w > o.w;
+    }
+};
+
+char mp[MAXN][MAXN][MAXN];
+int dis[MAXN][MAXN][MAXN];
+int vis[MAXN][MAXN][MAXN];
+
+
+int main()
+{
+    priority_queue<Node> q;
+    Node cur;
+    int xx,yy,zz;
+    int k;
+    int sx,sy,sz,tx,ty,tz;
+    while (~scanf("%d%d%d",&a,&b,&c)) {
+        if (a == 0 && b == 0 && c == 0) break;
+        while (!q.empty()) q.pop();
+        sx = sy = sz = tx = ty = tz = 0;
+        REP(i,0,a) {
+            REP(j,0,b) {
+                scanf("%s",mp[i][j]);
+                for (int k = 0;mp[i][j][k];k ++) {
+                    if (mp[i][j][k] == 'S') {
+                        sx = i;
+                        sy = j;
+                        sz = k;
+                    } else if (mp[i][j][k] == 'E') {
+                        tx = i;
+                        ty = j;
+                        tz = k;
+                    }
+                }
+            }
+        }
+        mem(dis,-1);
+        mem(vis,0);
+        q.push(Node(sx,sy,sz,dis[sx][sy][sz] = 0));
+        
+        while (!q.empty()) {
+            cur = q.top();
+            q.pop();
+            
+            if (vis[cur.x][cur.y][cur.z]) continue;
+            vis[cur.x][cur.y][cur.z] = 1;
+            
+            REP(i,0,6) {
+                xx = cur.x + dx[i];
+                yy = cur.y + dy[i];
+                zz = cur.z + dz[i];
+                
+                if (xx >= 0 && yy >= 0 && zz >= 0 &&
+                    xx < a && yy < b && zz < c &&
+                    mp[xx][yy][zz] != '#') {
+                    k = dis[cur.x][cur.y][cur.z] + 1;
+                    if (dis[xx][yy][zz] == -1 || k < dis[xx][yy][zz]) {
+                        q.push(Node(xx,yy,zz,dis[xx][yy][zz] = k));
+                    }
+                }
+                
+            }
+        }
+        
+        if (dis[tx][ty][tz] == -1) {
+            printf("Trapped!\n");
+            continue;
+        }
+        printf("Escaped in %d minute(s).\n",dis[tx][ty][tz]);
+    }
+    return 0;
+}
+*/
+
+
+/*
+int vis[2000010] = {0};
+
+struct Node {
+    int n,cnt;
+    Node(){}
+    Node(int n,int cnt):n(n),cnt(cnt){}
+};
+
+int main()
+{
+    dscii(n,k);
+    
+    
+    
+    queue<Node> q;
+    q.push(Node(n,0));
+    
+    Node cur;
+    
+    while (!q.empty()) {
+        cur = q.front();
+        q.pop();
+        
+        if (cur.n == k) {
+            printf("%d\n",cur.cnt);
+            re0;
+        }
+        
+        if (cur.n != 0 && cur.n < k && !vis[cur.n * 2]) {
+            q.push(Node(cur.n * 2,cur.cnt + 1));
+            vis[cur.n * 2] = 1;
+        }
+        if (cur.n < k && !vis[cur.n + 1]) {
+            q.push(Node(cur.n + 1,cur.cnt + 1));
+            vis[cur.n + 1] = 1;
+        }
+        if (cur.n > 0 && !vis[cur.n - 1]) {
+            q.push(Node(cur.n - 1,cur.cnt + 1));
+            vis[cur.n - 1] = 1;
+        }
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 1e6 + 10;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN * 2];
+int g[MAXN];
+int cnt = 0;
+
+int ch[MAXN];
+
+const int mod = 1e9 + 7;
+
+void init(int n)
+{
+    cnt = 0;
+    memn(g,-1,int,n);
+}
+
+void add_edge(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+void dfs(int n,int f)
+{
+    ch[n] = 1;
+    int to;
+    for (int i = g[n];~i;i = e[i].nxt) {
+        to = e[i].to;
+        if (f == to) continue;
+        dfs(to,n);
+        ch[n] += ch[to];
+    }
+}
+
+int main()
+{
+    int n;
+    int u,v;
+    ll ans;
+    __T {
+        sci(n);
+        init(n + 5);
+        REP(i,0,n - 1) {
+            scii(u,v);
+            add_edge(u, v);
+            add_edge(v, u);
+        }
+        dfs(1,-1);
+        ans = 0;
+        rep(i,1,n) {
+            ans += ch[i];
+            ans %= mod;
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+
+*/
+
+//const int mod = 998244353;
+//
+//ll quickpow(ll a, ll b)
+//{
+//    ll ans = 1;
+//    while (b)
+//    {
+//        if (b & 1) ans = a * ans % mod;
+//        a = a * a % mod;
+//        b >>= 1;
+//    }
+//    return ans;
+//}
+//
+//
+//ll gcd(ll a,ll b)
+//{
+//    if (a % b == 0) return b;
+//    return gcd(b, a % b);
+//}
+//
+//
+//int main()
+//{
+//    ll m,p,q;
+//    ll pm,pc,qm,qc;
+//    ll gq,gp,ans_c,ans_m;
+//    ll a,b;
+//    __T {
+//        scanf("%lld%lld%lld",&m,&p,&q);
+//        qm = pm = 100;
+//
+//        gp = gcd(p,pm);
+//        gq = gcd(q,qm);
+//
+//        qm /= gq;
+//        pm /= gp;
+//
+//        qc = q;
+//
+//        qc /= gq;
+//        p /= gp;
+//
+//        a = (qc * quickpow(qm, mod - 2) % mod) * (p * quickpow(pm, mod - 2) % mod) % mod;
+//
+//        q = 100 - q;
+//        qm = 100;
+//        gq = gcd(q,qm);
+//
+//        q /= gq;
+//        qm /= gq;
+//
+//        b = (p * quickpow(pm, mod - 2) % mod) * (q * quickpow(qm, mod - 2) % mod) % mod;
+//
+//        ans_c = (a + b) % mod;
+//        ans_c = quickpow(ans_c, m);
+//        printf("%lld\n",ans_c);
+//    }
+//    return 0;
+//}
+
+//const int mod = 998244353;
+//
+//ll quickpow(ll a, ll b)
+//{
+//    ll ans = 1;
+//    while (b)
+//    {
+//        if (b & 1) ans = a * ans % mod;
+//        a = a * a % mod;
+//        b >>= 1;
+//    }
+//    return ans;
+//}
+//
+//int main()
+//{
+//    ll m,p,q;
+//    __T {
+//        scanf("%lld%lld%lld",&m,&p,&q);
+//        p = p * quickpow(100,mod - 2) % mod;
+//        q = q * quickpow(100,mod - 2) % mod;
+//        printf("%lld\n",(m * quickpow(p,mod - 2) % mod * p % mod - (m * quickpow(p, mod - 2) - 1 + mod) % mod * q % mod + mod) % mod);
+//    }
+//    return 0;
+//}
+
+/*
+const int MAXN = 1e6 + 10;
+
+int cnt[MAXN] = {0};
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    while (m --) {
+        scanf("%d%d",&u,&v);
+        cnt[u] ++;
+        cnt[v] ++;
+    }
+    int mx = cnt[1];
+    int mi = 1;
+    rep(i,2,n) {
+        if (cnt[i] > mx) {
+            mx = cnt[i];
+            mi = i;
+        }
+    }
+    printf("%d %d\n",mi,mx);
+    return 0;
+}
+*/
+
+//int main()
+//{
+//    int n;
+//    __T {
+//        scanf("%d",&n);
+//        for (int i = 1;i <= n - 1;i ++) {
+//            for (int j = i + 1;j <= n;j ++) {
+//                printf("%d %d\n",i,j);
+//            }
+//        }
+//    }
+//    return 0;
+//}
+
+/*
+int p;
+
+//set<int> a;
+//vector<int> b;
+
+//void dfs(int n)
+//{
+//    if (n == p) {
+//        for (auto i : b) printf("%d ",i);
+//        puts("");
+//        return;
+//    }
+//    int k = (*(b.end() - 1) * 2) % p;
+//    if (k != 0 && a.find(k) == a.end()) {
+//        a.insert(k);
+//        b.pb(k);
+//        dfs(n + 1);
+//        b.erase(b.end() - 1);
+//        a.erase(a.find(k));
+//    }
+//
+//    k = (*(b.end() - 1) * 3) % p;
+//    if (k != 0 && a.find(k) == a.end()) {
+//        a.insert(k);
+//        b.pb(k);
+//        dfs(n + 1);
+//        b.erase(b.end() - 1);
+//        a.erase(a.find(k));
+//    }
+//}
+
+int main()
+{
+    set<int> a;
+    vector<int> b;
+    int f;
+    int k,v;
+    __T {
+        scanf("%d",&p);
+        a.clear();
+        b.clear();
+        
+        a.insert(1);
+        b.pb(1);
+        
+        rep(i,2,p-1) {
+            k = *(b.end() - 1);
+            v = k * 2 % p;
+            if (a.find(v) == a.end()) {
+                a.insert(v);
+                b.pb(v);
+                continue;
+            }
+            v = k * 3 % p;
+            if (a.find(v) == a.end()) {
+                a.insert(v);
+                b.pb(v);
+            } else break;
+        }
+        
+        f = 1;
+        
+        if (b.size() == p - 1)
+        {
+            for (auto i : b) {
+                if (f) f = 0;
+                else printf(" ");
+                printf("%d",i);
+            }
+            puts("");
+        } else puts("-1");
+    }
+    
+    
+//    rep(i,1,p-1) {
+//        a.insert(i);
+//        b.pb(i);
+//        dfs(2);
+//        a.erase(a.find(i));
+//        b.erase(b.end() - 1);
+//    }
+    
+    
+    
+    
+    return 0;
+}
+*/
+
+//const int MAXN = 1e5 + 10;
+//
+//struct Edge {
+//    int to;
+//    int nxt;
+//} e[MAXN * 2];
+//int g[MAXN]; // Please call init() to memset it to -1!
+//int cnt = 0;
+//
+//void init(int n)
+//{
+//    cnt = 0;
+//    memn(g,-1,int,n);
+//}
+//
+//void add_edge(int u,int v)
+//{
+//    e[cnt] = {v,g[u]};
+//    g[u] = cnt ++;
+//}
+//
+//
+//int main()
+//{
+//    dsci(n);
+//    int r1 = 1,r2 = 1;
+//    int t;
+//    rep(i,1,n) {
+//        sci(t);
+//        if (t == 0) r1 = t;
+//        else {
+//
+//        }
+//    }
+//    re0;
+//}
+
+//int main()
+//{
+//    int T,n;
+//    scanf("%d",&T);
+//    while(T--)
+//    {
+//        scanf("%d",&n);
+//        for(int i=2;i<n;i++)
+//            for(int j=1;j<=min(i-1,n-i);j++)
+//                printf("%d %d\n",j,i);
+//        for(int i=1;i<n;i++)
+//        {
+//            int k=min(i,n-i);
+//            for(int j=n-k+1;j<=n;j++)
+//                printf("%d %d\n",i,j);
+//        }
+//    }
+//}
+
+/*
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int l,r;
+    pair<int,int> k[100010];
+    REP(i,0,m) {
+        scanf("%d%d",&l,&r);
+        k[i] = mpair(l,r);
+    }
+    sort(k,k + m);
+    int ans = k[0].first - 1;
+    int mm = k[0].second;
+    REP(i,1,m) {
+        if (k[i].first > mm) ans = max(ans,k[i].first - mm - 1);
+        mm = max(mm,k[i].second);
+    }
+    ans = max(ans,n - mm);
+    printf("%d\n",ans);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    dscii(n,m);
+    dsciii(k,l,d);
+    pair<int,int> row[1010],col[1010];
+    rep(i,1,max(n,m)) {
+        row[i].second = i;
+        col[i].second = i;
+    }
+    int a,b,x,y;
+    while (d --) {
+        scii(a,b);
+        scii(x,y);
+        if (a == x) col[min(b,y)].first ++;
+        if (b == y) row[min(a,x)].first ++;
+    }
+    sort(row + 1,row + n + 1,greater<pair<int,int>>());
+    sort(col + 1,col + m + 1,greater<pair<int,int>>());
+    
+    vector<int> aa,bb;
+    
+    rep(i,1,k) aa.pb(row[i].second);
+    rep(i,1,l) bb.pb(col[i].second);
+    
+    sort(aa.begin(),aa.end());
+    sort(bb.begin(),bb.end());
+    
+    int f = 1;
+    for (auto i : aa) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    puts("");
+    
+    f = 1;
+    for (auto i : bb) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    puts("");
+    
+    return 0;
+}
+*/
+
+//int a[100010];
+//
+//int main()
+//{
+//    dscii(n,k);
+//    int t;
+//    vector<int> m,M;
+//    deque<int> q;
+//    REP(i,0,n) {
+//        sci(t);
+//
+//    }
+//
+//
+//    return 0;
+//}
+
+
+
+/*
+int main()
+{
+    int n,x,y;
+    int j;
+    int nn;
+    int cnt_x;
+    int ii;
+    int f;
+    vector<int> ans;
+    __T {
+        sciii(n,x,y);
+        if (x + y > n + 1) {
+            puts("NO");
+            continue;
+        }
+        puts("YES");
+        
+        ans.clear();
+        nn = n;
+        cnt_x = 0;
+        
+        while (nn - y + cnt_x + 1 > x) {
+            j = nn - y + 1;
+            for (int i = 1;i <= y;i ++,j ++) {
+                ans.pb(j);
+            }
+            nn -= y;
+            cnt_x ++;
+        }
+        
+        for (j = 0,ii = x - cnt_x;ii <= nn;ii ++,j ++) {
+            ans.pb(ii);
+        }
+        nn -= j;
+        pre(i,nn,1) ans.pb(i);
+        
+        f = 1;
+        for (auto i = ans.rbegin();i != ans.rend();i ++) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",*i);
+        }
+        puts("");
+    }
+}
+*/
+
+//struct Edge {
+//    ll n;
+//    int x1,y1;
+//    int x2,y2;
+//};
+//
+//int vis[2010][2010];
+//int xx[2010],yy[2010];
+//Edge dis[4000010];
+//int cnt;
+//
+//ll get_dis(ll x1,ll y1,ll x2,ll y2) {
+//    return (x1 - x2) * (x1 - x2) + (y1 - y2) * (y1 - y2);
+//}
+//
+//int cmp(const Edge &a,const Edge &b) {
+//    return a.n > b.n;
+//}
+//
+//int main()
+//{
+////    int u,v;
+//    int n;
+//    __T {
+//        sci(n);
+//        REP(i,0,n) scanf("%d%d",xx + i,yy + i);
+//        cnt = 0;
+//        REP(i,0,n) {
+//            REP(j,0,n) {
+//                dis[cnt ++] = {get_dis(xx[i], yy[i], xx[j], yy[j]),xx[i],yy[i],xx[j],yy[j]};
+//            }
+//        }
+//        sort(dis,dis + cnt,cmp);
+//        if ((dis[0].x1 == xx[0] && dis[0].y1 == yy[0]) || (dis[0].x2 == xx[0] && dis[0].y2 == yy[0])) {
+//            puts("YES");
+//            continue;
+//        }
+//
+//
+//    }
+//    return 0;
+//}
+
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int dx[] = {0,0,1,-1,1,-1,1,-1};
+int dy[] = {1,-1,0,0,1,-1,-1,1};
+
+set<pair<ll,ll>> vis;
+
+void bfs(ll x,ll y)
+{
+    queue<pair<ll, ll>> q;
+    q.push(mpair(x,y));
+    pair<ll,ll> cur,k;
+    int f = 1;
+    ll xx,yy;
+    
+    ll ch = 0;
+    ll mt = 0;
+    
+    vis.clear();
+    vis.insert(mpair(x,y));
+    while (!q.empty()) {
+        cur = q.front();
+        q.pop();
+        
+        REP(i,0,8) {
+            xx = cur.first + dx[i];
+            yy = cur.second + dy[i];
+            if (gcd(xx,yy) > 1) {
+                
+                if (xx == yy && xx != 1) {
+                    printf("0/1\n");
+                    return;
+                }
+                
+                if (f) ch ++;
+                mt ++;
+                k = mpair(xx,yy);
+                if(vis.find(k) == vis.end()) {
+                    q.push(k);
+                    vis.insert(k);
+                }
+            }
+        }
+        if (f) {
+            f = 0;
+            ch ++;
+        }
+        mt ++;
+    }
+    printf("%lld/%lld\n",ch / gcd(ch,mt),mt / gcd(ch,mt));
+}
+
+int main()
+{
+    ll x,y;
+    __T {
+        scanf("%lld%lld",&x,&y);
+        bfs(x,y);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    dscii(n,k);
+    int t;
+    deque<pair<int,int>> qm,qM;
+    vector<int> ansm,ansM;
+    rep(i,1,n) {
+        sci(t);
+
+        while (!qm.empty() && qm.back().first > t) qm.pop_back();
+        while (!qM.empty() && qM.back().first < t) qM.pop_back();
+
+        qm.push_back(mpair(t,i));
+        qM.push_back(mpair(t,i));
+        
+//        for (auto i : qm) {
+//            printf("%d ",i.first);
+//        }
+//        puts("");
+        
+        if (i >= k) {
+            ansm.pb(qm.front().first);
+            ansM.pb(qM.front().first);
+        }
+        
+        if (qm.front().second == i - k + 1) {
+            qm.pop_front();
+        }
+
+        if (qM.front().second == i - k + 1) {
+            qM.pop_front();
+        }
+    }
+    int f = 1;
+    for (auto i : ansm) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    f = 1;
+    puts("");
+    for (auto i : ansM) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+const int mod = 1e9 + 7;
+
+class Matrix
+{
+    const static int MAXN = 10;
+
+    ll a[MAXN][MAXN];
+
+public:
+    int w;
+    int h;
+
+    Matrix(int h,int w):w(w),h(h)
+    {
+        mem(a,0);
+    }
+
+    Matrix(const char format[], ...) {
+
+        va_list args;
+        w = 0;
+        h = 0;
+
+        char buf[1000];
+
+        va_start(args, format);
+        vsprintf(buf, format, args);
+        va_end(args);
+
+        stringstream ss(buf);
+        stringstream num;
+        ll n;
+        string line;
+        while (getline(ss, line)) {
+            num.clear();
+            num << line;
+            w = 0;
+            while (num >> n) {
+                a[h + 1][++ w] = n;
+            }
+            h ++;
+        }
+    }
+
+    void E()
+    {
+        if (w == h) {
+            mem(a,0);
+            rep(i,1,w) a[i][i] = 1;
+        }
+    }
+
+    void print()
+    {
+        int f = 1;
+        rep(i,1,h) {
+            f = 1;
+            rep(j,1,w) {
+                if (f) f = 0;
+                else printf(" ");
+                printf("%lld",a[i][j]);
+            }
+            puts("");
+        }
+    }
+
+    void read_in()
+    {
+        rep(i,1,h) {
+            rep(j,1,w) {
+                scanf("%lld",&a[i][j]);
+            }
+        }
+    }
+
+    Matrix operator* (const Matrix &B) const
+    {
+        if (w != B.h) return Matrix(0,0); // invalid
+
+        Matrix ans(h,B.w);
+        rep(i,1,h) {
+            rep(j,1,B.w) {
+                rep(k,1,w) {
+//                    ans[i][j] = (ans[i][j] + a[i][k] * B[k][j]); // Not Moduled
+                    ans[i][j] = (ans[i][j] + a[i][k] * B[k][j] % mod) % mod; // Moduled
+                }
+            }
+        }
+        return ans;
+    }
+
+    const ll* operator[] (int i) const {
+        return a[i];
+    }
+
+    ll* operator[] (int i) {
+        return a[i];
+    }
+};
+
+Matrix quickpow(Matrix a, ll b)
+{
+    if (a.h != a.w) return Matrix(0,0); // invalid
+
+    Matrix ans(a.h,a.w);
+    rep(i,1,ans.h) ans[i][i] = 1; // Set ans matrix to E
+    while (b)
+    {
+        if (b & 1) ans = a * ans;
+        a = a * a;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    dscl(n);
+    printf("%lld\n",quickpow(Matrix("1 1\n1 0"), n)[1][1] * quickpow(Matrix("1 1\n1 0"), n - 1)[1][1] % mod);
+    re0;
+}
+*/
+
+/*
+int a[20]['Z' + 1];
+int b['Z' + 1];
+
+int main()
+{
+    dsci(n);
+    string line;
+    mem(a,0);
+    REP(i,0,n) {
+        cin >> line;
+        for (int j = 0;line[j];j ++) {
+            a[i][line[j]] ++;
+        }
+    }
+    int nn = 1 << n;
+    int k;
+    int m;
+    int ok;
+    int ans = 0;
+    REP(i,0,nn) {
+        k = i;
+        m = 0;
+        ok = 1;
+        mem(b,0);
+        for (int x = 0;x < n;x ++) {
+            if (k & 1) {
+                m ++;
+                rep(j,'A','Z') b[j] += a[x][j];
+            }
+            k >>= 1;
+        }
+//        printf(">>%d\n",i);
+        rep(j,'A','Z') {
+//            printf("%d",b[j] % 3);
+            if (b[j] % 3) {
+                ok = 0;
+                break;
+            }
+        }
+//        puts("");
+        
+        
+        if (ok) ans = max(ans,m);
+    }
+    printf("%d\n",ans);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll x1,x2,x3,y1,y2,y3;
+    ll ABx,ABy;
+    ll BCx,BCy;
+    __T {
+        scll(x1,y1);
+        scll(x2,y2);
+        scll(x3,y3);
+        ABx = x2 - x1;
+        ABy = y2 - y1;
+        
+        BCx = x3 - x2;
+        BCy = y3 - y2;
+        
+        if (ABx * BCy - ABy * BCx > 0)
+        {
+            puts("Counterclockwise");
+        } else puts("Clockwise");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        int k = 0;
+        if (n % 2) {
+            printf("612423534645156261");
+            n -= 3;
+            k = 4;
+        } else {
+            printf("134561");
+            n -= 2;
+            k = 3;
+        }
+        for (int i = 0;i < n / 2;i ++) {
+            printf("6");
+            
+            for (int j = 0;j < k;j ++) {
+                printf("13");
+            }
+            printf("4");
+            for (int j = 0;j < k - 1;j ++) {
+                printf("24");
+            }
+            printf("5");
+            for (int j = 0;j < k - 1;j ++) {
+                printf("35");
+            }
+            printf("6");
+            for (int j = 0;j < k - 1;j ++) {
+                printf("46");
+            }
+            printf("1");
+            for (int j = 0;j < k - 1;j ++) {
+                printf("51");
+            }
+            for (int j = 0;j < k - 2;j ++) printf("26");
+            printf("1");
+            k += 2;
+        }
+        puts("");
+    }
+    
+    return 0;
+}
+*/
+
+
+/*
+int p[5000000];
+char str[5000010];
+int cntp = 0;
+
+int pre['z' - 'a' + 1]['z' - 'a' + 1][2];
+
+int n;
+
+inline void add(int k) {
+    if (k != n) {
+        p[cntp ++] = k;
+    }
+}
+
+
+int main()
+{
+    int k;
+    int ok;
+    
+    __T {
+        sci(n);
+        scanf("%s",str);
+        if (n == 1) {
+            printf("No\n");
+            continue;
+        }
+        cntp = 0;
+        for (int i = 1;i * i <= n;i ++) {
+            if (n % i == 0) {
+                add(i);
+                if (i != n / i) {
+                    add(n / i);
+                }
+            }
+        }
+        
+        ok = 0;
+        
+        REP(i,0,cntp) {
+            mem(pre,0);
+            k = p[i];
+            REP(j,0,k) {
+                pre[str[j] - 'a'][str[(j + k - 1) % k] - 'a'][0] ++;
+            }
+            
+            for (int j = k,v = 0;str[j];j += k,v = !v) {
+                for (int x = 0;x < k;x ++) {
+                    if (pre[str[x + j] - 'a'][str[(x + k - 1) % k + j] - 'a'][v]) {
+                        pre[str[x + j] - 'a'][str[(x + k - 1) % k + j] - 'a'][v] --;
+                        pre[str[x + j] - 'a'][str[(x + k - 1) % k + j] - 'a'][!v] ++;
+                    }
+                    else goto err;
+                }
+            }
+            ok = 1;
+            break;
+            err:;
+        }
+        puts(ok ? "Yes" : "No");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m,t;
+    __T {
+        sci(n);
+        rep(i,1,n) {
+            sci(t);
+            if (i == 1) m = t;
+            else m = max(m,t);
+        }
+        printf("%d\n",m);
+    }
+    return 0;
+}
+*/
+
+/*
+inline void out(int &f,string &k) {
+    string t;
+    int x = 1;
+    if (k != "") {
+        if (f) f = 0;
+        else printf(" ");
+        t = "";
+        for (int i = 0;k[i];i ++) {
+            if (k[i] == '0') {
+                if (!x) t += k[i];
+            } else {
+                t += k[i];
+                x = 0;
+            }
+        }
+        if (t == "") printf("0");
+        else cout << t;
+        k = "";
+    }
+}
+
+int main()
+{
+    string str;
+    int f,x;
+    string k,v;
+    while (getline(cin,str)) {
+        f = 1;
+        k = "";
+        for (int i = 0;str[i];i ++) {
+            if (str[i] >= '0' && str[i] <= '9') {
+                k += str[i];
+            } else {
+                x = 1;
+                out(f,k);
+            }
+        }
+        out(f,k);
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        if (n % 3) puts("Alan");
+        else puts("Frame");
+    }
+    return 0;
+}
+*/
+
+/*
+int isNum(char a)
+{
+    return a >= '0' && a <= '9';
+}
+
+inline int cmp(const string a,const string b)
+{
+    string na,nb;
+    int i,j;
+    for (i = 0,j = 0;a[i] && b[j];) {
+        if (!isNum(a[i]) && isNum(b[j])) {
+//            _C(1);
+            return 1;
+        } else if (isNum(a[i]) && !isNum(b[j])) {
+//            _C(2);
+            return 0;
+        } else if (!isNum(a[i]) && !isNum(b[j])) {
+//            _C(a[i] << " " << b[j]);
+            if (a[i] != b[j]) return a[i] > b[j];
+            i ++;
+            j ++;
+        } else if (isNum(a[i]) && isNum(b[j])) {
+            na = "";
+            nb = "";
+            
+            while (a[i] && isNum(a[i])) {
+                na += a[i];
+                i ++;
+            }
+            while (b[j] && isNum(b[j])) {
+                nb += b[j];
+                j ++;
+            }
+            
+            if (na.size() > nb.size()) return 1;
+            else if (na.size() < nb.size()) return 0;
+            else {
+                for (int k = 0;na[k];k ++) {
+                    if (na[k] > nb[k]) return 1;
+                    else if (na[k] < nb[k]) return 0;
+                }
+            }
+        }
+    }
+    
+    if (a[i] && !b[j]) return 1;
+    else if (!a[i] && b[j]) return 0;
+    return 1;
+}
+
+int main()
+{
+    dsci(n);
+    string k;
+    cin >> k;
+    string str;
+    while (n --) {
+        cin >> str;
+        if (cmp(str,k)) puts("+");
+        else puts("-");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    dsci(n);
+    int a[5010];
+    rep(i,1,n) sci(a[i]);
+    sort(a + 1,a + 1 + n);
+    int d;
+    int m = a[n];
+    int t;
+    int ans = 1;
+    rep(i,1,n - 1) {
+        rep(j,i + 1,n) {
+            d = a[j] - a[i];
+            t = 0;
+            for (int j = a[i];j <= m;j += d) {
+                if (binary_search(a + 1, a + 1 + n, j)) {
+                    t ++;
+                } else break;
+            }
+            ans = max(ans,t);
+        }
+    }
+    printf("%d\n",ans);
+    return 0;
+}
+*/
+
+/*
+ll a[500010];
+
+int main() {
+    dsciii(r,s,p);
+    int x,y;
+    int t;
+    rep(i,1,p) {
+        scii(x,y);
+        if (y <= s) t = r - x + 1 + s - y + 1;
+        else t = r - x + 1 + y - s;
+        a[i] = t;
+    }
+
+    sort(a + 1,a + 1 + p,greater<ll>());
+    ll ans = a[1];
+    rep(i,2,p) {
+        ans = max(ans,a[i] + i - 1);
+    }
+    printf("%lld\n",ans);
+    return 0;
+}
+*/
+
+/*
+struct Point {
+    int x;
+    int y;
+};
+ 
+
+class Solution {
+public:
+    
+    vector<int> g[100010];
+    
+    int NN[100010];
+    int MM[100010];
+    
+    int ans = 0;
+    
+    void dfsN(int n,int f,int d)
+    {
+        NN[n] = d;
+        for (auto i : g[n]) {
+            if (f == i) continue;
+            dfsN(i,n,d + 1);
+        }
+    }
+    
+    void dfsM(int n,int f,int d)
+    {
+        MM[n] = d;
+        if (MM[n] <= NN[n]) {
+            ans = max(ans,NN[n]);
+            if (MM[n] == NN[n]) return;
+        }
+        for (auto i : g[n]) {
+            if (f == i) continue;
+            dfsM(i,n,d + 1);
+        }
+    }
+    
+    
+    int solve(int n, int x, vector<Point>& Edge) {
+        // write code here
+        if (x == 1) return 0;
+        for (auto i : Edge) {
+            g[i.x].pb(i.y);
+            g[i.y].pb(i.x);
+        }
+        dfsN(1,-1,1);
+        dfsM(x,-1,1);
+        return ans;
+    }
+};
+
+int main()
+{
+    dscii(n,x);
+    
+    int u,v;
+    vector<Point> a;
+    rep(i,1,n - 1)
+    {
+        scii(u,v);
+        a.pb({u,v});
+    }
+    Solution s;
+    printf("%d\n",s.solve(n, x, a));
+    return 0;
+}
+
+*/
+
+/*
+const int MAXN = 100100;
+
+ll dis[MAXN];
+int vis[MAXN];
+
+struct ST {
+    int n;
+    ll w;
+
+    bool operator< (const ST &other) const {
+        return w > other.w;
+    }
+};
+
+vector<ST> g[MAXN];
+
+void dij(int s) {
+    mem(dis,-1);
+    mem(vis,0);
+
+    priority_queue<ST> q;
+    q.push({s,dis[s] = 0});
+
+    ST current;
+    ll k;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (vis[current.n]) continue;
+        vis[current.n] = 1;
+
+        for (auto to : g[current.n]) {
+            k = dis[current.n] + to.w;
+            if (dis[to.n] == -1 || dis[to.n] > k) {
+                q.push({to.n,dis[to.n] = k});
+            }
+        }
+    }
+}
+
+void add(int u,int v,ll w)
+{
+    g[u].pb({v,w});
+}
+
+int main()
+{
+    int n;
+    ll t;
+    int k;
+    __T {
+        sci(n);
+        rep(i,1,MAXN) g[i].clear();
+        
+        rep(i,1,n) {
+            scl(t);
+            k = 1;
+            while (t != 0) {
+                if (t & 1) {
+                    add(i, n + k, 1ll << (k - 1));
+                    add(n + k, i, 0);
+                }
+                k ++;
+                t >>= 1;
+            }
+        }
+        
+        dij(1);
+        
+        if (~dis[n])
+            printf("%lld\n",dis[n]);
+        else puts("Impossible");
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 100010;
+
+struct Edge {
+    int to;
+    int nxt;
+    ll w;
+} e[MAXN * 2];
+
+int g[MAXN];
+int cnt = 0;
+
+void add(int u,int v,ll w) {
+    e[cnt] = {v,g[u],w};
+    g[u] = cnt ++;
+}
+
+void init()
+{
+    mem(g,-1);
+    cnt = 0;
+}
+
+ll dis[MAXN];
+ll dis2[MAXN];
+int vis[MAXN];
+
+struct ST {
+    int n;
+    ll w;
+
+    bool operator< (const ST &other) const {
+        return w > other.w;
+    }
+};
+
+void dij(int s) {
+    mem(dis,-1);
+    mem(dis2,-1);
+    mem(vis,0);
+
+    priority_queue<ST> q;
+    q.push({s,dis[s] = 0});
+
+    ST current;
+    ll k;
+    int to;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (dis2[current.n] != -1 && dis2[current.n] < current.w) continue;
+
+        for (int i = g[current.n];~i;i = e[i].nxt) {
+            to = e[i].to;
+            k = current.w + e[i].w;
+            if (dis[to] == -1 || dis[to] > k) {
+                swap(dis[to],k);
+                q.push({to,dis[to]});
+            }
+            if ((dis2[to] == -1 || dis2[to] > k) && dis[to] < k) {
+                q.push({to,dis2[to] = k});
+            }
+        }
+    }
+}
+
+int main()
+{
+    dscii(n,m);
+    init();
+    int u,v;
+    ll w;
+    rep(i,1,m) {
+        scii(u,v);
+        scl(w);
+        add(u,v,w);
+        add(v,u,w);
+    }
+    dij(0);
+  
+    printf("%lld\n",dis2[n - 1]);
+    
+    re0;
+}
+*/
+
+//const int MAXN = 5e5 + 10;
+//
+//struct Edge {
+//    int to;
+//    int nxt;
+//} e[MAXN * 2];
+//int g[MAXN]; // Please call init() to memset it to -1!
+//int cnt = 0;
+//
+//void init(int n)
+//{
+//    cnt = 0;
+//    memn(g,-1,int,n);
+//}
+//
+//void add_edge(int u,int v)
+//{
+//    e[cnt] = {v,g[u]};
+//    g[u] = cnt ++;
+//}
+//
+//struct DPS {
+//    int n;
+//    ll d;
+//};
+//
+//struct Node {
+//    int i;
+//    ll d;
+//};
+//
+//ll ans = 0;
+//ll dps[MAXN];
+//int vis[MAXN];
+//int p[MAXN];
+//ll ch[MAXN];
+//Node ddd[MAXN];
+//
+////void dfs(int n,ll d) {
+////    int to;
+////    dps[n] = d;
+////    ch[n] = 1;
+////    for (int i = g[n];~i;i = e[i].nxt) {
+////        to = e[i].to;
+////        dfs(to,d + 1);
+////        ch[n] += ch[to];
+////    }
+////}
+//
+//
+//
+//int cmp(const Node &a,const Node &b)
+//{
+//    return a.d > b.d;
+//}
+//
+//void bfs()
+//{
+//    queue<DPS> q;
+//    q.push({1,1});
+//    DPS cur;
+//    int to;
+//    while (!q.empty()) {
+//        cur = q.front();
+//        dps[cur.n] = cur.d;
+//        q.pop();
+//        for (int i = g[cur.n];~i;i = e[i].nxt) {
+//            to = e[i].to;
+//            q.push({to,cur.d + 1});
+//        }
+//    }
+//}
+//
+//int main()
+//{
+//    int n;
+//    ll mx;
+//    int mx_i;
+//    __T {
+//        sci(n);
+//        init(n + 5);
+//        rep(i,2,n) {
+//            sci(p[i]);
+//            add_edge(p[i], i);
+//        }
+//        p[1] = -1;
+//        ans = 0;
+////        dfs(1,1);
+//        bfs();
+//
+//        rep(i,1,n) {
+//            ddd[i] = {i,dps[i]};
+//            ch[i] = 1;
+//        }
+//        sort(ddd + 1, ddd + 1 + n, cmp);
+//
+//
+//        mx = ddd[1].d;
+//        mx_i = ddd[1].i;
+//
+//        rep(i,1,n) {
+//            ch[p[i]] += ch[i];
+//        }
+//
+////        rep(i,1,n) printf("%lld ",ch[i]);
+////        puts("");
+//
+////        cout << mx << endl;
+////        cout << mx_i << endl;
+//        ans += mx * n;
+//        memn(vis,0,int,n + 5);
+//        while (mx_i != -1) {
+//            vis[mx_i] = 1;
+//            mx_i = p[mx_i];
+//        }
+//        rep(i,1,n) {
+//            if (vis[i]) continue;
+//            ans += ch[i];
+//        }
+//        printf("%lld\n",ans);
+//    }
+//    return 0;
+//}
+
+
+/*
+const int MAXN = 5e5 + 10;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN * 2];
+int g[MAXN]; // Please call init() to memset it to -1!
+int cnt = 0;
+
+void init(int n)
+{
+    cnt = 0;
+    memn(g,-1,int,n);
+}
+
+void add_edge(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+ll ans = 0;
+int p[MAXN];
+ll ch[MAXN];
+
+void dfs(int n) {
+    int to;
+    ch[n] = 1;
+    for (int i = g[n];~i;i = e[i].nxt) {
+        to = e[i].to;
+        dfs(to);
+        ch[n] += ch[to];
+    }
+}
+
+int n;
+
+void dfs2(int k,ll x)
+{
+    if (ch[k] == 1) {
+        ans = max(x,ans);
+        return;
+    }
+    int to;
+    for (int i = g[k];~i;i = e[i].nxt) {
+        to = e[i].to;
+        dfs2(to,x + n - ch[to]);
+    }
+}
+
+int main()
+{
+    __T {
+        sci(n);
+        init(n + 5);
+        rep(i,2,n) {
+            sci(p[i]);
+            add_edge(p[i], i);
+        }
+        p[1] = -1;
+        ans = 0;
+        dfs(1);
+        dfs2(1,0);
+        rep(i,1,n) ans += ch[i];
+        printf("%lld\n",ans);
+        
+    }
+    return 0;
+}
+*/
+
+//int main()
+//{
+//    ll a,b,k;
+//    ll x,y;
+//    __T {
+//        sclll(a,b,k);
+//        if (b < a) swap(a,b);
+//
+//        if (a == 0) {
+//            puts("1");
+//            continue;
+//        }
+//
+////        a *= 2;
+//        ll m = (k + 1) * 2 + 1;
+//        ll c = a;
+//        cout << ((k + 1) * (m - 2) + (k + 2) * 2) << endl;
+//        c -= (a / ((k + 1) * (m - 2) + (k + 2) * 2)) * (m - 1);
+//
+//        printf(">>%lld\n",(a / (m * ((k + 1) * (m - 2) + (k + 2) * 2))) * (m - 1));
+//        printf("%lld %lld\n",m,c);
+//    }
+//    return 0;
+//}
+
+
+/*
+int main()
+{
+    string str;
+    cin >> str;
+    itn cnt = 0;
+    int o1 = 0;
+    int o0 = 0;
+    for (int i = 0;str[i];i ++) {
+        if (str[i] == '0') o0 = 1;
+        if (str[i] == '1') o1 = 1;
+        if (o0 && o1) {
+            cnt ++;
+            o0 = o1 = 0;
+        }
+    }
+    printf("%d\n",cnt);
+    return 0;
+}
+*/
+
+/*
+void solve(int s)
+{
+    char a[30][30];
+    int n = s / 8;
+    int m = s % 8;
+    int r = 0,c = 0;
+    
+    if (m == 3 || m == 5 || m == 6 || m == 7) n ++;
+    
+    r = min(n * 2 + 1,25);
+    c = n / 12;
+    if (n % 12) c ++;
+    c = c * 2 + 1;
+    printf("%d %d\n",c,r);
+    int cnt = 0;
+    REP(i,0,c) {
+        REP(j,0,r) {
+            if (i & 1 && j & 1 && cnt < n) {
+                a[i][j] = 'X';
+                cnt ++;
+            }
+            else a[i][j] = '.';
+        }
+    }
+    
+    if (m == 1) {
+        a[0][0] = 'X';
+    } else if (m == 2) {
+        a[0][0] = 'X';
+        a[0][1] = 'X';
+    } else if (m == 3) {
+        a[1][1] = '.';
+        a[0][0] = 'X';
+    } else if (m == 4) {
+        a[1][0] = 'X';
+        a[0][1] = 'X';
+    } else if (m == 5) {
+        a[0][0] = 'X';
+        a[0][1] = 'X';
+        
+        a[1][r - 2] = '.';
+        a[0][r - 1] = 'X';
+    } else if (m == 6) {
+        a[1][3] = '.';
+        a[1][2] = 'X';
+    } else if (m == 7) {
+        a[1][1] = '.';
+        a[0][0] = 'X';
+        a[1][0] = 'X';
+        a[0][1] = 'X';
+    }
+    REP(i,0,c) {
+        REP(j,0,r) {
+            printf("%c",a[i][j]);
+        }
+        puts("");
+    }
+}
+
+int main()
+{
+    int s;
+    __T {
+        sci(s);
+        if (s == 0) {
+            printf("1 1\n");
+            printf("X\n");
+        } else if (s == 1) {
+            printf("1 2\n");
+            printf("X.\n");
+        } else if (s == 2) {
+            printf("1 3\n");
+            printf("X.X\n");
+        } else if (s == 3) {
+            puts("2 2");
+            puts("X.\n..");
+        } else if (s == 4) {
+            printf("2 2\n");
+            printf(".X\nX.\n");
+        } else if (s == 5) {
+            puts("1 6");
+            puts("X.X.X.");
+        } else if (s == 6) {
+            puts("1 7");
+            puts(".X.X.X.");
+        } else if (s == 7) {
+            puts("3 3");
+            puts("XX.\nX..\n...");
+        } else if (s == 8) {
+            puts("3 3");
+            puts("...\n.X.\n...");
+        } else if (s == 9) {
+            puts("3 3");
+            puts("X..\n.X.\n...");
+        } else if (s == 10) {
+            puts("3 3");
+            puts("XX.\n.X.\n...");
+        } else if (s == 11) {
+            puts("3 5");
+            puts("X....\n...X.\n.....");
+        } else if (s == 12) {
+            puts("3 3");
+            puts(".X.\nXX.\n...");
+        } else if (s == 13) {
+            puts("5 3");
+            puts("XX.\n.X.\n...\n...\nX..");
+        } else if (s == 14) {
+            puts("3 4");
+            puts("....\n.XX.\n....");
+        } else {
+            solve(s);
+        }
+    }
+    re0;
+}
+*/
+
+
+//const int mod = 1e9 + 7;
+//
+//int a[5010];
+//int vis[5010];
+//int n;
+//
+//ll dfs(int x,int k)
+//{
+//    if (x == n) return 1;
+//    ll sum = 0;
+//    if (a[x] == 0) {
+//        rep(i,k + 1,n) {
+//            if (vis[i]) continue;
+//            vis[i] = 1;
+//            sum += dfs(x + 1,i);
+//            vis[i] = 0;
+//        }
+//    } else {
+//        pre(i,k - 1,1) {
+//            if (vis[i]) continue;
+//            vis[i] = 1;
+//            sum += dfs(x + 1,i);
+//            vis[i] = 0;
+//        }
+//    }
+//    return sum;
+//}
+//
+//int main()
+//{
+////    mem(vis,0);
+////    __T {
+////        sci(n);
+////        rep(i,1,n - 1) sci(a[i]);
+////        ll ans = 0;
+////        rep(i,1,n) {
+////            vis[i] = 1;
+////            ans += dfs(1,i);
+////            vis[i] = 0;
+////        }
+////        printf("%lld\n",ans);
+////    }
+//
+//    sci(n);
+//    int x = n - 1;
+//    int xx = 1 << x;
+//    int t;
+//    ll ans;
+//    REP(i,0,xx) {
+//        t = i;
+//        for (int j = x;j >= 1;j --) {
+//            a[j] = t & 1;
+//            t >>= 1;
+//        }
+//        rep(j,1,x) printf("%d",a[j]);
+//        ans = 0;
+//        rep(i,1,n) {
+//            vis[i] = 1;
+//            ans += dfs(1,i);
+//            vis[i] = 0;
+//        }
+//        printf(" = %lld\n",ans);
+//    }
+//    return 0;
+//}
+
+/*
+struct Node {
+    int n;
+    int i;
+} a[105];
+
+int cmp(const Node &a,const Node &b)
+{
+    if (a.n == b.n) return a.i < b.i;
+    return a.n > b.n;
+}
+
+int main()
+{
+    int n,m,k;
+    __T {
+        sciii(n,m,k);
+        rep(i,1,n) {
+            sci(a[i].n);
+            a[i].i = i;
+        }
+        if (k == 0) {
+            rep(i,1,n) {
+                if (i != 1) {
+                    printf(" ");
+                }
+                printf("%d",i);
+            }
+            puts("");
+            continue;
+        }
+        sort(a + 1,a + 1 + n,cmp);
+        rep(i,1,n) {
+            if (i != 1) {
+                printf(" ");
+            }
+            printf("%d",a[i].i);
+        }
+        puts("");
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 1000;
+
+struct Edge {
+    int to;
+    int nxt;
+    ll w;
+} e[MAXN * 2];
+
+int cnt = 0;
+int g[MAXN];
+
+void init()
+{
+    mem(g,-1);
+    cnt = 0;
+}
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,g[u],w};
+    g[u] = cnt ++;
+}
+
+ll a[MAXN];
+ll dis[MAXN];
+ll vis[MAXN];
+ll mm[MAXN];
+
+struct Node {
+    int n;
+    ll w;
+    ll a;
+    bool operator <(const Node &o) const {
+        return w > o.w;
+    }
+};
+
+void dij(int s)
+{
+    mem(dis,-1);
+    mem(vis,0);
+    mem(mm,0);
+    priority_queue<Node> q;
+    q.push({s,dis[s] = 0,a[s]});
+    
+    Node cur;
+    int to;
+    ll cost;
+    while (!q.empty()) {
+        cur = q.top();
+        q.pop();
+        
+        if (cur.w > dis[cur.n]) continue;
+        if (cur.w == dis[cur.n]) {
+            vis[cur.n] ++;
+            mm[cur.n] = max(mm[cur.n],cur.a);
+        }
+        
+        for (int i = g[cur.n];~i;i = e[i].nxt) {
+            to = e[i].to;
+            cost = cur.w + e[i].w;
+            if (dis[to] == -1 || dis[to] >= cost) {
+                q.push({to,dis[to] = cost,cur.a + a[to]});
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n,m,c1,c2;
+    scii(n,m);
+    scii(c1,c2);
+    rep(i,0,n - 1) scl(a[i]);
+    init();
+    int u,v;
+    ll w;
+    rep(i,1,m) {
+        scii(u,v);
+        scl(w);
+        add_edge(u,v,w);
+        add_edge(v,u,w);
+    }
+    dij(c1);
+    printf("%lld %lld\n",vis[c2],mm[c2]);
+    
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 110;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN * 2];
+
+int cnt;
+int g[MAXN];
+
+int dps[MAXN];
+int mx_d;
+
+void init()
+{
+    mem(g,-1);
+    cnt = 0;
+    
+    mem(dps,0);
+    mx_d = -1;
+}
+
+void add(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+void dfs(int n,int d)
+{
+    mx_d = max(mx_d,d);
+    int cnt = 0;
+    int to;
+    
+    for (int i = g[n];~i;i = e[i].nxt,cnt ++)
+    {
+        to = e[i].to;
+        dfs(to,d + 1);
+    }
+    
+    if (cnt == 0) dps[d] ++;
+}
+
+int main()
+{
+    int n,m;
+    int id,k;
+    int v;
+    while (~scii(n,m)) {
+        if (n == 0) break;
+        init();
+        while (m --) {
+            scii(id,k);
+            while (k --) {
+                sci(v);
+                add(id,v);
+            }
+        }
+        
+        dfs(1,0);
+        
+        rep(i,0,mx_d) {
+            if (i) printf(" ");
+            printf("%d",dps[i]);
+        }
+        puts("");
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int h,m,s,hh,mm,ss;
+    string min_str,max_str;
+    int mi = INT_INF;
+    int mx = -1;
+    int i,x;
+    __T {
+        cin >> str;
+        scanf("%d:%d:%d",&h,&s,&m);
+        scanf("%d:%d:%d",&hh,&mm,&ss);
+        i = h * 10000 + m * 100 + s;
+        x = hh * 10000 + mm * 100 + ss;
+        if (i < mi) {
+            mi = i;
+            min_str = str;
+        }
+        if (x > mx) {
+            mx = x;
+            max_str = str;
+        }
+    }
+    cout << min_str << " " << max_str << endl;
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    dsci(n);
+    deque<int> q;
+    char a,b;
+    int k;
+    int i = 1;
+    while (n --) {
+        scanf(" %c %c",&a,&b);
+        if (a == 'A' && b == 'L') {
+            q.push_front(i ++);
+        } else if (a == 'A' && b == 'R') {
+            q.push_back(i ++);
+        } else if (a == 'D' && b == 'L') {
+            scanf("%d",&k);
+            rep(i,1,k) q.pop_front();
+        } else if (a == 'D' && b == 'R') {
+            scanf("%d",&k);
+            rep(i,1,k) q.pop_back();
+        }
+    }
+    while (!q.empty()) {
+        printf("%d\n",q.front());
+        q.pop_front();
+    }
+    return 0;
+}
+*/
+
+/*
+int n,m;
+ll a[100010];
+ll s[100010];
+
+inline bool check(ll x) {
+    int l = 0;
+    int cnt = 0;
+    rep(i,1,n) {
+//        printf(">>%lld\n",s[i] - s[l]);
+        if (a[i] > x) return 0;
+        if (s[i] - s[l] > x)
+        {
+            cnt ++;
+            l = i - 1;
+        }
+    }
+//    printf(">>%lld\n",s[n] - s[l]);
+    cnt ++;
+//    cout << cnt << endl;
+    return cnt <= m;
+}
+
+int main()
+{
+    scii(n,m);
+    s[0] = 0;
+    rep(i,1,n) {
+        scl(a[i]);
+        s[i] = s[i - 1] + a[i];
+    }
+//    rep(i,1,n) printf("%d ",s[i]);
+    ll l,r,mm;
+    l = s[1];
+    r = s[n];
+    while (l < r) {
+        mm = (l + r) / 2;
+        if (check(mm)) {
+            r = mm;
+        } else l = mm + 1;
+    }
+    printf("%lld\n",r);
+    return 0;
+}
+*/
+
+/*
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans;
+        a = a * a;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    int n;
+    ll a[1000];
+    int cnt = 0;
+    sci(n);
+    string str;
+    scanf(" ");
+    getline(cin,str);
+    
+    stringstream ss(str);
+    ll t;
+    while (ss >> t) {
+        a[cnt ++] = t;
+    }
+    
+    map<ll,int> vis;
+    ll x;
+    rep(i,2,n + 1) {
+        REP(j,0,cnt) {
+            if (vis[a[j]] && vis[a[j]] != i) continue;
+            t = a[j];
+            x = 0;
+            while (t) {
+                x += quickpow(t % 10,i);
+                t /= 10;
+            }
+            vis[x] = i;
+        }
+    }
+    sort(a,a + cnt);
+    int f = 1;
+    REP(i,0,cnt) {
+        if (vis[a[i]]) continue;
+        if (f) f = 0;
+        else printf(" ");
+        printf("%lld",a[i]);
+    }
+    puts("");
+    re0;
+}
+*/
+
+/*
+const int MAXN = 1e6 + 10;
+
+int is_prime[MAXN];
+int is_prime_small[MAXN];
+
+
+void segment_sieve(ll a,ll b)
+{
+    for (ll i = 0;i * i < b;i ++) is_prime_small[i] = 1;
+    for (ll i = 0;i < b - a;i ++) is_prime[i] = 1;
+    for (ll i = 2;i * i < b;i ++)
+    {
+        if (is_prime_small[i])
+        {
+            for (ll j = 2 * i;j * j < b;j += i)
+            {
+                is_prime_small[j] = 0;
+            }
+            for (ll j = max(2LL,(a + i - 1) / i) * i; j < b;j += i)
+            {
+                is_prime[j - a] = 0;
+            }
+        }
+    }
+}
+
+int main()
+{
+    ll a,b;
+    scanf("%lld %lld",&a,&b);
+    segment_sieve(a,b + 1);
+    int ans = 0;
+    rep(i,0,b - a) {
+        if(is_prime[i]) ans ++;
+    }
+    if (a == 1) ans --;
+    printf("%d\n",ans);
+    
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1000000;
+
+struct Edge {
+    int to;
+    double w;
+    int nxt;
+} e[MAXN * 2];
+int g[MAXN]; // Please call init() to memset it to -1!
+int cnt = 0;
+
+void init(int n)
+{
+    cnt = 0;
+    memn(g,-1,int,n);
+}
+
+void add_edge(int u,int v,double w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+ll x[110];
+ll y[110];
+int to_u[110];
+
+int pre[MAXN];
+//ll dis[MAXN];
+double dis[MAXN];
+int vis[MAXN];
+
+struct ST {
+    int n;
+    double w;
+
+    bool operator< (const ST &other) const {
+        return w > other.w;
+    }
+};
+
+ll n,v;
+
+void dij(int s) {
+//    mem(dis,-1);
+    rep(i,1,n) dis[i] = -1;
+//    mem(ans,0);
+    mem(vis,0);
+
+    priority_queue<ST> q;
+    q.push({s,dis[s] = 0});
+//    ans[s] = 0;
+
+    ST current;
+    double k;
+    int to;
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (vis[current.n]) continue;
+        vis[current.n] = 1;
+
+        for (int i = g[current.n];~i;i = e[i].nxt) {
+            to = e[i].to;
+            k = dis[current.n] + e[i].w;
+            if (dis[to] == -1 || dis[to] > k) {
+                q.push({to,dis[to] = k});
+//                ans[to] = ans[current.n] + sqrt(e[i].w / 10.0);
+            }
+        }
+    }
+}
+
+int main()
+{
+    scll(n,v);
+    init(MAXN - 5);
+    rep(i,1,n) {
+        scll(x[i],y[i]);
+        sci(to_u[i]);
+    }
+    ll w;
+    rep(i,1,n) {
+        if (to_u[i] != 0) {
+            w = (x[i] - x[to_u[i]]) * (x[i] - x[to_u[i]]) + (y[i] - y[to_u[i]]) * (y[i] - y[to_u[i]]);
+            add_edge(i, to_u[i], sqrt(w) / v);
+            add_edge(to_u[i], i, sqrt(w) / v);
+        }
+        rep(j,1,n) {
+            if (i != j && x[i] == x[j] && y[i] > y[j]) {
+                add_edge(i, j, sqrt((y[i] - y[j]) * 0.2));
+            }
+        }
+    }
+    dij(1);
+    printf("%.2f\n",dis[n]);
+    
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 100;
+
+int ans[MAXN] = {0};
+int tmp[MAXN] = {0};
+int base[MAXN] = {1};
+
+void print(int *a)
+{
+    pre(i,MAXN - 1,0) printf("%d",a[i]);
+    puts("");
+}
+
+void add(int a[],int b)
+{
+    int p = 0;
+    REP(i,0,MAXN) {
+        a[i] += b % 10 + p;
+        b /= 10;
+        p = a[i] / 10;
+        a[i] %= 10;
+    }
+//    print(a);
+}
+
+void add(int a[],int b[])
+{
+    // a = a + b
+    int p = 0;
+    REP(i,0,MAXN) {
+        a[i] += b[i] + p;
+        p = a[i] / 10;
+        a[i] %= 10;
+    }
+//    print(a);
+}
+
+void cpy(int a[],int des[])
+{
+    REP(i,0,MAXN) {
+        des[i] = a[i];
+    }
+}
+
+void multy(int a[],int b)
+{
+    int x[MAXN] = {0};
+    int k[MAXN];
+    int off = 0;
+    int z,t;
+    int p;
+    while (b) {
+        z = b % 10;
+        p = 0;
+        REP(i,0,MAXN) {
+            t = z * a[i];
+            k[i] = t + p;
+            p = k[i] / 10;
+            k[i] %= 10;
+        }
+//        printf(">>");
+//        print(k);
+        p = 0;
+        REP(i,off,MAXN) {
+            x[i] += k[i - off] + p;
+            p = x[i] / 10;
+            x[i] %= 10;
+        }
+        off ++;
+        b /= 10;
+    }
+    
+//    print(x);
+    cpy(x,a);
+}
+
+int main()
+{
+    int x,n;
+    scii(x,n);
+    int t;
+    rep(i,0,n) {
+        sci(t);
+        if (i == 0) add(ans,t);
+        else {
+            cpy(base, tmp);
+            multy(tmp, t);
+            add(ans,tmp);
+        }
+        multy(base, x);
+    }
+    print(ans);
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 310;
+
+struct Node {
+    int to;
+    ll w;
+    bool operator <(const Node &o) const {
+        return w > o.w;
+    }
+};
+
+vector<Node> g[MAXN];
+
+ll dis[MAXN];
+int vis[MAXN];
+
+void prime(int s)
+{
+    mem(dis,-1);
+    mem(vis,0);
+    
+    priority_queue<Node> q;
+    q.push({s,dis[s] = 0});
+    
+    Node current;
+    ll k;
+    
+    ll ans = 0;
+    
+    while (!q.empty()) {
+        current = q.top();
+        q.pop();
+        if (vis[current.to]) continue;
+        vis[current.to] = 1;
+        
+        ans += current.w;
+        
+        for (auto to : g[current.to]) {
+            k = to.w;
+            if (dis[to.to] == -1 || dis[to.to] > k) {
+                q.push({to.to,dis[to.to] = k});
+            }
+        }
+    }
+    
+    printf("%lld\n",ans);
+}
+
+int main()
+{
+    dsci(n);
+    ll t;
+    rep(i,1,n) {
+        scl(t);
+        g[0].pb({i,t});
+        g[i].pb({0,t});
+    }
+    rep(i,1,n) {
+        rep(j,1,n) {
+            scl(t);
+            if (i != j) {
+                g[i].pb({j,t});
+            }
+        }
+    }
+    prime(0);
+    return 0;
+}
+*/
+
+//const int MAXN = 510;
+//
+//vector<int> g[MAXN];
+//
+//int x,y;
+//
+//void dfs(int n) {
+//
+//}
+//
+//int main()
+//{
+//    int n,m;
+//    scii(n,m);
+//    scii(x,y);
+//    int u,v;
+//    while (m --) {
+//        scii(u,v);
+//        g[u].pb(v);
+//        g[v].pb(u);
+//    }
+//
+//    return 0;
+//}
+
+/*
+int main()
+{
+    dsci(nn);
+    string str;
+    cin >> str;
+    int k = 0,i = 0,n = 0,g = 0;
+    rep(j,0,nn - 1) {
+        if (str[j] == 'k') k ++;
+        if (str[j] == 'i') i ++;
+        if (str[j] == 'n') n ++;
+        if (str[j] == 'g') g ++;
+    }
+//    _C(k << " " << i << " " << n << " " << g);
+    ll cnt = 0;
+    while (k >= 1 && i >= 2 && n >= 2 && g >= 2) {
+        cnt += 2;
+        k --;
+        i -= 2;
+        n -= 2;
+        g -= 2;
+    }
+    while (k >= 1 && i >= 1 && n >= 1 && g >= 1) {
+        cnt ++;
+        k --;
+        i --;
+        n --;
+        g --;
+    }
+    printf("%lld\n",cnt);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    dsci(n);
+    int a[100010];
+    rep(i,1,n) sci(a[i]);
+    sort(a + 1,a + 1 + n);
+    if (a[n] > n) {
+        printf("-1\n");
+        return 0;
+    }
+    int l = a[1];
+    int cnt = 0;
+    int ans = 0;
+    int k[100010];
+    rep(i,1,n) {
+        if (l == cnt) {
+            ans ++;
+            cnt = 0;
+        }
+        l = a[i];
+        k[i] = ans;
+        cnt ++;
+    }
+    if (cnt != l) {
+        ans = k[n - a[n] + 1];
+    }
+    printf("%d\n",ans + 1);
+    return 0;
+}
+*/
+
+//const int MAXN = 1000000;
+//
+//struct Edge {
+//    int to;
+//    int nxt;
+//} e[MAXN * 2];
+//int g[MAXN];
+//int cnt;
+//
+//int n,m,x,y;
+//
+//int vis[510];
+//int d[510];
+//
+//void init() {
+//    cnt = 0;
+//    mem(g,-1);
+//    mem(vis,0);
+//}
+//
+//void add(int u,int v)
+//{
+//    e[cnt] = {v,g[u]};
+//    g[u] = cnt ++;
+//}
+//
+//
+//void dfs(int n)
+//{
+//    if (vis[n]) return;
+//    vis[n] = 1;
+//    int to;
+//    int c = 0;
+//    for (int i = g[n];~i;i = e[i].nxt,c ++) {
+//        to = e[i].to;
+//        dfs(to);
+//    }
+//    d[n] = c;
+//}
+//
+//int main()
+//{
+//    scii(n,m);
+//    scii(x,y);
+//    int u,v;
+//    init();
+//    while (m --) {
+//        scii(u,v);
+//        add(u,v);
+//        add(v,u);
+//    }
+//    return 0;
+//}
+
+/*
+ll A[1010][1010];
+ll B[1010][1010];
+
+int main()
+{
+    int n,q;
+    int t,i,j,val;
+    ll sum;
+    cio
+    while (cin >> n >> q)
+    {
+        sum = 0;
+        rep(i,1,n) {
+            rep(j,1,n) {
+                cin >> A[i][j];
+            }
+        }
+        rep(i,1,n) {
+            rep(j,1,n) {
+                cin >> B[i][j];
+            }
+        }
+        rep(i,1,n) {
+            rep(j,1,n) {
+                sum += A[i][j] * B[j][i];
+            }
+        }
+    //    _C(sum);
+        while (q --) {
+            cin >> t >> i >> j >> val;
+            if (t) {
+                // B
+                sum -= B[i][j] * A[j][i];
+                B[i][j] = val;
+                sum += B[i][j] * A[j][i];
+            } else {
+                // A
+                sum -= A[i][j] * B[j][i];
+                A[i][j] = val;
+                sum += A[i][j] * B[j][i];
+            }
+            _C(sum);
+        }
+    }
+    
+    return 0;
+}
+
+*/
+/*
+int main() {
+    string a,b;
+    cin >> a >> b;
+    int this_num = 0;
+    ulong lena = a.length() - 1;
+    ulong lenb = b.length() - 1;
+    int judge = 1;
+    for (;lenb >= 0 && lena >= 0;lenb --, lena--, judge++){
+        this_num = 0;
+        if (judge % 2){
+            this_num = (a[lena] - '0' + b[lenb] - '0') % 13;
+            if (this_num == 10) {
+                a[lena] = 'J';
+            } else if (this_num == 11) {
+                a[lena] = 'Q';
+            } else if (this_num == 12) {
+                a[lena] = 'K';
+            } else if (this_num < 10) {
+                a[lena] = this_num + '0';
+            }
+        } else {
+            this_num = b[lenb] - a[lena];
+            if (this_num < 0) this_num += 10;
+            a[lena] = this_num + '0';
+        }
+    }
+    if (a.length() < b.length()) {
+        for (int i = 0;i < b.length() - a.length();i ++)
+            cout << b[i];
+    }
+    cout << a;
+}
+*/
+
+/*
+double s[10010];
+int main(){
+    int n;
+    cin>>n;
+    for(int i=1;i<=n;i++)
+    {
+        cin>>s[i];
+    }
+    sort(s+1,s+n+1);
+    double sum1=s[1];
+    for(int i=2;i<=n;i++)
+    {
+        sum1=sum1/2+s[i]/2;
+    }
+    
+    printf("%.0f\n",floor(sum1));
+    return 0;
+}
+*/
+
+/*
+// 树状数组：单点修改，区间和查询
+const int MAXN = 5e5 + 10;
+
+ll a[MAXN];
+ll c[MAXN];
+
+int n,m;
+
+void modify(int idx,ll x)
+{
+    // 从叶子结点一路向上更新
+    for (int i = idx;i <= n;i += lowbit(i)) {
+        c[i] += x;
+    }
+}
+
+ll sum(int idx)
+{
+    // 查询： 由于每个c结点相当于一小段前缀和，因此全+起来，最后求得的便是总共的前缀和
+    ll ans = 0;
+    for (int i = idx;i > 0;i -= lowbit(i))
+    {
+        ans += c[i];
+    }
+    return ans;
+}
+
+int main()
+{
+    scii(n,m);
+    rep(i,1,n) scl(a[i]);
+    rep(i,1,n) modify(i, a[i]);
+    int t,x,y;
+    while (m --) {
+        sciii(t,x,y);
+        if (t == 1) {
+            // modify
+            modify(x, y);
+        } else if (t == 2) {
+            // query
+            printf("%lld\n",sum(y) - sum(x - 1));
+        }
+    }
+    re0;
+}
+*/
+
+/*
+// 树状数组+差分： 区间修改+单点查询
+const int MAXN = 5e5 + 10;
+
+int a[MAXN];
+int c[MAXN];
+
+int n,m;
+
+void modify(int idx,ll x)
+{
+    // 从叶子结点一路向上更新
+    for (int i = idx;i <= n;i += lowbit(i))
+    {
+        c[i] += x;
+    }
+}
+
+ll sum(int idx)
+{
+    // 查询：由于每个c结点相当于一小段前缀和，因此全+起来，最后求得的便是总共的前缀和
+    ll ans = 0;
+    for (int i = idx;i > 0;i -= lowbit(i))
+    {
+        ans += c[i];
+    }
+    return ans;
+}
+
+void pls(int l,int r,int k)
+{
+    modify(l, k);
+    modify(r + 1, -k);
+}
+
+void init()
+{
+    rep(i,1,n) {
+        pls(i,i,a[i]);
+    }
+}
+
+int main()
+{
+    scii(n,m);
+    rep(i,1,n) sci(a[i]);
+    init();
+    
+    int t;
+    int x,y,k;
+    
+    while (m --) {
+        sci(t);
+        if (t == 1) {
+            sciii(x,y,k);
+            // modify
+            pls(x,y,k);
+        } else if (t == 2) {
+            sci(x);
+            // get_ans: sum_up
+            printf("%lld\n",sum(x));
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+// 树状数组求逆序数
+const int MAXN = 5e4 + 10;
+
+int a[MAXN];
+int b[MAXN];
+ll c[MAXN];
+
+int n,m;
+
+void modify(int idx,ll x)
+{
+    // 从叶子结点一路向上更新
+    for (int i = idx;i <= n;i += lowbit(i)) {
+        c[i] += x;
+    }
+}
+
+ll sum(int idx)
+{
+    // 查询： 由于每个c结点相当于一小段前缀和，因此全+起来，最后求得的便是总共的前缀和
+    ll ans = 0;
+    for (int i = idx;i > 0;i -= lowbit(i))
+    {
+        ans += c[i];
+    }
+    return ans;
+}
+
+int main()
+{
+    int *x;
+    ll ans;
+    int idx;
+    while (~sci(n)) {
+        
+        rep(i,1,n) {
+            sci(a[i]);
+            b[i] = a[i];
+            c[i] = 0;
+        }
+        sort(a + 1, a + 1 + n);
+        x = unique(a + 1, a + 1 + n);
+//        for (int *i = a + 1;i != x;i ++) printf("%d ",*i);
+//        puts("");
+        ans = 0;
+        pre(i,n,1) {
+            idx = (int) (lower_bound(a + 1, x, b[i]) - a);
+            
+            ans += sum(idx);
+            modify(idx, 1);
+        }
+        printf("%lld\n",ans);
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int k1,k2;
+    pair<int,double> p1[50],p2[50];
+    sci(k1);
+    rep(i,1,k1) {
+        sci(p1[i].first);
+        scd(p1[i].second);
+    }
+    sci(k2);
+    rep(i,1,k2) {
+        sci(p2[i].first);
+        scd(p2[i].second);
+    }
+    
+    double a[2010];
+    rep(i,0,2009) a[i] = 0;
+    rep(i,1,k1) {
+        rep(j,1,k2) {
+            a[p1[i].first + p2[j].first] += p1[i].second * p2[j].second;
+        }
+    }
+    vector<pair<int, double>> ans;
+    pre(i,2010,0) {
+        if (a[i] != 0) {
+            ans.pb(mpair(i,a[i]));
+        }
+    }
+    printf("%lu",ans.size());
+    for (auto i : ans) {
+        printf(" ");
+        printf("%d %.1f",i.first,i.second);
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+ll c[50010];
+int n;
+
+ll sum(int idx)
+{
+    ll ans = 0;
+    for (int i = idx;i > 0;i -= lowbit(i)) {
+        ans += c[i];
+    }
+    return ans;
+}
+
+void modify(int idx,int a) {
+    for (int i = idx;i <= n;i += lowbit(i)) {
+        c[i] += a;
+    }
+}
+
+int main()
+{
+    int T;
+    sci(T);
+    
+    
+    char cmd[100];
+    int l,r;
+    rep(test,1,T) {
+        sci(n);
+        rep(i,1,n) c[i] = 0;
+        rep(i,1,n) {
+            sci(l);
+            modify(i, l);
+        }
+        printf("Case %d:\n",test);
+        while (1) {
+            scanf("%s",cmd);
+            if (strcmp("Query", cmd) == 0) {
+                scii(l,r);
+                printf("%lld\n",sum(r) - sum(l - 1));
+            } else if (strcmp("Add", cmd) == 0) {
+                scii(l,r);
+                modify(l, r);
+            } else if (strcmp("Sub", cmd) == 0) {
+                scii(l,r);
+                modify(l, -r);
+            } else if (strcmp("End", cmd) == 0) {
+                break;
+            }
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+ll cnt[1000010];
+
+inline int is462(int x)
+{
+    int last = 0;
+    int t;
+    while (x) {
+        t = x % 10;
+        if (t == 4) re1;
+        else if (t == 6 && last == 2) re1;
+        last = t;
+        x /= 10;
+    }
+    re0;
+}
+
+int main()
+{
+    int a,b;
+    cnt[0] = 0;
+    rep(i,1,1000000) {
+        cnt[i] = cnt[i - 1];
+        if (is462(i)) {
+            cnt[i] ++;
+        }
+    }
+    ll ans;
+    while (~scii(a,b)) {
+        if (a == 0 && b == 0) break;
+        ans = b - a + 1;
+        if (a == 0) a ++;
+        ans -= cnt[b] - cnt[a - 1];
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+//const int mod = 1e9 + 7;
+//
+//ll quickpow(ll a, ll b)
+//{
+//    ll ans = 1;
+//    while (b)
+//    {
+//        if (b & 1) ans = a * ans % mod;
+//        a = a * a % mod;
+//        b >>= 1;
+//    }
+//    return ans;
+//}
+//
+//int main()
+//{
+//    string str = " 123456";
+//    int i = 3;
+//    rep(j,1,i) {
+//        rep(l,j,i) printf("%c",str[l]);
+//    }
+//
+//    int n,k;
+////    string str;
+//    ll ans;
+//    __T {
+//        scii(n,k);
+//        cin >> str;
+//        ans = 0;
+//        rep(i,1,n) {
+//            ans += quickpow(str[i - 1] - '0',k) * i % mod;
+//            ans %= mod;
+//            if (i != 1) printf(" ");
+//            printf("%lld",ans);
+//        }
+//        puts("");
+//    }
+//    re0;
+//}
+
+/*
+int main()
+{
+    int a[100010] = {0};
+    dscii(n,q);
+    int t;
+    rep(i,1,n) {
+        sci(t);
+        a[t] = i;
+    }
+    int l,r;
+    while (q --) {
+        scii(l,r);
+        rep(i,0,n)
+            if (a[i] < l || a[i] > r) {
+                printf("%d\n",i);
+                break;
+            }
+    }
+    return 0;
+}
+*/
+
+/*
+class Solution {
+public:
+    
+    inline int judge(string x)
+    {
+        if (x[0] == x[4] && x[1] == x[3] && x[0] != x[1] && x[0] != x[2] && x[1] != x[2]) re1;
+        re0;
+    }
+    
+    int Fivecharacterpalindrome(string &s) {
+        // write your code here
+        ulong l = s.length();
+        int cnt = 0;
+        for (int i = 4;i < l;i ++) {
+            if (judge(s.substr(i - 4,5))) cnt ++;
+        }
+        return cnt;
+    }
+};
+
+int main()
+{
+    string x;
+    cin >> x;
+    Solution s;
+    _C(s.Fivecharacterpalindrome(x));
+    re0;
+}
+*/
+
+/*
+class Solution {
+public:
+    
+    const static int MAXN = 50010;
+    
+    int st[MAXN][20];
+    int st2[MAXN][20];
+    vector<int> a;
+    
+    void init_max() {
+        // 定义 st[i][j] 是从i开始，到i + 2^j这一段，即[i,i + 2^j]这一段中的最大/小值
+        int n = (int) a.size();
+        rep(i,1,n) st[i][0] = a[i - 1];
+
+        for (int j = 1;(1 << j) <= n;j ++) { // 遍历所有的j，j是一个很小的数字，最大值=log2(n)
+            rep(i,1,n - (1 << j) + 1) { // 在[1,n]区间范围内，确定j的情况下，把所有的i都遍历求值一遍
+                st[i][j] = max(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]); // 套公式
+            }
+        }
+    }
+
+    int query_max(int l, int r)
+    {
+        int x = log2(r - l + 1);
+        return max(st[l][x],st[r - (1 << x) + 1][x]);
+    }
+    
+    void init_min() {
+        // 定义 st[i][j] 是从i开始，到i + 2^j这一段，即[i,i + 2^j]这一段中的最大/小值
+        int n = (int) a.size();
+        rep(i,1,n) st2[i][0] = a[i - 1];
+
+        for (int j = 1;(1 << j) <= n;j ++) { // 遍历所有的j，j是一个很小的数字，最大值=log2(n)
+            rep(i,1,n - (1 << j) + 1) { // 在[1,n]区间范围内，确定j的情况下，把所有的i都遍历求值一遍
+                st2[i][j] = min(st2[i][j - 1], st2[i + (1 << (j - 1))][j - 1]); // 套公式
+            }
+        }
+    }
+
+    int query_min(int l, int r)
+    {
+        int x = log2(r - l + 1);
+        return min(st2[l][x],st2[r - (1 << x) + 1][x]);
+    }
+ 
+    int Intervalxor(vector<int> &num, vector<vector<int>> &ask) {
+        // write your code here
+        a = num;
+        init_max();
+        init_min();
+        int f = 1;
+        int ans = -1;
+        int k;
+        for (auto q : ask) {
+            k = query_max(q[0], q[1]);
+            k += query_min(q[2], q[3]);
+//            _C(k);
+            if (f) {
+                f = 0;
+                ans = k;
+            } else {
+                ans ^= k;
+            }
+        }
+        return ans;
+    }
+};
+
+int main()
+{
+    Solution s;
+    int n;
+    vector<int> num;
+    sci(n);
+    int t;
+    while (n --) {
+        sci(t);
+        num.pb(t);
+    }
+    int q;
+    sci(q);
+    vector<vector<int>> ask;
+    while (q --) {
+        vector<int> x;
+        dscii(l,r);
+        x.pb(l);
+        x.pb(r);
+        scii(l,r);
+        x.pb(l);
+        x.pb(r);
+        ask.pb(x);
+    }
+    _C(s.Intervalxor(num, ask));
+    
+    re0;
+}
+*/
+
+/*
+class Solution {
+public:
+    string castMagic(vector<vector<int>> &triangle, vector<int> &point) {
+        // write your code here
+        ll ax = triangle[0][0],ay = triangle[0][1],
+        bx = triangle[1][0],by = triangle[1][1],
+        cx = triangle[2][0],cy = triangle[2][1],
+        px = point[0],py = point[1];
+
+        ll pax = ax - px,
+            pay = ay - py;
+        ll pbx = bx - px,
+            pby = by - py;
+        ll pcx = cx - px,
+            pcy = cy - py;
+        
+//        _C(">>" << pcx << " " << pcy);
+        
+        ll a = pax * pby - pay * pbx,
+            b = pbx * pcy - pby * pcx,
+            c = pcx * pay - pcy * pax;
+//        a /= abs(a);
+//        b /= abs(b);
+//        c /= abs(c);
+//        _C(a << " " << b << " " << c);
+        
+        if ((ay-by)*(ax-cx) == (ay-cy)*(ax-bx)) return "No";
+        
+        
+        if ((a >= 0 && b >= 0 && c >= 0) || (a <= 0 && b <= 0 && c <= 0))
+            return "Yes";
+        else return "No";
+    }
+};
+
+int main()
+{
+    dscll(ax,ay);
+    dscll(bx,by);
+    dscll(cx,cy);
+    dscll(px,py);
+    vector<vector<int>> a;
+    vector<int> p;
+    vector<int> x,y,z;
+    x.pb(ax);
+    x.pb(ay);
+    y.pb(bx);
+    y.pb(by);
+    z.pb(cx);
+    z.pb(cy);
+    a.pb(x);
+    a.pb(y);
+    a.pb(z);
+    p.pb(px);
+    p.pb(py);
+
+    Solution s;
+    _C(s.castMagic(a, p));
+
+
+    return 0;
+}
+*/
+
+
+//int n;
+//
+//int ans = 0;
+//
+//void dfs(int i,int j)
+//{
+////    _C(">>" << i << " " << j);
+//
+//    if (i == n && j == n) {
+//        ans ++;
+//        return;
+//    }
+////    if (vis[i][j]) return;
+////    vis[i][j] = 1;
+//
+//    if (i + 1 <= n) {
+//        dfs(i + 1,j);
+////        vis[i + 1][j] = 0;
+//    }
+//    if (j + 1 <= i) {
+//        dfs(i,j + 1);
+////        vis[i][j + 1] = 0;
+//    }
+//    if (i + 1 <= n && j + 1 <= i + 1) {
+//        dfs(i + 1,j + 1);
+////        vis[i + 1][j + 1] = 0;
+//    }
+//}
+//
+//int main()
+//{
+//
+//    sci(n);
+//    dfs(1,1);
+//    _C(ans);
+//    return 0;
+//}
+
+/*
+const int MAXN = 1e7;
+ll a[MAXN + 1];
+
+class Solution {
+public:
+    
+    const static int mod = 1e9 + 7;
+    
+    ll quickpow(ll a, ll b)
+    {
+        ll ans = 1;
+        while (b)
+        {
+            if (b & 1) ans = a * ans % mod;
+            a = a * a % mod;
+            b >>= 1;
+        }
+        return ans;
+    }
+    
+    void init()
+    {
+        a[0] = 1;
+        a[1] = 1;
+        rep(i,2,MAXN) {
+            a[i] = ((6 * i - 3) * a[i - 1] % mod - (i - 2) * a[i - 2] % mod + mod) % mod
+            * quickpow(i + 1,mod - 2) % mod;
+        }
+    }
+    
+    int pyramid(int n, vector<int> &k) {
+        // write your code here
+        int t;
+        init();
+        ll ans = 0;
+        for (auto i : k) {
+            t = n - i + 1;
+            if (t == 1) {
+                ans += 1;
+            } else {
+                ans += (a[t - 1] * 2) % mod;
+            }
+            ans %= mod;
+        }
+        return (int) ans;
+    }
+};
+
+int main()
+{
+    int n;
+    sci(n);
+    dsci(q);
+    vector<int> k;
+    int t;
+    
+    while (q --) {
+        sci(t);
+        k.pb(t);
+    }
+    
+    Solution s;
+    _C(s.pyramid(n, k));
+    return 0;
+}
+*/
+
+
+/*
+const int MAXN = 2e7 + 10;
+
+int a[30];
+int n,k;
+int check[MAXN];
+int zhi[MAXN];
+ll ans = 0;
+
+void init()
+{
+    mem(zhi,0);
+    mem(check,0);
+    check[1] = 1;
+    ans = 0;
+    for (int i = 2;i <= MAXN;i ++) {
+        for (int j = i + i;j <= MAXN;j += i) {
+            zhi[j] = 0;
+        }
+    }
+    int pos = 0;
+    for (int i = 2 ;i < MAXN;i++)
+    {
+        if (!check[i]) zhi[pos ++] = i;
+        for (int j = 0;j < pos && i * zhi[j] < MAXN;j ++)
+        {
+            check[i * zhi[j]] = 1;
+            if (i % zhi[j] == 0)
+                break;
+        }
+    }
+}
+
+
+
+void dfs(int x,ll num,int t)
+{
+    if (t == k) {
+        if (!check[num]) ans ++;
+        return;
+    }
+    if (x == n) return;
+    
+    dfs(x + 1,num + a[x],t + 1);
+    dfs(x + 1,num,t);
+}
+
+int main()
+{
+    init();
+//    printf("%d %d %d %d %d\n",check[1],check[2],check[3],check[4],check[29]);
+    scii(n,k);
+    REP(i,0,n) {
+        sci(a[i]);
+    }
+    dfs(0,0,0);
+    printf("%lld\n",ans);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    double a[5],b[5],c[5];
+    double mm;
+    char t[5];
+    double ans = 1;
+    rep(i,1,3) {
+        scddd(a[i],b[i],c[i]);
+        mm = max(max(a[i],b[i]),c[i]);
+        if (mm == a[i]) t[i] = 'W';
+        else if (mm == b[i]) t[i] = 'T';
+        else if (mm == c[i]) t[i] = 'L';
+        ans *= mm;
+        if (t[i] == 'W') ans *= 0.65;
+    }
+    rep(i,1,3) {
+        printf("%c ",t[i]);
+    }
+    printf("%.2f\n",(ans - 1) * 2);
+    return 0;
+}
+*/
+
+/*
+struct Stu {
+    int id,c,m,e,a;
+} s[100000];
+
+int cmp_c(const Stu &a,const Stu &b)
+{
+    return a.c > b.c;
+}
+
+int cmp_m(const Stu &a,const Stu &b)
+{
+    return a.m > b.m;
+}
+
+int cmp_e(const Stu &a,const Stu &b)
+{
+    return a.e > b.e;
+}
+
+int cmp_a(const Stu &a,const Stu &b)
+{
+    return a.a > b.a;
+}
+
+int cmp(const pair<int, char> &a,const pair<int, char> &b)
+{
+    if (a.first == b.first) {
+        char l = a.second,r = b.second;
+        if (l == 'A') {
+            if (r == 'C') return 1;
+            else if (r == 'M') return 1;
+            else if (r == 'E') return 1;
+        } else if (l == 'C') {
+            if (r == 'A') return 0;
+            else if (r == 'M') return 1;
+            else if (r == 'E') return 1;
+        } else if (l == 'M') {
+            if (r == 'A') return 0;
+            else if (r == 'C') return 0;
+            else if (r == 'E') return 1;
+        } else if (l == 'E') {
+            if (r == 'A') return 0;
+            else if (r == 'C') return 0;
+            else if (r == 'M') return 0;
+        }
+    }
+    return a.first < b.first;
+}
+
+int main()
+{
+    int n,q;
+    scanf("%d%d",&n,&q);
+    REP(i,0,n) {
+        scanf("%d%d%d%d",&s[i].id,&s[i].c,&s[i].m,&s[i].e);
+        s[i].a = s[i].c + s[i].m + s[i].e;
+    }
+    map<int,int> c,m,e,a;
+    sort(s,s + n,cmp_c);
+    
+    REP(i,0,n) {
+        c[s[i].id] = i + 1;
+        if (i != 0) {
+            if (s[i].c == s[i - 1].c) c[s[i].id] = c[s[i - 1].id];
+        }
+    }
+    
+    sort(s,s + n,cmp_m);
+    
+    REP(i,0,n) {
+        m[s[i].id] = i + 1;
+        if (i != 0) {
+            if (s[i].m == s[i - 1].m) m[s[i].id] = m[s[i - 1].id];
+        }
+    }
+    
+    sort(s,s + n,cmp_e);
+    
+    REP(i,0,n) {
+        e[s[i].id] = i + 1;
+        if (i != 0) {
+            if (s[i].e == s[i - 1].e) e[s[i].id] = e[s[i - 1].id];
+        }
+    }
+    
+    sort(s,s + n,cmp_a);
+    
+    REP(i,0,n) {
+        a[s[i].id] = i + 1;
+        if (i != 0) {
+            if (s[i].a == s[i - 1].a) a[s[i].id] = a[s[i - 1].id];
+        }
+    }
+    int id;
+    vector<pair<int, char>> x;
+    while (q --) {
+        scanf("%d",&id);
+        if (a.find(id) == a.end()) {
+            printf("N/A\n");
+            continue;
+        }
+        x.clear();
+        x.pb(make_pair(c[id], 'C'));
+        x.pb(make_pair(m[id], 'M'));
+        x.pb(make_pair(e[id], 'E'));
+        x.pb(make_pair(a[id], 'A'));
+        sort(x.begin(),x.end(),cmp);
+        printf("%d %c\n",x[0].first,x[0].second);
+    }
+    return 0;
+}
+*/
+
+/*
+ll quickpow(ll a,ll b) {
+    ll ans = 1;
+    while (b) {
+        if (b & 1) ans *= a;
+        a *= a;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int isP(ll n)
+{
+    if (n == 1) return 0;
+    for (ll i = 2;i * i <= n;i ++) if (n % i == 0) return 0;
+    return 1;
+}
+
+int main()
+{
+    int l,k;
+    string str;
+    scanf("%d%d",&l,&k);
+    cin >> str;
+    if (l < k) {
+        puts("404");
+        return 0;
+    }
+    ll x = 0;
+    for (int i = 0;i < k;i ++) {
+        x = x * 10 + str[i] - '0';
+    }
+    string s = "%0";
+    s += (char) (k + '0');
+    s += "lld\n";
+    if (isP(x)) {
+        printf(s.c_str(),x);
+        return 0;
+    }
+    for (int i = k;i < l;i ++) {
+        x = x - quickpow(10, k - 1) * (str[i - k] - '0');
+        x *= 10;
+        x += str[i] - '0';
+
+        if (isP(x)) {
+            printf(s.c_str(),x);
+            return 0;
+        }
+    }
+    printf("404\n");
+    return 0;
+}
+*/
+
+/*
+int cmp(const pair<string,int> &a,const pair<string,int> &b)
+{
+    if (a.second == b.second) return a.first < b.first;
+    return a.second > b.second;
+}
+
+int cmp2(const pair<int,int> &a,const pair<int,int> &b)
+{
+    if (a.second == b.second) return a.first < b.first;
+    return a.second > b.second;
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int site_n[1000] = {0};
+    int site_s[1000] = {0};
+    vector<pair<string,int>> tp['Z'];
+    map<int,map<int,int>> date;
+//    map<string,int> scr;
+    string str;
+    int s;
+    int x,y;
+    while (n --) {
+        cin >> str >> s;
+        tp[str[0]].push_back(make_pair(str,s));
+        x = 0;
+        for (int i = 1;i <= 3;i ++) {
+            x = x * 10 + str[i] - '0';
+        }
+        site_n[x] ++;
+        site_s[x] += s;
+        
+        y = 0;
+        for (int i = 4;i <= 9;i ++) {
+            y = y * 10 + str[i] - '0';
+        }
+        
+        date[y][x] ++;
+    }
+    sort(tp['A'].begin(),tp['A'].end(),cmp);
+    sort(tp['B'].begin(),tp['B'].end(),cmp);
+    sort(tp['T'].begin(),tp['T'].end(),cmp);
+    int t;
+    char k;
+    vector<pair<int,int>> c;
+    rep(ii,1,m) {
+        scanf("%d",&t);
+        if (t == 1) {
+            scanf(" %c",&k);
+            printf("Case %d: %d %c\n",ii,t,k);
+            if (tp[k].size() == 0) printf("NA\n");
+            for (auto i : tp[k]) {
+                cout << i.first << " " << i.second << endl;
+            }
+        } else {
+            scanf("%d",&x);
+            if (t == 2) {
+                printf("Case %d: %d %03d\n",ii,t,x);
+                if (site_n[x] == 0) {
+                    printf("NA\n");
+                } else printf("%d %d\n",site_n[x],site_s[x]);
+            } else if (t == 3) {
+                printf("Case %d: %d %06d\n",ii,t,x);
+                c.clear();
+                if (date[x].size() == 0) {
+                    printf("NA\n");
+                    continue;
+                }
+                for (auto i : date[x]) {
+                    c.push_back(i);
+                }
+                sort(c.begin(), c.end(), cmp2);
+                for (auto i : c) {
+                    printf("%d %d\n",i.first,i.second);
+                }
+            }
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 10010;
+
+pair<int,int> e[MAXN];
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    
+    int u,v;
+    rep(i,1,m) {
+        scanf("%d%d",&u,&v);
+        e[i] = make_pair(u,v);
+    }
+    int k;
+    scanf("%d",&k);
+    int a[MAXN];
+    int ok;
+    int ans;
+    rep(ii,1,k) {
+        REP(i,0,n) {
+            scanf("%d",a + i);
+        }
+        ok = 1;
+        rep(i,1,m) {
+            if (a[e[i].first] == a[e[i].second]) {
+                ok = 0;
+                break;
+            }
+        }
+        if (!ok) {
+            puts("No");
+            continue;
+        }
+        sort(a,a + n);
+        ans = (int) (unique(a,a + n) - a);
+        printf("%d-coloring\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int a[100010];
+
+int type = 0;
+// -1 min
+// 1 max
+// 0 not sure
+// -2 not heap
+
+vector<vector<int>> all;
+int n;
+
+void dfs(int i,vector<int> path)
+{
+    path.pb(a[i]);
+    
+    if (i * 2 > n && i * 2 + 1 > n) {
+        all.pb(path);
+        return;
+    }
+    
+    if (i * 2 + 1 <= n) dfs(i * 2 + 1,path);
+    if (i * 2 <= n) dfs(i * 2,path);
+}
+
+int main()
+{
+    scanf("%d",&n);
+    rep(i,1,n) scanf("%d",a + i);
+    if (n == 1) {
+        printf("%d\nNot Heap\n",a[1]);
+        return 0;
+    }
+    
+    dfs(1,vector<int>());
+    int f;
+    int l;
+    for (auto i : all) {
+        f = 1;
+        l = a[1];
+        for (auto j : i) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",j);
+            if (type == 0) {
+                if (j > l) type = -1;
+                if (j < l) type = 1;
+            } else if (type == 1) {
+                if (j > l) type = -2;
+            } else if (type == -1) {
+                if (j < l) type = -2;
+            }
+            l = j;
+        }
+        puts("");
+    }
+    if (type == -2) {
+        puts("Not Heap");
+    } else if (type == -1) {
+        puts("Min Heap");
+    } else if (type == 1) {
+        puts("Max Heap");
+    }
+    
+    return 0;
+}
+*/
+
+/*
+inline int isLie(int i,int j,int a)
+{
+    if (abs(a) == i || abs(a) == j) {
+        if (a > 0) return 1;
+    } else {
+        if (a < 0) return 1;
+    }
+    return 0;
+}
+
+int main()
+{
+    int n;
+    int a[110];
+    scanf("%d",&n);
+    rep(i,1,n) scanf("%d",a + i);
+    
+    int lie;
+    
+    rep(i,1,n - 1) {
+        rep(j,i + 1,n) {
+            lie = 0;
+            rep(k,1,n) {
+                if (isLie(i, j, a[k])) lie ++;
+            }
+            if (lie == 2) {
+                if ((isLie(i, j, a[i]) || isLie(i, j, a[j])) && !(isLie(i, j, a[i]) && isLie(i, j, a[j]))) {
+                    printf("%d %d\n",i,j);
+                    return 0;
+                }
+            }
+        }
+    }
+    puts("No Solution");
+    return 0;
+}
+*/
+
+/*
+int n;
+int a[100010];
+
+int ok(int x)
+{
+    REP(i,0,n) {
+        if (a[i] > x) {
+            return n - i >= x;
+        }
+    }
+    return 0;
+}
+
+int main()
+{
+    scanf("%d",&n);
+    REP(i,0,n) scanf("%d",a + i);
+    sort(a,a + n);
+    int l = 1;
+    int r = 100010;
+    int m;
+    while (l < r) {
+        m = (l + r) / 2;
+        if (ok(m)) {
+            l = m + 1;
+        } else {
+            r = m;
+        }
+    }
+    printf("%d\n",l - 1);
+    re0;
+}
+*/
+
+/*
+int main() {
+    int n,q;
+    map<int,set<int> > mp;
+    int u,v;
+    scanf("%d%d",&n,&q);
+    while (n --) {
+        scanf("%d%d",&u,&v);
+        mp[u].insert(v);
+        mp[v].insert(u);
+    }
+    set<int> l;
+    int ok;
+    while (q --) {
+        scanf("%d",&n);
+        l.clear();
+        ok = 1;
+        
+        rep(i,1,n) {
+            scanf("%d",&u);
+            if (mp.find(u) != mp.end()) {
+                if (l.find(u) != l.end()) ok = 0;
+                else for (auto j : mp[u]) l.insert(j);
+            }
+        }
+        if (ok) puts("Yes");
+        else puts("No");
+    }
+    return 0;
+}
+*/
+
+/*
+int g[210][210];
+
+int main()
+{
+    mem(g,-1);
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v,w;
+    while (m --) {
+        scanf("%d%d%d",&u,&v,&w);
+        g[u][v] = w;
+        g[v][u] = w;
+    }
+    int q;
+    scanf("%d",&q);
+    if (q == 0) {
+        return 0;
+    }
+    int t;
+    int f;
+    int nn;
+    set<int> a;
+    int ok;
+    ll dis;
+    ll dis_m = -1;
+    int dis_i = 1;
+    rep(ii,1,q)
+    {
+        a.clear();
+        scanf("%d",&nn);
+        if (nn == 0) continue;
+        scanf("%d",&t);
+        f = t;
+        a.insert(f);
+        ok = 1;
+        dis = 0;
+        rep(i,2,nn) {
+            scanf("%d",&m);
+            a.insert(m);
+            if (g[t][m] == -1) ok = 0;
+            else {
+                dis += g[t][m];
+            }
+            t = m;
+        }
+        printf("Path %d: ",ii);
+        if (ok) {
+            printf("%lld ",dis);
+            if (a.size() == n && t == f) {
+                if (nn == n + 1) puts("(TS simple cycle)");
+                else puts("(TS cycle)");
+                if (dis < dis_m || dis_m == -1) {
+                    dis_m = dis;
+                    dis_i = ii;
+                }
+            } else puts("(Not a TS cycle)");
+        } else {
+            puts("NA (Not a TS cycle)");
+        }
+    }
+    printf("Shortest Dist(%d) = %lld\n",dis_i,dis_m);
+    
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    Node *l;
+    Node *r;
+    Node *fa;
+    int n;
+    
+    Node(Node *l,Node *r,Node *fa,int n):l(l),r(r),fa(fa),n(n)
+    {}
+};
+
+
+map<int,Node*> mp;
+
+int a[10010];
+int b[10010];
+
+Node *root;
+
+void build(int la,int ra,int lb,int rb,Node *f)
+{
+    if (la >= ra) return;
+    int s = a[la];
+    int m = lb;
+    rep(i,lb,rb) {
+        if (b[i] == s) {
+            m = i;
+            break;
+        }
+    }
+    
+    if (lb < m) {
+        Node *l = new Node(NULL,NULL,f,a[la + 1]);
+        f -> l = l;
+        mp[a[la + 1]] = l;
+        build(la + 1, la + m - lb, lb, m - 1,f -> l);
+    }
+    if (m < rb) {
+        Node *r = new Node(NULL,NULL,f,a[la + m - lb + 1]);
+        f -> r = r;
+        mp[a[la + m - lb + 1]] = r;
+        build(la + m - lb + 1, ra, m + 1, rb,f -> r);
+    }
+}
+
+int main()
+{
+    int m,n;
+    scanf("%d%d",&m,&n);
+    rep(i,1,n) scanf("%d",b + i);
+    rep(i,1,n) scanf("%d",a + i);
+    
+    root = new Node(NULL,NULL,NULL,a[1]);
+    mp[a[1]] = root;
+    build(1,n,1,n,root);
+//    rep(i,1,n * 2 + 1) printf("%d ",tree[i]);
+    int u,v;
+    set<int> as;
+    while (m --) {
+        scanf("%d%d",&u,&v);
+        if (mp[u] == NULL && mp[v] == NULL) printf("ERROR: %d and %d are not found.\n",u,v);
+        else if (mp[u] == NULL) printf("ERROR: %d is not found.\n",u);
+        else if (mp[v] == NULL) printf("ERROR: %d is not found.\n",v);
+        else {
+            as.clear();
+            for (Node *i = mp[u];i != NULL;i = i -> fa) {
+                as.insert(i -> n);
+                if (i -> n == v) {
+                    printf("%d is an ancestor of %d.\n",v,u);
+                    goto nxt;
+                }
+            }
+            for (Node *i = mp[v];i != NULL;i = i -> fa) {
+                if (i -> n == u) {
+                    printf("%d is an ancestor of %d.\n",u,v);
+                    goto nxt;
+                }
+                if (as.find(i -> n) != as.end()) {
+                    printf("LCA of %d and %d is %d.\n",u,v,i -> n);
+                    goto nxt;
+                }
+            }
+        }
+    nxt:;
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int a[100010];
+    REP(i,0,n) {
+        scanf("%d",a + i);
+    }
+    sort(a,a + n);
+    int i = 1;
+    for (;i <= n;i ++) {
+        if (!binary_search(a, a + n, i)) break;
+    }
+    printf("%d\n",i);
+    
+    return 0;
+}
+*/
+
+/*
+int isP(int n)
+{
+    if (n <= 1) return 0;
+    for (int i = 2;i * i <= n;i ++) if (n % i == 0) return 0;
+    return 1;
+}
+
+int _hash[20010];
+int has[20010];
+int s_u,n,m;
+int mod;
+
+int _search(int num)
+{
+    int ans = 0;
+    int p;
+    int ok = 1;
+    REP(i,0,mod) {
+        ans ++;
+        if (_hash[p = (i * i + num) % mod] == num || !has[p]) {
+            ok = 0;
+            break;
+        }
+    }
+    return ans + ok; // 不是很理解为什么没找到最后还要加一个1
+}
+
+int main()
+{
+    
+    scanf("%d%d%d",&s_u,&n,&m);
+    while (!isP(s_u)) s_u ++;
+    
+    mod = s_u;
+    
+    int t;
+    int p;
+    int ok;
+    rep(ii,1,n) {
+        scanf("%d",&t);
+        ok = 0;
+        REP(i,0,mod) {
+            if (!has[p = (t + i * i) % mod]) {
+                has[p] = 1;
+                _hash[p] = t;
+                ok = 1;
+                break;
+            }
+        }
+        if (!ok) printf("%d cannot be inserted.\n",t);
+    }
+    
+    ll tm = 0;
+    rep(i,1,m) {
+        scanf("%d",&t);
+        tm += _search(t);
+    }
+    printf("%.1f\n",tm / (double) m);
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e4 + 10;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN * 2];
+
+int g[MAXN];
+int cnt;
+
+void init()
+{
+    mem(g,-1);
+    cnt = 0;
+}
+
+void add(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    init();
+    int u,v;
+    int in[MAXN] = {0};
+    while (m --) {
+        scanf("%d%d",&u,&v);
+        in[v] ++;
+        add(u,v);
+    }
+    
+    int q;
+    scanf("%d",&q);
+    int t;
+    int f = 1;
+    int inn[MAXN];
+    int ok;
+    REP(ii,0,q)
+    {
+        memcpy(inn, in, sizeof(in));
+        ok = 1;
+        rep(iii,1,n) {
+            scanf("%d",&t);
+            if (inn[t] == 0) {
+                for (int i = g[t];~i;i = e[i].nxt) inn[e[i].to] --;
+            } else {
+                ok = 0;
+            }
+        }
+        
+        if (!ok) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",ii);
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int a[1010];
+int m,n;
+
+int cmp1(int a,int b) {
+    return a <= b;
+}
+
+int cmp2(int a,int b) {
+    return a >= b;
+}
+
+
+int dfs(int i,int (*func)(int,int)) {
+    int ok = 1;
+    if (i * 2 <= n) {
+        if (!func(a[i],a[i * 2])) return 0;
+        ok &= dfs(i * 2,func);
+    }
+    if (i * 2 + 1 <= n) {
+        if (!func(a[i],a[i * 2 + 1])) return 0;
+        ok &= dfs(i * 2 + 1,func);
+    }
+    return ok;
+}
+
+int f;
+
+void prt(int i)
+{
+    if (i * 2 <= n) prt(i * 2);
+    if (i * 2 + 1 <= n) prt(i * 2 + 1);
+    if (f) f = 0;
+    else printf(" ");
+    printf("%d",a[i]);
+}
+
+int main()
+{
+    scanf("%d%d",&m,&n);
+    int ok1,ok2;
+    while (m --) {
+        rep(i,1,n) scanf("%d",a + i);
+        ok1 = dfs(1,cmp1);
+        ok2 = dfs(1,cmp2);
+        if (!ok1 && !ok2) puts("Not Heap");
+        else if (ok1 && ok2) puts("Min Heap");
+        else if (ok1 && !ok2) puts("Min Heap");
+        else if (!ok1 && ok2) puts("Max Heap");
+        f = 1;
+        prt(1);
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string d;
+    int n;
+    cin >> d >> n;
+    string a;
+    char l;
+    int cnt;
+    rep(ii,1,n - 1) {
+        a = "";
+        l = -1;
+        cnt = 0;
+        for (int i = 0;d[i];i ++) {
+            if (l != -1 && l != d[i]) {
+                a += l;
+                a += cnt + '0';
+                cnt = 1;
+            } else cnt ++;
+            l = d[i];
+        }
+        
+        a += l;
+        a += cnt + '0';
+        
+        d = a;
+    }
+    cout << d << endl;
+    return 0;
+}
+*/
+
+/*
+void toLow(string &str) {
+    for (int i = 0;str[i];i ++) {
+        if (str[i] >= 'A' && str[i] <= 'Z') {
+            str[i] = str[i] - 'A' + 'a';
+        }
+    }
+}
+
+unordered_map<string,int> mpn;
+
+int cmp(const pair<string,int> &a,const pair<string,int> &b) {
+    if (a.second == b.second) {
+        if (mpn[a.first] == mpn[b.first]) return a.first < b.first;
+        return mpn[a.first] < mpn[b.first];
+    }
+    return a.second > b.second;
+}
+
+int main()
+{
+    cio
+    int n;
+    cin >> n;
+    string id;
+    int scr;
+    string sch;
+    unordered_map<string,double> mps;
+    
+    rep(i,1,n) {
+        cin >> id >> scr >> sch;
+        toLow(sch);
+        if (id[0] == 'A') mps[sch] += scr;
+        else if (id[0] == 'B') mps[sch] += scr / 1.5;
+        else if (id[0] == 'T') mps[sch] += scr * 1.5;
+        mpn[sch] ++;
+    }
+    int cnt = 0;
+    pair<string,int> p[100010];
+    for (auto i : mps) {
+        p[cnt ++] = mpair(i.first,(int) i.second);
+    }
+    sort(p, p + cnt, cmp);
+    int r = 1;
+    cout << cnt << endl;
+    REP(i,0,cnt) {
+        if (i != 0) {
+            if (p[i].second != p[i - 1].second) r = i + 1;
+        }
+        cout << r << " " << p[i].first << " " << p[i].second << " " << mpn[p[i].first] << endl;
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 40010;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN * 2];
+int cnt;
+int g[MAXN];
+
+void init() {
+    mem(g,-1);
+    cnt = 0;
+}
+
+void add(int u,int v) {
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    init();
+    while (m --) {
+        scanf("%d%d",&u,&v);
+        add(u,v);
+        add(v,u);
+    }
+    int q;
+    scanf("%d",&q);
+    int k;
+    map<int,int> mp;
+    vector<int> vec;
+    int t,ok;
+    while (q --) {
+        scanf("%d",&k);
+        mp.clear();
+        vec.clear();
+        rep(i,1,k) {
+            scanf("%d",&t);
+            vec.push_back(t);
+            
+            for (int j = g[t];~j;j = e[j].nxt) {
+                mp[e[j].to] ++;
+            }
+        }
+        ok = 1;
+        for (auto i : vec) {
+            if (mp[i] < k - 1) {
+                ok = 0;
+                break;
+            }
+            mp.erase(mp.find(i));
+        }
+        if (!ok) {
+            puts("Not a Clique");
+            continue;
+        }
+        for (auto i : mp) {
+            if (i.second >= k) {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok) puts("Yes");
+        else puts("Not Maximal");
+    }
+    return 0;
+}
+*/
+
+/*
+map<int,int> mp;
+int main()
+{
+    int q,n;
+    scanf("%d%d",&q,&n);
+    int a[10010];
+    rep(i,1,n) {
+        scanf("%d",a + i);
+        mp[a[i]] = 1;
+    }
+    int u,v;
+    while (q --) {
+        scanf("%d%d",&u,&v);
+        if (!mp[u] && !mp[v]) printf("ERROR: %d and %d are not found.\n",u,v);
+        else if (!mp[u]) printf("ERROR: %d is not found.\n",u);
+        else if (!mp[v]) printf("ERROR: %d is not found.\n",v);
+        else rep(i,1,n) {
+            if (a[i] == u) {
+                printf("%d is an ancestor of %d.\n",u,v);
+                break;
+            } else if (a[i] == v) {
+                printf("%d is an ancestor of %d.\n",v,u);
+                break;
+            } else if ((u > a[i] && v < a[i]) || (v > a[i] && u < a[i])) {
+                printf("LCA of %d and %d is %d.\n",u,v,a[i]);
+                break;
+            }
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    string name;
+    int p = -1,m = -1,f = -1,g = -1;
+};
+
+int cmp(const Node &a,const Node &b) {
+    if (a.g == b.g) return a.name < b.name;
+    return a.g > b.g;
+}
+
+int main()
+{
+    unordered_map<string,int> mp1;
+    unordered_map<string,int> mp2;
+    unordered_map<string,int> mp3;
+    int p,m,n;
+    scanf("%d%d%d",&p,&m,&n);
+    string id;
+    int scr;
+    for (int i = 0;i < p;i ++) {
+        cin >> id >> scr;
+        mp1[id] = scr;
+    }
+    for (int i = 0;i < m;i ++) {
+        cin >> id >> scr;
+        mp2[id] = scr;
+    }
+    for (int i = 0;i < n;i ++) {
+        cin >> id >> scr;
+        mp3[id] = scr;
+    }
+    unordered_map<string, Node> mp;
+    for (auto i : mp1) {
+        mp[i.first].p = i.second;
+    }
+    for (auto i : mp2) {
+        mp[i.first].m = i.second;
+    }
+    for (auto i : mp3) {
+        mp[i.first].f = i.second;
+    }
+    vector<Node> ans;
+    for (auto i : mp) {
+        if (i.second.p < 200) continue;
+        if (i.second.m > i.second.f) i.second.g = i.second.m * 0.4 + i.second.f * 0.6 + 0.5;
+        else i.second.g = i.second.f;
+        if (i.second.g < 60) continue;
+        i.second.name = i.first;
+        ans.pb(i.second);
+    }
+    sort(ans.begin(),ans.end(),cmp);
+    for (auto i : ans) {
+        cout << i.name;
+        printf(" %d %d %d %d\n",i.p,i.m,i.f,i.g);
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 5e4 + 10;
+
+int a[MAXN];
+int b[MAXN];
+
+
+struct Node {
+    Node *l;
+    Node *r;
+    int n;
+    
+    Node(Node *l,Node *r,int n):l(l),r(r),n(n)
+    {}
+};
+
+void build(int la,int ra,int lb,int rb,Node *f)
+{
+    if (la >= ra) return;
+    int s = a[la];
+    int m = lb;
+    rep(i,lb,rb) {
+        if (b[i] == s) {
+            m = i;
+            break;
+        }
+    }
+    
+    if (lb < m) {
+        Node *l = new Node(NULL,NULL,a[la + 1]);
+        f -> l = l;
+        build(la + 1, la + m - lb, lb, m - 1,f -> l);
+    }
+    if (m < rb) {
+        Node *r = new Node(NULL,NULL,a[la + m - lb + 1]);
+        f -> r = r;
+        build(la + m - lb + 1, ra, m + 1, rb,f -> r);
+    }
+}
+
+int ok = 0;
+
+void dfs(Node *root) {
+    if (root -> l != NULL && !ok) dfs(root -> l);
+    if (root -> r != NULL && !ok) dfs(root -> r);
+    if (!ok) {
+        printf("%d\n",root -> n);
+        ok = 1;
+    }
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    rep(i,1,n) scanf("%d",a + i);
+    rep(i,1,n) scanf("%d",b + i);
+    Node *root = new Node(NULL,NULL,a[1]);
+    build(1,n,1,n,root);
+    dfs(root);
+    return 0;
+}
+*/
+
+//const int MAXN = 1e5 + 10;
+//
+//struct Edge {
+//    int to;
+//    int nxt;
+//    Edge(){}
+//    Edge(int to,int nxt):to(to),nxt(nxt){}
+//} e[MAXN * 2];
+//int cnt;
+//int g[MAXN];
+//
+//int vis[MAXN];
+//int type[MAXN];
+//
+//void init() {
+//    memset(g,-1,sizeof(g));
+//    cnt = 0;
+//}
+//
+//void add(int u,int v)
+//{
+//    e[cnt] = Edge(v,g[u]);
+//    g[u] = cnt ++;
+//}
+//
+//int to;
+//vector<vector<int>> ans;
+//vector<int> tmp;
+//
+//void dfs(int n,int d)
+//{
+//    if (d == 3) {
+//        if (n == to) {
+//            ans.push_back(tmp);
+//        }
+//        return;
+//    }
+//
+//    if (n == to) return;
+//
+//    int t;
+//    for (int i = g[n];~i;i = e[i].nxt) {
+//        t = e[i].to;
+//        if (d == 0 || d == 2) {
+//            if (type[t] == type[n]) {
+//                if (vis[t]) continue;
+//                tmp.push_back(abs(t));
+//                vis[t] = 1;
+//                dfs(t,d + 1);
+//                vis[t] = 0;
+//                tmp.erase(tmp.end() - 1);
+//            }
+//        } else if (d == 1) {
+//            if (type[t] != type[n]) {
+//                if (vis[t]) continue;
+//                tmp.push_back(abs(t));
+//                vis[t] = 1;
+//                dfs(t,d + 1);
+//                vis[t] = 0;
+//                tmp.erase(tmp.end() - 1);
+//            }
+//        }
+//    }
+//}
+//
+//int cmp(const vector<int> &a,const vector<int> &b)
+//{
+//    if (a[0] == b[0]) return a[1] < b[1];
+//    return a[0] < b[0];
+//}
+//
+//void dfs2(int n,int d)
+//{
+//    if (d == 3) {
+//        if (n == to) {
+//            ans.push_back(tmp);
+//        }
+//        return;
+//    }
+//
+//    if (n == to) return;
+//
+//    int t;
+//    for (int i = g[n];~i;i = e[i].nxt) {
+//        t = e[i].to;
+//        if (type[t] == type[n]) {
+//            if (vis[t]) continue;
+//            tmp.push_back(abs(t));
+//            vis[t] = 1;
+//            dfs2(t,d + 1);
+//            vis[t] = 0;
+//            tmp.erase(tmp.end() - 1);
+//        }
+//    }
+//}
+//
+//int main()
+//{
+//    int n,m;
+//    scanf("%d%d",&n,&m);
+//    int u,v;
+//    set<int> s;
+//    init();
+//    rep(i,1,m) {
+//        scanf("%d%d",&u,&v);
+//
+//        type[abs(u)] = u / abs(u);
+//        type[abs(v)] = v / abs(v);
+//        u = abs(u);
+//        v = abs(v);
+//        add(u,v);
+//        add(v,u);
+//    }
+//    int q;
+//    scanf("%d",&q);
+//    while (q --) {
+//        scanf("%d%d",&u,&v);
+//        tmp.clear();
+//        ans.clear();
+//        u = abs(u);
+//        v = abs(v);
+//        to = v;
+//
+//        if (type[u] == type[v]) {
+//            vis[u] = 1;
+//            dfs2(u,0);
+//            vis[u] = 0;
+//        } else {
+//            vis[u] = 1;
+//            dfs(u,0);
+//            vis[u] = 0;
+//        }
+//
+//        sort(ans.begin(),ans.end(),cmp);
+//        printf("%lu\n",ans.size());
+//        for (auto i : ans) {
+//            printf("%d %d\n",i[0],i[1]);
+//        }
+//    }
+//    return 0;
+//}
+
+/*
+int ok(int a,int b,int c,int d) {
+    return abs(a - b) == abs(c - d);
+}
+
+int main()
+{
+    int a,b,c,d;
+    __T {
+        scii(a,b);
+        scii(c,d);
+        if (ok(a,b,c,d) || ok(a,c,b,d) || ok(a,d,b,c) || ok(b,c,a,d) || ok(b,d,a,c) || ok(c,d,a,b)) puts("YES");
+        else puts("NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    
+    dscll(n,m);
+    if (n > m) swap(n,m);
+    if (n <= 1) puts("1");
+    else if (n <= 2) printf("%lld\n",(ll) ceil(m / 2.0));
+    else if (n == 3 && m == 3) puts("8");
+    else if (n >= 3 && m > 3) printf("%lld\n",n * m);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int a[500010];
+    dsci(n);
+    rep(i,1,n) {
+        sci(a[i]);
+    }
+    sort(a + 1,a + 1 + n);
+    int cnt = 0;
+    
+    for (int i = n,j = n / 2;j >= 1 && i >= n / 2 + 1;j --) {
+        if (a[j] * 2 <= a[i]) {
+            i --;
+            cnt ++;
+        }
+    }
+    
+    printf("%d\n",n - cnt);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll a,b;
+    __T {
+        scll(a,b);
+        if (!(a & b)) puts("1");
+        else printf("%lld\n",a & b);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    dscii(n,m);
+    int a[300010];
+    rep(i,1,n) sci(a[n - i + 1]);
+    int t;
+    int i = n;
+    while (m --) {
+        sci(t);
+        a[++ i] = t;
+    }
+    int vis[100010] = {0};
+    pre(ii,i,1) {
+        if (vis[a[ii]]) continue;
+        printf("%d ",a[ii]);
+        vis[a[ii]] = 1;
+    }
+    return 0;
+}
+*/
+
+/*
+char a[1030][1030];
+char b[1030][1030];
+string str[10];
+
+void init()
+{
+    int w;
+    a[1][1] = 'C';
+    a[1][2] = 'C';
+    a[2][1] = 'P';
+    a[2][2] = 'C';
+    str[1] = "CC\nPC\n";
+    w = 2;
+    rep(i,1,9) {
+        str[i + 1] = "";
+        rep(j,1,w) {
+            rep(k,1,w) {
+                if (i & 1) {
+                    b[j][k] = a[j][k];
+                } else {
+                    a[j][k] = b[j][k];
+                }
+            }
+        }
+
+        rep(j,1,w) {
+            rep(k,1,w) {
+                if (i & 1) {
+                    b[j][k + w] = a[j][k];
+                } else {
+                    a[j][k + w] = b[j][k];
+                }
+            }
+        }
+
+        rep(j,1,w) {
+            rep(k,1,w) {
+                if (i & 1) {
+                    if (a[j][k] == 'C') b[j + w][k] = 'P';
+                    else if (a[j][k] == 'P') b[j + w][k] = 'C';
+                } else {
+                    if (b[j][k] == 'C') a[j + w][k] = 'P';
+                    else if (b[j][k] == 'P') a[j + w][k] = 'C';
+                }
+            }
+        }
+
+        rep(j,1,w) {
+            rep(k,1,w) {
+                if (i & 1) {
+                    b[j + w][k + w] = a[j][k];
+                } else {
+                    a[j + w][k + w] = b[j][k];
+                }
+            }
+        }
+
+
+        w <<= 1;
+        rep(ii,1,w) {
+            rep(jj,1,w) {
+                if (i & 1) str[i + 1] += b[ii][jj];
+                else str[i + 1] += a[ii][jj];
+            }
+            str[i + 1] += '\n';
+        }
+    }
+}
+
+int main()
+{
+    init();
+    int n;
+    __T {
+        sci(n);
+        cout << str[n];
+    }
+    return 0;
+}
+*/
+
+/*
+int a[100010];
+
+int main()
+{
+    int n,k;
+    ll ans;
+    int cnt;
+    int t;
+    __T {
+        scii(n,k);
+        cnt = n;
+        ans = k;
+        cnt --;
+        rep(i,1,n) {
+            sci(t);
+            ans += t / k * k;
+            a[i] = t % k;
+            cnt -= t / k;
+        }
+        
+        sort(a + 1,a + 1 + n,greater<int>());
+        
+        rep(i,1,n) {
+            if (cnt > 0) {
+                cnt --;
+                ans += k;
+            } else ans += a[i];
+        }
+        printf("%lld\n",ans);
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 5e4 + 10;
+
+struct Node {
+    int end;
+    ll w;
+    bool operator<(const Node &o) const {
+        return w < o.w;
+    }
+};
+
+multiset<Node> que;
+vector<Node> g[MAXN];
+
+void init(int x)
+{
+    rep(i,1,x) g[i].clear();
+    que.clear();
+}
+
+void add(int u,int v,ll w)
+{
+    g[u].pb({v,w});
+}
+
+int n,m,q;
+
+ll ans[250010];
+
+void bfs(int mm)
+{
+    Node cur;
+    while (que.size() > mm) que.erase(-- que.end());
+    multiset<Node>::iterator it;
+    rep(ii,1,mm) {
+        cur = *que.begin();
+        que.erase(que.begin());
+        ans[ii] = cur.w;
+        for (auto i : g[cur.end]) {
+            if (que.size() < mm - ii) que.insert({i.end,cur.w + i.w});
+            else if (que.size()) {
+                it = -- que.end();
+                if (cur.w + i.w < it -> w) {
+                    que.erase(it);
+                    que.insert({i.end,cur.w + i.w});
+                } else break;
+            }
+        }
+    }
+}
+
+int main()
+{
+    int u,v,w;
+    int mm,t;
+    vector<int> qq;
+    __T {
+        sciii(n,m,q);
+        init(n + 5);
+        while (m --) {
+            sciii(u,v,w);
+            add(u,v,w);
+            que.insert({v,w});
+        }
+        
+        rep(i,1,n) sort(g[i].begin(),g[i].end());
+        
+        mm = -1;
+        qq.clear();
+        while (q --) {
+            sci(t);
+            qq.pb(t);
+            mm = max(mm,t);
+        }
+        bfs(mm);
+        for (auto i : qq) {
+            printf("%lld\n",ans[i]);
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+const int mod = 1e9 + 7;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    int n,m;
+    ll x;
+    __T {
+        scii(n,m);
+        x = quickpow(n, m) % mod;
+        printf("%lld\n",((x + mod - 1) % mod) * quickpow(x, mod - 2) % mod);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int x,y;
+    __T {
+        scii(x,y);
+        if (abs(x - y) % 3) puts("yyds");
+        else puts("awsl");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[100];
+    __T {
+        sci(n);
+        rep(i,1,n) {
+            sci(a[i]);
+        }
+        int ok = 1;
+        rep(i,2,n) {
+            if (a[i - 1] == a[i]) {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok) puts("YES");
+        else puts("NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int a[1000010];
+
+int main()
+{
+    int n,m,k;
+    ll ans = 0;
+    int mm,t;
+    __T {
+        sciii(n,m,k);
+        mm = INT_INF;
+        ans = (k - 1) * 2;
+        rep(i,1,m) {
+            sci(t);
+            if (i == 1) mm = t;
+            else mm = min(t,mm);
+            ans += abs(t - k) * 2;
+        }
+        if (mm < k) {
+            ans -= abs(mm - k);
+            ans -= k - 1;
+            ans += mm - 1;
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+//int n;
+//int A[55][55];
+//int k[5][5];
+//
+//int main()
+//{
+//    int sum;
+//    __T {
+//        sci(n);
+//        rep(i,1,n)
+//            rep(j,1,n) sci(A[i][j]);
+//        sum = 0;
+//        rep(i,1,3)
+//        {
+//            rep(j,1,3) {
+//                sci(k[i][j]);
+//                sum += k[i][j];
+//            }
+//        }
+//
+//    }
+//    return 0;
+//}
+
+/*
+const int MAXN = 1e7 + 10;
+
+//int mod = 1e9 + 7;
+
+int is_prime[MAXN];
+int is_prime_small[MAXN];
+
+ll segment_sieve(ll a,ll b)
+{
+    ll ans = 0;
+    for (ll i = 0;i * i < b;i ++) is_prime_small[i] = 1;
+    for (ll i = 0;i < b - a;i ++) is_prime[i] = 1;
+    for (ll i = 2;i * i < b;i ++)
+    {
+        if (is_prime_small[i])
+        {
+            for (ll j = 2 * i;j * j < b;j += i)
+            {
+                is_prime_small[j] = 0;
+            }
+            for (ll j = max(2LL,(a + i - 1) / i) * i; j < b;j += i)
+            {
+                is_prime[j - a] = 0;
+            }
+        }
+    }
+    for (ll i = 0;i < b - a;i ++) {
+        if (is_prime[i]) {
+//            _C(">>" << i + a);
+            ans = ans + i + a;
+        }
+    }
+    return ans;
+}
+
+ll a[1010];
+
+int main()
+{
+    
+    
+        for (ll i = 0;i <= 999;i ++) {
+            _C(i * 10000000 + 1 << " -> " << (i + 1) * 10000000);
+            _C((a[i] = segment_sieve(i * 10000000 + 1, (i + 1) * 10000000 + 1)));
+        }
+        for (ll i = 0;i <= 999;i ++) {
+            printf("%lld,",a[i]);
+        }
+    
+    return 0;
+}
+
+*/
+
+/*
+const int MAXN = 1000010;
+
+namespace Min25 {
+    int prime[MAXN], id1[MAXN], id2[MAXN], flag[MAXN], ncnt, m;
+
+    ll g[MAXN], sum[MAXN], a[MAXN], T, n;
+
+    inline int ID(ll x) {
+        return x <= T ? id1[x] : id2[n / x];
+    }
+
+    inline ll calc(ll x) {
+        return x * (x + 1) / 2 - 1;
+    }
+
+    inline ll f(ll x) {
+        return x;
+    }
+
+    inline void init() {
+        
+        rep(i,0,MAXN - 1) {
+            prime[i] = id1[i] = id2[i] = flag[i] = 0;
+            g[i] = sum[i] = a[i] = 0;
+        }
+        
+        ncnt = 0;
+        m = 0;
+        T = sqrt(n + 0.5);
+        for (int i = 2; i <= T; i++) {
+            if (!flag[i]) {
+                prime[++ncnt] = i;
+                sum[ncnt] = sum[ncnt - 1] + i;
+            }
+            for (int j = 1; j <= ncnt && i * prime[j] <= T; j++) {
+                flag[i * prime[j]] = 1;
+                if (i % prime[j] == 0) break;
+            }
+        }
+        for (ll l = 1; l <= n; l = n / (n / l) + 1) {
+            a[++m] = n / l;
+            if (a[m] <= T) id1[a[m]] = m; else id2[n / a[m]] = m;
+            g[m] = calc(a[m]);
+        }
+        for (int i = 1; i <= ncnt; i++)
+            for (int j = 1; j <= m && (ll)prime[i] * prime[i] <= a[j]; j++)
+                g[j] = g[j] - (ll)prime[i] * (g[ID(a[j] / prime[i])] - sum[i - 1]);
+    }
+
+    inline ll solve(ll x) {
+        if (x <= 1) return x;
+        n = x;
+        init();
+        return g[ID(n)];
+    }
+
+}
+
+ll mod = 1e9 + 7;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+
+int main() {
+    ll n,k;
+    ll ans;
+    __T {
+        scll(n,k);
+        if (n == 1) puts("0");
+        else {
+            n ++;
+            mod = k;
+            ans = (((3 + n) % mod) * ((n - 2) % mod) % mod) * quickpow(2, mod - 2) % mod;
+            ans += (Min25::solve(n) - 2) % mod;
+            printf("%lld\n",ans % mod);
+        }
+    }
+    
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[1000010];
+    int t = 0;
+    int ii;
+    __T {
+        sci(n);
+        rep(i,1,n) sci(a[i]);
+        t = 0;
+        
+        for (ii = 2;ii <= n;ii ++) {
+            if (a[ii] <= a[ii - 1]) {
+                t = 1;
+                break;
+            }
+        }
+        if (ii == 2) t = -1;
+        
+        for (;ii <= n;ii ++) {
+            if (a[ii] >= a[ii - 1]) {
+                t = -1;
+                break;
+            }
+        }
+        if (t == 1) puts("Yes");
+        else puts("No");
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[100010];
+    int b[100010];
+    map<int,int> mp;
+    int ans;
+    __T {
+        sci(n);
+        rep(i,1,n) sci(a[i]);
+        rep(i,1,n) sci(b[i]);
+        mp.clear();
+        rep(i,1,n) {
+            mp[a[i] - b[i]] ++;
+        }
+        ans = 0;
+        for (auto i : mp) {
+            ans = max(ans,i.second);
+        }
+        printf("%d\n",ans);
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,b;
+    int t;
+    int ok;
+    __T {
+        scii(n,b);
+        ok = 0;
+        rep(i,1,n) {
+            sci(t);
+            if ((t + b) % 7 == 0) ok = 1;
+        }
+        puts(ok ? "Yes" : "No");
+    }
+    re0;
+}
+*/
+
+/*
+int cmp(const pair<string,ll> &a,const pair<string,ll> &b)
+{
+    if (a.second == b.second) return a.first < b.first;
+    return a.second > b.second;
+}
+
+int main()
+{
+    int n,m;
+    pair<string,ll> a[110];
+    ll ans;
+    __T {
+        scii(n,m);
+        rep(i,1,n) cin >> a[i].first >> a[i].second;
+        sort(a + 1, a + 1 + n, cmp);
+        ans = 0;
+        rep(i,1,m) {
+            ans += (m - i + 1) * a[i].second;
+        }
+        printf("%lld",ans);
+        rep(i,1,m) cout << " " << a[i].first;
+        puts("");
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    ll n;
+    string str;
+    int ans[100010];
+    ll x;
+    __T {
+        scl(n);
+        cin >> str;
+        if ((x = (1 + n) * n / 2) % 2) puts("-1");
+        else {
+            x /= 2;
+            pre(i,(int) n,1) {
+                if (x - i >= 0) {
+                    if (str[i - 1] == '1') ans[i] = 3;
+                    else ans[i] = 1;
+                    x -= i;
+                } else {
+                    if (str[i - 1] == '1') ans[i] = 4;
+                    else ans[i] = 2;
+                }
+            }
+            rep(i,1,n) printf("%d",ans[i]);
+            puts("");
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int m;
+
+struct Tile {
+    char type;
+    int rank;
+    
+    bool operator<=(const Tile &o) const {
+        if (type == o.type) return rank <= o.rank;
+        else if (type == 'C' && o.type == 'B') return 1;
+        else if (type == 'C' && o.type == 'D') return 1;
+        else if (type == 'B' && o.type == 'D') return 1;
+        return 0;
+    }
+    
+    Tile operator++(int) {
+        if (rank < m) rank ++;
+        else {
+            rank = 1;
+            if (type == 'C') type = 'B';
+            else if (type == 'B') type = 'D';
+            else if (type == 'D') rank = m + 1;
+        }
+        return *this;
+    }
+    
+    Tile operator--(int) {
+        if (rank > 1) rank --;
+        else {
+            if (type == 'D') {
+                type = 'B';
+                rank = m;
+            }
+            else if (type == 'B') {
+                type = 'C';
+                rank = m;
+            }
+            
+        }
+        return *this;
+    }
+};
+
+int main()
+{
+    int n;
+    int w;
+    Tile t[100010];
+    Tile begin,end;
+    int ans;
+    __T {
+        scii(n,m);
+        w = -1;
+        
+        rep(i,1,n) {
+            scanf(" %c",&t[i].type);
+            if (t[i].type == 'W') w = i;
+            else scanf(" %d",&t[i].rank);
+        }
+        
+        if (n >= 2 && (w > 2 || w == -1) && !(t[1] <= t[2])) {
+            puts("1");
+        } else if (w != -1) {
+            begin.type = t[w - 1].type;
+            begin.rank = t[w - 1].rank;
+            if (w != 2) {
+                begin ++;
+            }
+            
+            end.type = t[w + 1].type;
+            end.rank = t[w + 1].rank;
+            
+            if (w == 1) {
+                begin.type = 'C';
+                begin.rank = 1;
+                
+                if (w != n) {
+                    end.type = t[w + 1].type;
+                    end.rank = t[w + 1].rank;
+                }
+            }
+            end --;
+            
+            if (w == n) {
+                end.type = 'D';
+                end.rank = m;
+            }
+            
+            ans = 0;
+            for (;begin <= end;begin ++,ans ++);
+            printf("%d\n",ans);
+        } else {
+            printf("%d\n",m * 3 - n + 1);
+        }
+        
+    }
+    re0;
+}
+*/
+
+//ll pls(int l,int r)
+//{
+//
+//}
+//
+//int main()
+//{
+//    int n;
+//    int b[100010];
+//    int a[100010];
+//    ll ans;
+//    int l;
+//    __T {
+//        sci(n);
+//        rep(i,1,n) sci(a[i]);
+//        rep(i,1,n) sci(b[i]);
+//        rep(i,1,n) a[i] -= b[i];
+//        ans = 0;
+//        l = -1;
+//        rep(r,1,n) {
+//            if (a[r] != 0) {
+//                if (l == -1) l = r;
+//            } else {
+//                pls(l,r - 1);
+//                l = -1;
+//            }
+//        }
+//
+//        printf("%lld\n",ans);
+//    }
+//    re0;
+//}
+
+//char a[10];
+//char to[] = {'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'};
+//int v['z'];
+//
+//void init()
+//{
+//    v['0'] = 6;
+//    v['1'] = 2;
+//    v['2'] = 5;
+//    v['3'] = 5;
+//    v['4'] = 4;
+//    v['5'] = 5;
+//    v['6'] = 6;
+//    v['7'] = 3;
+//    v['8'] = 7;
+//    v['9'] = 6;
+//    v['A'] = 6;
+//    v['B'] = 5;
+//    v['C'] = 4;
+//    v['D'] = 5;
+//    v['E'] = 5;
+//    v['F'] = 4;
+//}
+//
+//void conv(uint x)
+//{
+//    mem(a,'0');
+//    int i = 0;
+//    int ans = 0;
+//    while (x != 0) {
+//        a[++ i] = to[x % 16];
+//        x /= 16;
+//    }
+//    pre(i,8,1) {
+//        printf("%c",a[i]);
+//        ans += a[i];
+//    }
+//    printf(" %d\n",ans);
+//}
+//
+//
+//int main()
+//{
+//    init();
+//    for (int i = 0;i <= 100;i ++) {
+//        conv(i);
+//    }
+//
+//    return 0;
+//}
+
+
+/*
+struct Node {
+    int l,r;
+};
+
+int cmp(const Node &a,const Node &b) {
+    return a.l < b.l;
+}
+
+int main()
+{
+    int n,m,x,y;
+    Node a[110];
+    Node b[110];
+    Node k[1000010];
+    int cnt;
+    int aa,bb;
+    ll ans = 0;
+    __T {
+        cnt = 0;
+        scanf("%d %d %d %d",&n,&m,&x,&y);
+        rep(i,1,x) scii(a[i].l,a[i].r);
+        rep(i,1,y) scii(b[i].l,b[i].r);
+        rep(j,1,y) {
+            rep(i,1,x) {
+                aa = max(a[i].l,b[j].l);
+                bb = min(a[i].r,b[j].r);
+                if (aa <= bb) {
+                    k[cnt].l = aa;
+                    k[cnt ++].r = bb;
+                }
+            }
+        }
+        sort(k, k + cnt, cmp);
+        ans = 0;
+        REP(i,0,cnt) {
+//            printf("%d %d\n",k[i].l,k[i].r);
+            ans += max(0,k[i].r - k[i].l - m + 2);
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+ll sum[20];
+
+ll nn[20] = {6,2,5,5,4,5,6,3,7,6,6,5,4,5,5,4};
+
+void init()
+{
+    sum[0] = 6;
+    sum[1] = 8;
+    sum[2] = 13;
+    sum[3] = 18;
+    sum[4] = 22;
+    sum[5] = 27;
+    sum[6] = 33;
+    sum[7] = 36;
+    sum[8] = 43;
+    sum[9] = 49;
+    sum[10] = 55;
+    sum[11] = 60;
+    sum[12] = 64;
+    sum[13] = 69;
+    sum[14] = 74;
+    sum[15] = 78;
+}
+
+void to(char num[])
+{
+    rep(i,0,7) {
+        if (num[i] >= '0' && num[i] <= '9') num[i] ^= 48;
+        else num[i] = num[i] - 'A' + 10;
+    }
+}
+
+uint conv(char num[],int l)
+{
+    uint ans = 0;
+    for (int i = 0;i < l;i ++) {
+        ans += (1ULL << (i * 4ULL)) * num[i];
+    }
+    return ans;
+}
+
+ull get(ull num)
+{
+    ull ans = 0;
+    ull f = num / 16,t = 0;
+    ull x = 1;
+    int k;
+    rep(i,0,7) {
+        k = num % 16;
+        
+        // group
+        ans += f * sum[15] * (1ULL << (4 * i));
+        
+        // middle
+        if (k) ans += sum[k - 1] * (1ULL << (4 * i));
+        
+        
+        // tail
+        ans += (t + 1) * nn[k];
+        
+        t += (num % 16) * x;
+        x <<= 4;
+        f /= 16;
+        num /= 16;
+    }
+    return ans;
+}
+
+ull single_conv(ull a)
+{
+    ull ans = 0;
+    rep(i,0,7) {
+        ans += nn[a % 16];
+        a /= 16;
+    }
+    return ans;
+}
+
+void add(uint a,uint b)
+{
+    ull x = (ull) a + (ull)(b - 1);
+    uint k = 0;
+    uint t = a + (b - 1);
+    if (x > k - 1) {
+        printf("%llu\n",single_conv(a) + get(k - 1) - get(a) + get(t));
+    } else {
+        printf("%llu\n",single_conv(a) + get(x) - get(a));
+    }
+}
+
+int main()
+{
+    init();
+
+    int s;
+    char num[10];
+    char str[10];
+    uint x;
+    __T {
+        scanf("%d",&s);
+        scanf("%s",str);
+        rep(i,0,7) num[7 - i] = str[i];
+        to(num);
+        x = conv(num,8);
+        add(x,s);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll x[100];
+    x[1] = 1;
+    rep(i,2,63) {
+        x[i] = x[i - 1] * 2 + 1;
+//        printf("%lld\n",x[i]);
+    }
+    ll y[100];
+    rep(i,1,31) {
+        y[i] = (1 + x[i]) * x[i]/ 2;
+//        printf("%lld\n",y[i]);
+    }
+    
+    
+    ll n;
+    int i;
+    ll k = 0;
+    __T {
+        scl(n);
+        k = 0;
+        for (i = 1;i <= 31;i ++) {
+            k += y[i];
+            if (k <= 0 || k > n) {
+                printf("%d\n",i - 1);
+                break;
+            }
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    int a[100010];
+    rep(i,1,n) sci(a[i]);
+    sort(a + 1,a + 1 + n);
+    int ans = 0;
+    
+    vector<int> aa;
+    aa.pb(a[(n + 1) / 2]);
+    if (!(n % 2)) aa.pb(a[(n + 1) / 2 + 1]);
+    for (int i = (n + 1) / 2 + 1 + !(n % 2),j = 1;i <= n;i ++,j ++) {
+        if (a[j] < a[i] && a[j] < a[i - 1]) ans ++;
+        aa.pb(a[j]);
+        aa.pb(a[i]);
+    }
+    printf("%d\n",ans);
+    int f = 1;
+    for (auto i : aa) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    puts("");
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int a[1010];
+    int ok;
+    int ok2;
+    ll sum;
+    __T {
+        scii(n,m);
+        ok = 1;
+        ok2 = 0;
+        sum = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            sum += a[i];
+            if (a[i] == m) ok2 = 1;
+            if (i != 1) {
+                if (a[i] != a[i - 1]) ok = 0;
+            }
+        }
+        if (ok && a[1] == m) puts("0");
+        else {
+            if (m * (ll) n == sum || ok2) puts("1");
+            else puts("2");
+        }
+        
+    }
+}
+*/
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int isZhi(int n)
+{
+    if (n == 1) return 0;
+    for (int i = 2;i * i <= n;i ++) if (n % i == 0) return 0;
+    return 1;
+}
+
+int main()
+{
+    int n;
+    priority_queue<ll,vector<ll>,greater<ll>> que;
+    set<ll> vis;
+    ll last;
+    list<ll> ans;
+    list<ll>::iterator j;
+    ll g;
+    int ok;
+    __T {
+        sci(n);
+        vis.clear();
+        ans.clear();
+        while (!que.empty()) que.pop();
+        for (int i = 2;i * i <= n;i ++) {
+            if (n % i == 0) {
+                if (isZhi(i)) ans.pb(i);
+                else que.push(i);
+                if (i != n / i) {
+                    if (isZhi(n / i)) ans.pb(n / i);
+                    else que.push(n / i);
+                }
+            }
+        }
+        
+        if (ans.size() == 1) {
+            printf("%lld",*ans.begin());
+            while (!que.empty()) {
+                printf(" %lld",que.top());
+                que.pop();
+            }
+            printf(" %d\n0\n",n);
+        } else if (ans.size() == 2 && (*ans.begin()) * (*(++ ans.begin())) == n) {
+            printf("%lld %lld %d\n1\n",*ans.begin(),*(++ ans.begin()),n);
+        } else {
+            for (auto i = ++ ans.begin();i != ans.end();i ++) {
+                j = i;
+                j --;
+                ans.insert(i, g = (*i) * (*j) * gcd(*i,*j));
+                vis.insert(g);
+            }
+            while (!que.empty()) {
+                last = que.top();
+                que.pop();
+                
+                if (vis.find(last) != vis.end()) continue;
+                
+                ok = 0;
+                for (auto i = ++ ans.begin();i != ans.end();i ++) {
+                    j = i;
+                    j --;
+                    if (gcd(last,*j) != 1 && gcd(last,*i) != 1) {
+                        ans.insert(i, last);
+                        ok = 1;
+                        break;
+                    }
+                }
+                if (!ok) ans.pb(last);
+            }
+            ans.pb(n);
+            ok = 1;
+            for (auto i : ans) {
+                if (ok) ok = 0;
+                else printf(" ");
+                printf("%lld",i);
+            }
+            printf("\n0\n");
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int n;
+
+const int MAXN = 1e5 + 10;
+
+int a[MAXN];
+ll c[MAXN];
+
+void modify(int i,ll x)
+{
+    // 从叶子结点一路向上更新
+    for (;i <= n;i += lowbit(i)) {
+        c[i] += x;
+    }
+}
+
+ll sum(int i)
+{
+    // 查询： 由于每个c结点相当于一小段前缀和，因此全+起来，最后求得的便是总共的前缀和
+    ll ans = 0;
+    for (;i > 0;i -= lowbit(i))
+    {
+        ans += c[i];
+    }
+    return ans;
+}
+
+int mx[MAXN];
+
+void modify_m(int i,int x)
+{
+    int low;
+    a[i] = x; // 会直接修改数组的值
+    for (;i <= n;i += lowbit(i)) {
+        mx[i] = a[i];
+        low = lowbit(i);
+        for (int j = 1;j < low;j <<= 1) {
+            mx[i] = max(mx[i], mx[i - j]);
+        }
+    }
+}
+
+int query_max(int l,int r)
+{
+    int ans = max(a[l],a[r]);
+    while(true)
+    {
+        ans = max(ans, a[r]);
+        if (l == r) break;
+        r --;
+        for (;r - l > lowbit(r);r -= lowbit(r))
+        {
+            ans = max(ans,mx[r]);
+        }
+    }
+    return ans;
+}
+
+int main()
+{
+    int m;
+    scii(n,m);
+    rep(i,1,n) {
+        sci(a[i]);
+        modify_m(i, a[i]); // 修改最大值
+        modify(i, a[i]);
+    }
+    int t,x,y;
+    while (m --) {
+        sciii(t,x,y);
+        if (t == 1) {
+            modify(x, y - a[x]);
+            modify_m(x, y);
+        } else if (t == 2) {
+            printf("%lld\n",sum(y) - sum(x - 1));
+        } else printf("%d\n",query_max(x, y));
+    }
+    re0;
+}
+*/
+
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        if (n >= 7) {
+            if (n % 2) {
+                printf("%d %d\n",3,n - 3);
+            } else {
+                printf("%d %d\n",2,n - 2);
+            }
+        } else {
+            switch (n) {
+                case 1:
+                    puts("-1");
+                    break;
+                case 2:
+                    puts("-1");
+                    break;
+                case 3:
+                    puts("-1");
+                    break;
+                case 4:
+                    puts("-1");
+                    break;
+                case 5:
+                    puts("-1");
+                    break;
+                case 6:
+                    puts("2 4");
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    int w[100010];
+    double sum = 0;
+    __T {
+        sum = 0;
+        scii(n,k);
+        rep(i,1,n) {
+            sci(w[i]);
+            sum += w[i];
+        }
+        rep(i,1,n) {
+            if (i != 1) printf(" ");
+            printf("%.8f",w[i] * (sum + k) / sum);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int a[10]['z'];
+    int k[] = {1,2,3,4,5,6};
+    int ok = 0;
+    __T {
+        k[0] = 1;
+        k[1] = 2;
+        k[2] = 3;
+        k[3] = 4;
+        k[4] = 5;
+        k[5] = 6;
+        mem(a,0);
+        rep(ii,1,6) {
+            cin >> str;
+            for (int i = 0;str[i];i ++) {
+                a[ii][str[i]] ++;
+            }
+        }
+        ok = 0;
+        do {
+            if (a[k[0]]['h'] && a[k[1]]['a'] && a[k[2]]['r'] && a[k[3]]['b'] && a[k[4]]['i'] && a[k[5]]['n']) {
+                ok = 1;
+                break;
+            }
+        } while (next_permutation(k, k + 6));
+        puts(ok ? "Yes" : "No");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    vector<int> a(n);
+    rep(i,0,n-1) a[i] = i + 1;
+    vector<int> b(n);
+    int m,M;
+    map<vector<int>,vector<vector<int>>> all;
+    do {
+        m = a[0];
+        M = a[0];
+        rep(i,0,n-1) {
+            m = min(m,a[i]);
+            M = max(M,a[i]);
+            b[i] = M - m;
+        }
+        all[b].pb(a);
+    } while (next_permutation(a.begin(), a.end()));
+    
+    for (auto i : all) {
+        for (auto j : i.first) printf(" %d",j);
+        puts(":");
+        for (auto j : i.second) {
+            for (auto k : j) printf(" %d",k);
+            puts("");
+        }
+        printf("cnt = %lu\n",i.second.size());
+        puts("");
+    }
+    
+    return 0;
+}
+*/
+
+
+
+/*
+const int mod = 1e9 + 7;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+ll AA[100010];
+
+ll A(int a,int b)
+{
+    return (AA[a] * quickpow(AA[a - b], mod - 2)) % mod;
+}
+
+int main()
+{
+    int n;
+    int a[100010];
+    int vis[100010];
+    int cnt = 0;
+    int ok,has;
+    
+    AA[0] = 1;
+    AA[1] = 1;
+    rep(i,2,100005) {
+        AA[i] = i * AA[i - 1];
+        AA[i] %= mod;
+    }
+    
+    int last;
+    int length;
+    int cc;
+    ll ans;
+    
+    __T {
+        cc = cnt = 0;
+        ans = 1;
+        sci(n);
+        vis[0] = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            vis[i] = 0;
+        }
+
+        ok = 1;
+        has = 0;
+        rep(i,2,n) {
+            if (a[i] >= n) {
+                ok = 0;
+                break;
+            }
+            if (a[i] == n - 1) has = 1;
+            if (a[i] < a[i - 1]) {
+                ok = 0;
+                break;
+            }
+            if (has && a[i] < n - 1) {
+                ok = 0;
+                break;
+            }
+        }
+        if (a[1] != 0) ok = 0;
+        
+        
+        if (ok) {
+            length = 0;
+            last = 0;
+            
+            rep(i,2,n) {
+                if (a[i] > last) {
+                    if (cc < length) {
+                        puts("0");
+                        goto nxt;
+                    }
+                    
+                    ans *= A(cc,length);
+                    ans %= mod;
+                    
+                    cc -= length;
+                    cc += a[i] - last - 1;
+                    
+                    length = 0;
+                    cnt ++;
+                    
+                } else length ++;
+                last = a[i];
+            }
+            
+            if (cc < length) {
+                puts("0");
+                goto nxt;
+            }
+            
+            ans *= A(cc,length);
+            ans %= mod;
+            
+            ans *= quickpow(2, cnt);
+            ans %= mod;
+            printf("%lld\n",ans);
+        } else puts("0");
+    nxt:;
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll n;
+    int a[50010];
+    int ok = 1;
+    __T {
+        scl(n);
+        rep(i,1,n) {
+            sci(a[i]);
+            
+        }
+        ok = 1;
+       
+        rep(i,2,n) {
+            if (a[i] >= a[i - 1]) {
+                ok = 0;
+                break;
+            }
+        }
+        
+        puts(ok ? "NO" : "YES");
+        
+    }
+    return 0;
+}
+*/
+
+
+/*
+int main()
+{
+    int n;
+    ll x[50][5];
+    ll k[50];
+    ll t;
+    ll cnt = 0;
+
+    __T {
+        sci(n);
+        mem(x,0);
+        cnt = 0;
+        rep(i,1,n) {
+            scl(t);
+            REP(i,0,32) {
+                k[i] = t & 1;
+                t >>= 1;
+            }
+            pre(i,31,0) {
+                if (k[i]) {
+                    cnt += x[i][1];
+                    x[i][1] ++;
+                    break;
+                }
+            }
+        }
+        printf("%lld\n",cnt);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,q;
+    ll a[300010];
+    ll dp[2];
+    __T {
+        scii(n,q);
+        dp[0] = dp[1] = 0;
+        rep(i,1,n) scl(a[i]);
+        dp[1] = a[1];
+        rep(i,2,n) {
+            dp[0] = max(dp[0],dp[1] - a[i]);
+            dp[1] = max(dp[1],dp[0] + a[i]);
+        }
+        printf("%lld\n",max(dp[0],dp[1]));
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    freopen("data.txt","w",stdout);
+    int a[500];
+    rep(i,1,480) a[i] = i;
+    srand((uint)time(NULL));
+    rep(i,1,480) swap(a[rand() % 480 + 1],a[rand() % 480 + 1]);
+    rep(i,1,160) printf("%d ",a[i]);
+    puts("\r\n");
+    rep(i,161,320) printf("%d ",a[i]);
+    puts("\r\n");
+    rep(i,321,480) printf("%d ",a[i]);
+    puts("\r\n");
+    return 0;
+}
+*/
+
+//
+//int main()
+//{
+//    int n,m;
+//    scii(n,m);
+//    int a[20010];
+//    rep(i,1,n) sci(a[i]);
+//    int u,v,x;
+//    while (m --) {
+//        sciii(u,v,x);
+//
+//    }
+//    re0;
+//}
+
+/*
+int main()
+{
+    int n;
+    char x;
+    sci(n);
+    scanf(" %c",&x);
+    int nn = n - 1;
+    nn /= 2;
+    int v = sqrt(4 * nn + 4) - 1;
+    if (v % 2 == 0) v --;
+    rep(i,1,(v - 1) / 2 + 1) {
+        REP(ii,1,i) printf(" ");
+        rep(ii,1,v - (i - 1) * 2) printf("%c",x);
+        puts("");
+    }
+    
+    pre(i,(v - 1) / 2,1) {
+        REP(ii,1,i) printf(" ");
+        rep(ii,1,v - (i - 1) * 2) printf("%c",x);
+        puts("");
+    }
+    printf("%d\n",n - (v + 3) * (v - 1) / 2 - 1);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    char p[100010];
+    mem(p,1);
+    p[1] = 0;
+    p[2] = 1;
+    int n;
+    sci(n);
+    rep(i,2,n) {
+        for (int j = i + i;j <= n;j += i) {
+            p[j] = 0;
+        }
+    }
+    int cnt = 0;
+    int pp[100010];
+    rep(i,1,n) {
+        if (p[i]) pp[++ cnt] = i;
+    }
+    int ans = 0;
+    rep(i,2,n) {
+        if (pp[i] - pp[i - 1] == 2) ans ++;
+    }
+    printf("%d\n",ans);
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    scii(n,m);
+    int a[110];
+    REP(i,0,n) sci(a[i]);
+    REP(i,0,n) {
+        if (i != 0) printf(" ");
+        printf("%d",a[(i - m + n * m) % n]);
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int x,y,z,k;
+    __T {
+        sciii(x,y,z);
+        k = x + y - z;
+        if (x + y < z) puts("-1");
+        else if (x + y == z) printf("%d\n",z + 1);
+        else if (k <= x || k <= z) puts("-1");
+        else printf("%d\n",x + y - z);
+    }
+    return 0;
+}
+*/
+
+/*ll to(int a) {
+    ll ans = 1;
+    while (a) {
+        
+        ans *= a % 10;
+        
+        if (ans == 0) return ans;
+        a /= 10;
+    }
+    return ans;
+}
+
+int main()
+{
+    int l,r;
+    ll ans;
+    __T {
+        scii(l,r);
+        ans = 1;
+        rep(i,l,r) {
+            ans *= to(i);
+            if (ans == 0) break;
+            ans %= 1000000007;
+        }
+        _C(ans);
+    }
+    re0;
+}
+*/
+
+/*
+string str;
+int n,k;
+
+int chk(int l) {
+    int ans = 0;
+    for (int i = 0;i < n;) {
+        if (str[i] == '1') {
+            ans ++;
+            i += l;
+        } else i ++;
+    }
+    return ans <= k;
+}
+
+int main()
+{
+    int l,r,m;
+    __T {
+        scii(n,k);
+        cin >> str;
+        l = 1;
+        r = n;
+        while (l < r) {
+            m = (l + r) / 2;
+            if (chk(m)) r = m;
+            else l = m + 1;
+        }
+        printf("%d\n",r);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    ll n;
+    ll a6,a9,a0,a8;
+    ll ans = 0;
+    int o;
+    
+    __T {
+        cin >> str;
+        n = str.size();
+        ans = (1 + n) * n / 2;
+        o = 0;
+        a0 = a8 = a6 = a9 = 0;
+        REP(i,0,n) {
+            if (str[i] == '6') a6 ++;
+            else if (str[i] == '9') a9 ++;
+            else if (str[i] == '0') a0 ++;
+            else if (str[i] == '8') a8 ++;
+            if (str[i] == '0' || str[i] == '8') o = 1;
+        }
+        ans -= (a0 + 1) * a0 / 2;
+        ans -= (a8 + 1) * a8 / 2;
+        o = o || (a6 && a9);
+        if (o) ans ++;
+        ans -= a6 * a9;
+        printf("%lld\n",ans);
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int find_set[MAXN];
+int depth[MAXN];
+
+int vis[MAXN];
+
+int find(int a)
+{
+    if (find_set[a] == a) return a;
+    return find_set[a] = find(find_set[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (depth[x] >= depth[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        find_set[y] = x; // 改变b节点的根的根为a的根
+        if (depth[x] == depth[y]) { // 俩根深度一样
+            if (x != y) depth[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else find_set[x] = y;
+}
+
+
+void init(int n)
+{
+    rep(i,0,n) {
+        find_set[i] = i;  // 每个种类初始状态只有自己一个点
+        depth[i] = 1;  // 初始化秩
+        vis[i] = 0;
+    }
+}
+
+int n,m;
+
+int conv(int i,int j) {
+    return i * m + j;
+}
+
+int main()
+{
+    char a[MAXN];
+    
+    int t;
+    int ii,jj;
+    int ok;
+    int last;
+    int times;
+    __T {
+        scii(n,m);
+        init(n * m + 5);
+        REP(i,0,n) {
+            scanf(" ");
+            REP(j,0,m) {
+                scanf("%c",&a[conv(i,j)]);
+            }
+        }
+        REP(i,0,n) {
+            REP(j,0,m) {
+                scanf("%d",&t);
+                ii = i;
+                jj = j;
+                switch (a[conv(i,j)]) {
+                    case 'u':
+                        ii -= t;
+                        break;
+                    case 'd':
+                        ii += t;
+                        break;
+                    case 'l':
+                        jj -= t;
+                        break;
+                    case 'r':
+                        jj += t;
+                        break;
+                    default:
+                        break;
+                }
+                if (ii >= 0 && ii < n && jj >= 0 && jj < m) {
+                    bind(conv(i,j),conv(ii,jj));
+                    vis[conv(ii,jj)] ++;
+                }
+            }
+        }
+        ok = 1;
+        last = find(0);
+        REP(i,1,n * m) {
+            if (last != (t = find(i))) {
+                ok = 0;
+                break;
+            }
+            last = t;
+        }
+        times = 0;
+        REP(i,0,n * m) if (vis[i] == 0) times ++;
+        if (times >= 2) ok = 0;
+        
+        puts(ok ? "Yes" : "No");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int main()
+{
+    int n;
+    char p[MAXN],vis[MAXN];
+    int cnt;
+    int t;
+    vector<pair<int,int>> ans;
+    __T {
+        ans.clear();
+        sci(n);
+        rep(i,0,n) {
+            p[i] = 1;
+            vis[i] = 0;
+        }
+        rep(i,3,n) {
+            if (!p[i] || i % 2 == 0) continue;
+            cnt = 1;
+            for (int j = i + i;j <= n;j += i) {
+                p[j] = 0;
+                if (!vis[j]) cnt ++;
+            }
+            
+            t = i;
+            for (int j = i * (2 + cnt % 2);j <= n;j += i) {
+                if (vis[j]) continue;
+                if (t == -1) {
+                    t = j;
+                } else {
+                    vis[j] = vis[t] = 1;
+                    ans.pb(mpair(t,j));
+                    t = -1;
+                }
+            }
+        }
+        
+        t = -1;
+        rep(i,2,n) {
+            if (!(i & 1) && !vis[i]) {
+                if (t == -1) {
+                    t = i;
+                } else {
+                    ans.pb(mpair(t,i));
+                    t = -1;
+                }
+            }
+        }
+        printf("%lu",ans.size());
+        for (auto i : ans) {
+            printf(" %d %d",i.first,i.second);
+        }
+        puts("");
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,x;
+    __T {
+        scii(n,x);
+        if (n == 1 || n == 2) printf("1\n");
+        else {
+            n -= 2;
+            printf("%.0f\n",ceil(n / (double)x) + 1);
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int main() {
+    int n;
+    sci(n);
+    ll s = 0;
+    ll ans = 0;
+    ll a[200010];
+    set<ll> vis;
+    vis.insert(0);
+    REP(i,0,n) scanf("%lld",&a[i]);
+    REP(i,0,n) {
+        if (vis.find(s + a[i]) != vis.end()){
+            vis.clear();
+            vis.insert(s = 0);
+            ans ++;
+        }
+        s += a[i];
+        vis.insert(s);
+    }
+    printf("%lld\n",ans);
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int a,b,c,d;
+    int ok;
+    __T {
+        scii(n,m);
+        ok = 0;
+        while (n --) {
+            scii(a,b);
+            scii(c,d);
+            if (b == c) ok = 1;
+        }
+        if (m % 2) puts("NO");
+        else {
+            puts(ok ? "YES" : "NO");
+        }
+    }
+    re0;
+}
+*/
+/*
+int main()
+{
+    int n;
+    sci(n);
+    ll a1,a2,a3;
+    ll b1,b2,b3;
+    sclll(a1,a2,a3);
+    sclll(b1,b2,b3);
+    ll w = min(a1,b2) + min(a2,b3) + min(a3,b1);
+    ll l;
+    ll t;
+    
+    ll aa1,aa2,aa3;
+    ll bb1,bb2,bb3;
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    l = min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1);
+    
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    
+    printf("%lld %lld\n",l,w);
+    
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 2e4 + 10;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN << 1];
+int g[MAXN];
+
+int cnt;
+
+void init()
+{
+    cnt = 0;
+    mem(g,-1);
+}
+
+void add(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+int bg[MAXN],ed[MAXN];
+int dfn = 0;
+
+void dfs(int n) {
+    bg[n] = ++ dfn;
+    // iterate graph
+    int to;
+    for (int i = g[n];~i;i = e[i].nxt) {
+        to = e[i].to;
+        dfs(to);
+    }
+    ed[n] = dfn;
+}
+
+int n,m;
+
+struct node{
+    int l,r;
+    ll add;
+    ll sum;
+} tree[MAXN << 2];
+void pushup(int index){
+    tree[index].sum = tree[index<<1].sum+tree[index<<1|1].sum;
+}
+void pushdown(int index){    //下推标记
+    if(tree[index].add){
+         tree[index<<1].sum += (tree[index<<1].r-tree[index<<1].l+1)*tree[index].add;
+        tree[index<<1|1].sum +=(tree[index<<1|1].r-tree[index<<1|1].l+1)*tree[index].add;
+        
+        tree[index<<1].add += tree[index].add;
+        tree[index<<1|1].add += tree[index].add;
+        
+        tree[index].add = 0;
+    }
+}
+void build(int l, int r, int index){        //建树    数组a的l,r区间建树
+    tree[index].l = l;
+    tree[index].r = r;
+    tree[index].add = 0;
+    if(l == r){
+//        scanf("%lld",&tree[index].sum);
+        
+         tree[index].sum = 0;
+        return;
+    }
+    int mid = (l+r)>>1;
+    build(l,mid,index<<1);
+    build(mid+1,r,index<<1|1);
+    pushup(index);
+}
+void update(int l,int r,int index, ll w){    //修改a[L]的值 更新sum
+    if(l <= tree[index].l && r >= tree[index].r){
+        tree[index].sum += (tree[index].r-tree[index].l+1)*w;
+        tree[index].add += w;
+        return;
+    }
+    pushdown(index);
+    int mid = (tree[index].l + tree[index].r)>>1;
+    if(l <= mid) update(l,r,index<<1,w);
+    if(r > mid) update(l,r,index<<1|1,w);
+    pushup(index);
+}
+ll query(int l,int r,int index){    //查询
+    if(l <= tree[index].l && r >= tree[index].r){
+        return tree[index].sum;
+    }
+    pushdown(index);
+    int mid = (tree[index].l + tree[index].r)>>1;
+    ll sum = 0;
+     if(l <= mid){
+         sum += query(l,r,index<<1);
+     }
+    if(r > mid){
+        sum += query(l,r,index<<1|1);
+    }
+    return sum;
+}
+
+int main()
+{
+    init();
+    scii(n,m);
+    build(1,n,1);
+    int t;
+    int root = 1;
+    rep(i,1,n) {
+        sci(t);
+        if (t) add(t,i);
+        else root = i;
+    }
+    dfs(root);
+
+    int u,x,v;
+    while (m --) {
+        sciii(u,x,v);
+        printf("%lld\n",query(bg[v],bg[v],1));
+        update(bg[u], ed[u], 1, x);
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 2e4 + 10;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN << 1];
+int g[MAXN];
+
+int cnt;
+
+void init()
+{
+    cnt = 0;
+    mem(g,-1);
+}
+
+void add(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+int bg[MAXN],ed[MAXN];
+int dfn = 0;
+
+void dfs(int n) {
+    bg[n] = ++ dfn;
+    // iterate graph
+    int to;
+    for (int i = g[n];~i;i = e[i].nxt) {
+        to = e[i].to;
+        dfs(to);
+    }
+    ed[n] = dfn;
+}
+
+int n,m;
+ll c[MAXN] = {0};
+
+void modify(int i,ll x)
+{
+    // 从叶子结点一路向上更新
+    for (;i <= n;i += lowbit(i))
+    {
+        c[i] += x;
+    }
+}
+
+ll sum(int i)
+{
+    // 查询：由于每个c结点相当于一小段前缀和，因此全+起来，最后求得的便是总共的前缀和
+    ll ans = 0;
+    for (;i > 0;i -= lowbit(i))
+    {
+        ans += c[i];
+    }
+    return ans;
+}
+
+void pls(int l,int r,int k)
+{
+    modify(l, k);
+    modify(r + 1, -k);
+}
+
+
+int main()
+{
+    init();
+    
+    scii(n,m);
+    int t;
+    int root = 1;
+    rep(i,1,n) {
+        sci(t);
+        if (t) add(t,i);
+        else root = i;
+    }
+    dfs(root);
+
+    int u,x,v;
+    while (m --) {
+        sciii(u,x,v);
+        printf("%lld\n",sum(bg[v]));
+        pls(bg[u],ed[u],x);
+    }
+    return 0;
+}
+*/
+
+/*
+int n;
+
+const int MAXN = 1e5 + 10;
+
+struct Edge {
+    Edge(){}
+    Edge(int to,int nxt):to(to),nxt(nxt){}
+    int to;
+    int nxt;
+} e[MAXN << 1];
+
+int g[MAXN];
+int cnt;
+
+int dfn = 0;
+
+void init()
+{
+    mem(g,-1);
+    cnt = 0;
+    dfn = 0;
+}
+
+void add(int u,int v) {
+    e[cnt] = Edge(v,g[u]);
+    g[u] = cnt ++;
+}
+
+int in[MAXN],out[MAXN];
+
+void dfs(int k,int f)
+{
+    in[k] = ++ dfn;
+    for (int i = g[k];~i;i = e[i].nxt)
+    {
+        if (e[i].to != f) {
+            dfs(e[i].to,k);
+        }
+    }
+    out[k] = dfn;
+}
+
+int c[MAXN] = {0};
+int a[MAXN];
+
+void modify(int idx,ll x)
+{
+    a[idx] += x;
+    // 从叶子结点一路向上更新
+    for (int i = idx;i <= n;i += lowbit(i))
+    {
+        c[i] += x;
+    }
+}
+
+ll sum(int idx)
+{
+    // 查询：由于每个c结点相当于一小段前缀和，因此全+起来，最后求得的便是总共的前缀和
+    ll ans = 0;
+    for (int i = idx;i > 0;i -= lowbit(i))
+    {
+        ans += c[i];
+    }
+    return ans;
+}
+
+int main()
+{
+    sci(n);
+    init();
+    int u,v;
+    rep(i,1,n - 1) {
+        scii(u,v);
+        add(u,v);
+        add(v,u);
+    }
+    dsci(m);
+    char c;
+    int x;
+    dfs(1,-1);
+    
+    rep(i,1,n) {
+        modify(i, 1);
+    }
+    
+    while (m --) {
+        scanf(" %c",&c);
+        sci(x);
+        if (c == 'C') {
+            if (a[in[x]]) modify(in[x], -1);
+            else modify(in[x], 1);
+        }
+        else if (c == 'Q') printf("%lld\n",sum(out[x]) - sum(in[x] - 1));
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int ans;
+    int cnt;
+    __T {
+        sci(n);
+        ans = n;
+        cnt = n;
+        for (int i = 1;cnt <= ans;i ++,ans = min(ans,cnt)) {
+            cnt = (i - 1) + n / i + min(n % i,1) - 1;
+        }
+        printf("%d\n",ans);
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    ll k;
+    ll n,ans;
+    while (~scl(k)) {
+        k = abs(k);
+        for (ans = 1,n = 1;n < k || n % 2 != k % 2;n += ++ ans);
+        printf("%lld\n",ans);
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    __T {
+        scii(n,k);
+        rep(i,1,k) {
+            n = (n >> 1) + (n & 1);
+            if (n == 1 | n == 0) break;
+        }
+        printf("%d\n",n);
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    ll year1,mon1,day1;
+    ll year,mon,day;
+    string s;
+    string str[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+    map<string,int> conv;
+    rep(i,0,4) conv[str[i]] = i;
+    __T {
+        scanf("%lld %lld %lld", &year, &mon, &day);
+        cin >> s;
+        scanf("%lld %lld %lld", &year1, &mon1, &day1);
+        day %= 5;
+        day1 %= 5;
+        
+        _C(str[(conv[s] + day1 + 5 - day) % 5]);
+        
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[100010];
+    ll x = 0,y;
+    ll p;
+    __T {
+        sci(n);
+        p = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            p += a[i];
+        }
+        p /= n;
+        x = y = 0;
+        rep(i,1,n) {
+            x += a[i] - p;
+            y += abs(a[i] - p);
+        }
+        printf("%lld\n",x + (y - x) / 2);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    string str;
+    ll x,y;
+    ll ans;
+    ll ans2;
+    __T {
+        scii(n,k);
+        cin >> str;
+        x = y = 0;
+        ans = ans2 = 0;
+        REP(i,0,n) {
+            switch (str[i]) {
+                case 'U':
+                    y ++;
+                    break;
+                case 'D':
+                    y --;
+                    break;
+                case 'L':
+                    x --;
+                    break;
+                case 'R':
+                    x ++;
+                    break;
+                default:
+                    break;
+            }
+            ans2 = max(abs(x) + abs(y),ans2);
+        }
+        x *= (k - 1);
+        y *= (k - 1);
+        REP(i,0,n) {
+            switch (str[i]) {
+                case 'U':
+                    y ++;
+                    break;
+                case 'D':
+                    y --;
+                    break;
+                case 'L':
+                    x --;
+                    break;
+                case 'R':
+                    x ++;
+                    break;
+                default:
+                    break;
+            }
+            ans = max(abs(x) + abs(y),ans);
+        }
+        printf("%lld\n",max(ans,ans2));
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    ll k;
+    string str;
+    ll n,m;
+    int u,v;
+    ll i;
+    __T {
+        scl(k);
+        cin >> str;
+        scll(n,m);
+        rep(i,1,m) scii(u,v);
+        
+        i = (m - n + 1 + k) % k;
+        if (str[i] == '1') puts("2");
+        else if (str[i] == '2') puts("1");
+    }
+    return 0;
+}
+*/
+
+/*
+int cmp(const pair<int,int> &a,const pair<int,int> &b)
+{
+    if (a.second == b.second) return a.first < b.first;
+    return a.second < b.second;
+}
+
+int main() {
+    int n;
+    int l,r;
+    ll ans;
+    pair<int, int> a[100010];
+    map<int,int> vis;
+    __T {
+        sci(n);
+        vis.clear();
+        rep(i,1,n) {
+            scii(l,r);
+            a[i] = mpair(l,r);
+        }
+        sort(a + 1,a + 1 + n,cmp);
+        ans = 0;
+        rep(i,1,n) {
+            rep(j,a[i].first,a[i].second) {
+                if (!vis[j]) {
+                    vis[j] = 1;
+                    ans ++;
+                    break;
+                }
+            }
+        }
+        printf("%lld\n",ans);
+    }
+}
+*/
+
+/*
+int n,m;
+const int MAXN = 110;
+
+vector<int> g1[MAXN],g2[MAXN];
+
+int in[MAXN],out[MAXN];
+
+int ch[MAXN],fa[MAXN];
+
+int nonvis[MAXN];
+int vis[MAXN];
+
+int tuopu()
+{
+    queue<int> q;
+    rep(i,1,n) {
+        if (nonvis[i]) {
+            if (in[i] == 0) q.push(i);
+        }
+        vis[i] = 0;
+    }
+    int t;
+    while (!q.empty()) {
+        t = q.front();
+        q.pop();
+        
+        if (vis[t]) continue;
+        vis[t] = 1;
+        
+        for (auto i : g1[t]) {
+            ch[i] += 1 + ch[t];
+            in[i] --;
+            if (in[i] == 0) {
+                q.push(i);
+            }
+        }
+        
+    }
+    int ok = 1;
+    rep(i,1,n) {
+        if (!vis[i] && nonvis[i]) {
+            ok = 0;
+            break;
+        }
+    }
+    
+    if (!ok) re0;
+    re1;
+}
+
+
+void bfs()
+{
+    queue<int> q1;
+    queue<int> q2;
+    
+    rep(i,1,n) {
+        ch[i] = fa[i] = vis[i] = 0;
+    }
+    int t;
+    rep(i,1,n) {
+        rep(j,1,n) vis[j] = 0;
+        ch[i] = -1;
+        
+        q1.push(i);
+        while (!q1.empty()) {
+            t = q1.front();
+            q1.pop();
+            
+            if (vis[t]) continue;
+            vis[t] = 1;
+            
+            ch[i] ++;
+            
+            for (auto i : g1[t]) {
+                q1.push(i);
+            }
+        }
+        
+        rep(j,1,n) vis[j] = 0;
+        fa[i] = -1;
+        
+        q2.push(i);
+        while (!q2.empty()) {
+            t = q2.front();
+            q2.pop();
+            
+            if (vis[t]) continue;
+            vis[t] = 1;
+            
+            fa[i] ++;
+            
+            for (auto i : g2[t]) {
+                q2.push(i);
+            }
+        }
+    }
+}
+
+int main()
+{
+    int u,v;
+    
+    __T {
+        scii(n,m);
+        rep(i,1,n) {
+            g1[i].clear();
+            g2[i].clear();
+            in[i] = out[i] = nonvis[i] = 0;
+        }
+        
+        while (m --) {
+            scii(u,v);
+            in[v] ++;
+            out[u] ++;
+            g1[u].pb(v);
+            g2[v].pb(u);
+            nonvis[u] = 1;
+            nonvis[v] = 1;
+        }
+        
+        if (tuopu())
+        {
+            bfs();
+            rep(i,1,n) {
+                if (!nonvis[i] || (ch[i] <= n / 2 && fa[i] <= n / 2)) printf("1");
+                else printf("0");
+            }
+        } else rep(i,1,n) printf("0");
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int a,p,pp;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % pp;
+        a = a * a % pp;
+        b >>= 1;
+    }
+    return ans;
+}
+
+
+int main()
+{
+    vector<int> ans;
+    int d;
+    int e;
+    vector<int>::iterator it;
+    __T {
+        scii(a,p);
+        pp = 1 << p;
+        ans.clear();
+        if (a & 1) {
+            printf("1\n");
+            continue;
+        }
+        rep(x,1,pp) {
+            if (quickpow(a, x) == quickpow(x, a)) {
+                ans.pb(x);
+            }
+            if (ans.size() == 5) break;
+        }
+        
+        it = ans.end();
+        d = (e = *(-- it)) - *(-- it);
+        printf("%lu\n",ans.size() + (pp - e) / d);
+    }
+    return 0;
+}
+*/
+
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    int ans = 0;
+    int u,v;
+    int de[100010] = {0};
+    
+    rep(i,1,n - 1) {
+        scii(u,v);
+        de[u] ++;
+        de[v] ++;
+    }
+    rep(i,1,n) {
+        if (de[i] == 1) ans ++;
+    }
+    printf("%d\n",ans);
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    dsci(n);
+    set<int> s;
+    int a[100010];
+    rep(i,1,n) sci(a[i]);
+    int b[100010];
+    b[1] = 0;
+    s.insert(a[1]);
+    set<int>::iterator it;
+    rep(i,2,n) {
+        it = s.upper_bound(a[i]);
+        if (it != s.end()) b[i] = *it;
+        else b[i] = 0;
+        s.insert(a[i]);
+    }
+    ll sum = 0;
+    rep(i,1,n) sum += b[i];
+    printf("%lld\n",sum);
+    re0;
+}
+*/
+
+/*
+int a[100010];
+int b[100010] = {0};
+
+int max(int a,int b) {
+    return a > b ? a : b;
+}
+
+int main()
+{
+    int n,m,q,maxn = -1;
+    scanf("%d",&n);
+    for (int i = 1;i <= n;i ++) {
+        scanf("%d",a + i);
+        maxn = max(a[i],maxn);
+        b[a[i]] ++;
+    }
+    for (int i = maxn - 1;i >= 1;i --) b[i] += b[i + 1];
+    scanf("%d",&m);
+    while (m --) {
+        scanf("%d",&q);
+        printf("%d\n",b[a[q] + 1]);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int u,v;
+    __T {
+        sci(n);
+        rep(i,1,n - 1) {
+            scii(u,v);
+        }
+        if (!(n & 1)) puts("Bob");
+        else puts("Alice");
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    vector<int> pos;
+    char x[] = {'0','1','2','3','4','5','6','7','8','9'};
+    __T {
+        scii(k,n);
+        pos.clear();
+        while (n) {
+            n --;
+            pos.pb(n % k);
+            n /= k;
+        }
+        
+        for (auto i = pos.rbegin();i != pos.rend();i ++)
+        {
+            printf("%c",x[10 - k + *i]);
+        }
+        puts("");
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int k;
+    sci(k);
+    k --;
+    
+    int l = 1,r = k;
+    int le = k - l * r;
+    int cnt = l + r + le;
+    
+    int low = cnt;
+    
+    for (int i = 1,x;i * i <= k;i ++) {
+        x = k / i;
+        le = k - i * x;
+        cnt = i + x + le;
+        if (cnt <= low) {
+            low = cnt;
+            l = i;
+            r = x;
+        }
+    }
+    le = k - l * r + 1;
+    
+    cnt = low;
+    cnt ++;
+    printf("%d\n",cnt);
+    
+    int i;
+    int f = 1;
+    for (i = 2;i <= le;i ++) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i - 1);
+    }
+    rep(j,1,l) {
+        if (j == 1) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",le);
+        } else {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",i - 1);
+        }
+        i ++;
+    }
+    rep(j,1,r) {
+        if (j == 1) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",le);
+        } else {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",i - 1);
+        }
+        i ++;
+    }
+    puts("");
+    for (i = 1;i <= le;i ++) {
+        if (i != 1) printf(" ");
+        printf("2");
+    }
+    for (i = le + 1;i <= cnt;i ++) {
+        printf(" 1");
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int ucmp(const pair<string,int> &a,const pair<string,int> &b) {
+    return a.first == b.first;
+}
+
+int cmp(const pair<string,int> &a,const pair<string,int> &b) {
+    return a.second < b.second;
+}
+
+int main()
+{
+    int n;
+    scanf("%d ",&n);
+    pair<string,int> str[1010];
+    for (int i = 0;i < n;i ++) {
+        getline(cin,str[i].first);
+        str[i].second = i;
+    }
+    sort(str,str + n);
+    pair<string, int> *end;
+    end = unique(str, str + n, ucmp);
+    int m = (int) (end - str);
+    printf("%d\n",m);
+    sort(str,str + m,cmp);
+    for (int i = 0;i < m;i ++) cout << str[i].first << endl;
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d ",&n);
+    vector<string> ans;
+    string str;
+    map<string,int> vis;
+    for (int i = 0;i < n;i ++) {
+        getline(cin,str);
+        if (vis[str]) continue;
+        vis[str] = 1;
+        ans.push_back(str);
+    }
+    printf("%lu\n",ans.size());
+    for (auto i : ans) cout << i << endl;
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string m;
+    cin >> m;
+    string str;
+    vector<string> ans;
+    int ok;
+    __T {
+        cin >> str;
+        ok = 1;
+        if (m.size() != str.size()) continue;
+        for (int i = 0;str[i];i ++) {
+            if (m[i] == '*') continue;
+            if (m[i] != str[i]) {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok) ans.pb(str);
+    }
+    printf("%lu\n",ans.size());
+    for (auto i : ans) {
+        _C(i);
+    }
+    return 0;
+}
+*/
+
+/*
+int n,m;
+int main()
+{
+    scii(n,m);
+    int a[1010];
+    int b[1010];
+    rep(i,1,n) scii(a[i],b[i]);
+    int x,y,t;
+    int cnt;
+    int mod,k;
+    int idx;
+    rep(j,1,m) {
+        sciii(x,y,t);
+        cnt = 0;
+        rep(i,1,n) {
+            mod = b[i] - a[i];
+            mod *= 2;
+            k = t % mod;
+            if (k < b[i] - a[i] + 1) idx = a[i] + k;
+            else idx = a[i] + (mod - k);
+            if (idx >= x && idx <= y) cnt ++;
+        }
+        printf("%d\n",cnt);
+    }
+    
+    re0;
+}
+*/
+
+/*
+pair<int,int> a[100010];
+
+int cmp(const pair<int,int> &a,const pair<int,int> &b)
+{
+    return a.second < b.second;
+}
+
+int main()
+{
+    int n,k;
+    scii(n,k);
+    int t[100010] = {0};
+    rep(i,1,n) {
+        sci(a[i].first);
+        t[a[i].first] ++;
+    }
+    rep(i,1,n) sci(a[i].second);
+    
+    sort(a + 1,a + 1 + n,cmp);
+    int cnt = 0;
+    rep(i,1,k) if (t[i]) cnt ++;
+    ll ans = 0;
+    rep(i,1,n) {
+        if (cnt >= k) break;
+        if (t[a[i].first] <= 1) continue;
+        t[a[i].first] --;
+        cnt ++;
+        ans += a[i].second;
+    }
+    printf("%lld\n",ans);
+    re0;
+}
+*/
+
+/*
+int a[10];
+int b[10];
+int n;
+ll k,cnt,mod;
+ll nn;
+
+ll get(int i) {
+    ll ans = 0;
+    int x = 0;
+    rep(j,i,7) {
+        ans ++;
+        if (a[j]) x ++;
+        if (x == n) return ans;
+    }
+    nn = n - x;
+    k = nn / cnt;
+    mod = nn % cnt;
+    if (mod) k ++;
+//    _C(">>" << k)
+    ans += k * 7;
+    ans -= 7 - b[mod];
+    return ans;
+}
+
+int main()
+{
+    
+    int s,e;
+    
+    ll ans;
+    ll x;
+    __T {
+        sci(n);
+        cnt = 0;
+        s = 0;
+        e = 0;
+        rep(i,1,7) {
+            sci(a[i]);
+            if (a[i]) {
+                b[++ cnt] = i;
+                if (!s) s = i;
+                e = i;
+            }
+        }
+        b[0] = e;
+        ans = -1;
+        rep(i,1,7) {
+            x = get(i);
+//            _C(x);
+            if (ans == -1 || x < ans) ans = x;
+        }
+        
+        printf("%lld\n",ans);
+        
+    }
+    re0;
+}
+*/
+
+/*
+ll exgcd(ll a, ll b, ll &x, ll &y)
+{
+    if (b == 0)
+    {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    ll r = exgcd(b, a % b, x, y);
+    ll t = y;
+    y = x - (a / b) * y;
+    x = t;
+    return r;
+}
+
+int main()
+{
+    ll n,nn;
+    scl(n);
+    nn = n;
+    vector<ll> y;
+    for (ll i = 2;i * i <= nn;i ++) {
+        if (n % i == 0) {
+            y.pb(i);
+            y.pb(n / i);
+        }
+    }
+    
+    ll a,b;
+    ll p;
+    for (auto i : y) {
+        for (auto j : y) {
+            if (i > 1 && i < nn && j > 1 && j < nn && exgcd(i,j,a,b) == 1) {
+                a *= (nn - 1);
+                b *= (nn - 1);
+                
+                if (a <= 0) {
+                    p = abs(a) / j;
+                    p ++;
+                    a += p * j;
+                    b -= p * i;
+                }
+                if (b <= 0) {
+                    p = abs(b) / i;
+                    p ++;
+                    b += p * i;
+                    a -= p * j;
+                }
+                
+                if (b >= nn) {
+                    p = (b - nn) / i;
+                    p ++;
+                    a += p * j;
+                    b -= p * i;
+                }
+                
+                if (a >= nn) {
+                    p = (a - nn) / j;
+                    p ++;
+                    b += p * i;
+                    a -= p * j;
+                }
+                
+                if (a < 1 || a >= j || b < 1 || b >= i) continue;
+                
+                printf("YES\n2\n");
+                printf("%lld %lld\n",a,j);
+                printf("%lld %lld\n",b,i);
+                re0;
+            }
+        }
+    }
+    puts("NO");
+    
+    re0;
+}
+*/
+
+/*
+int n,m;
+
+int check(int a,int b,int c)
+{
+    int ok = 0;
+    
+    int h = b + c,
+    w = 3 * a + b + c;
+    
+    if (h <= n && w <= m) ok = 1;
+    if (h <= m && w <= n) ok = 1;
+    
+    h = 2 * a + 2 * c;
+    w = b + 2 * c;
+    
+    if (h <= n && w <= m) ok = 1;
+    if (h <= m && w <= n) ok = 1;
+    
+    return ok;
+}
+
+int main()
+{
+    int a,b,c;
+    sciii(a,b,c);
+    scii(n,m);
+    int ok = check(a,b,c) | check(a,c,b) | check(b,a,c) | check(b,c,a) | check(c,a,b) | check(c,b,a);
+    puts(ok ? "Yes" : "No");
+    re0;
+}
+*/
+
+/*
+int a[110],b[110],c[110];
+int p[110];
+int n;
+
+int main()
+{
+    __T {
+        sci(n);
+        rep(i,1,n) sci(a[i]);
+        rep(i,1,n) sci(b[i]);
+        rep(i,1,n) sci(c[i]);
+        p[1] = a[1];
+        rep(i,2,n - 1) {
+            if (a[i] != p[i - 1]) p[i] = a[i];
+            else if (b[i] != p[i - 1]) p[i] = b[i];
+            else p[i] = c[i];
+        }
+        if (a[n] != p[1] && a[n] != p[n - 1]) p[n] = a[n];
+        else if (b[n] != p[1] && b[n] != p[n - 1]) p[n] = b[n];
+        else p[n] = c[n];
+        rep(i,1,n) {
+            if (i != 1) printf(" ");
+            printf("%d",p[i]);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,l;
+    int f[100010];
+    double ta[100010];
+    double tb[100010];
+    double v;
+    int t;
+    double ext;
+    double va,vb;
+    double a,b;
+    __T {
+        scii(n,l);
+        rep(i,1,n) sci(f[i]);
+        f[0] = 0;
+        f[n + 1] = l;
+        v = 1;
+        
+        ta[0] = 0;
+        rep(i,1,n + 1) {
+            ta[i] = (f[i] - f[i - 1]) / v + ta[i - 1];
+            v ++;
+        }
+        
+        v = 1;
+        
+        tb[n + 1] = 0;
+        pre(i,n,0) {
+            tb[i] = (f[i + 1] - f[i]) / v + tb[i + 1];
+            v ++;
+        }
+        
+        
+//        rep(i,0,n + 1) {
+//            printf("%f ",ta[i]);
+//        }
+//        puts("");
+//        rep(i,0,n + 1) {
+//            printf("%f ",tb[i]);
+//        }
+//        puts("");
+        
+        for (t = 0;t <= n + 1;t ++) {
+            if (ta[t] >= tb[t]) break;
+        }
+        
+        va = t;
+        vb = n + 2 - t;
+//        _C(va << " " << vb);
+        
+        ext = max(ta[t - 1],tb[t]);
+        a = f[t - 1];
+        b = f[t];
+        
+//        _C(">>" << t)
+        
+        if (fabs(ta[t - 1] - tb[t]) <= 1e-6){}
+        else if (ta[t - 1] > tb[t]) {
+            b -= vb * fabs(ext - tb[t]);
+        } else if (ta[t - 1] < tb[t]) {
+            a += va * fabs(ext - ta[t - 1]);
+        }
+//        _C("s> " << a << " " << b)
+        printf("%.15f\n",ext + (b - a) / (va + vb));
+        
+        
+        
+    }
+    re0;
+}
+*/
+
+//
+//itn h[1000010];
+//pair<int,int> r[20010];
+//pair<int,int> w[20010];
+//
+//int main()
+//{
+//    itn n,m;
+//    scii(n,m);
+//    mem(h,-1);
+//    rep(i,1,n) {
+//        scii(r[i].first,r[i].second);
+//    }
+//    rep(i,1,m) {
+//        scii(w[i].first,w[i].second);
+//    }
+//
+//
+//
+//    rep(i,1,n) {
+//        rep(j,1,m) {
+//            if (r[i].second <= w[j].second && r[i].first <= w[j].first)
+//            h[w[j].second - r[i].second] = max(h[w[j].second - r[i].second],w[j].first - r[i].first + 1);
+//        }
+//    }
+//    _C(h[0])
+//    ll mx = -INT_INF;
+//    ll ans = INT_INF;
+//    pre(i,1000005,0) {
+//        mx = max((ll)h[i],mx);
+//        ans = min(ans,mx + i);
+//    }
+//    _C(ans);
+//
+////    int mn_x,mn_y,mn;
+////    int ans_x = 0,ans_y = 0,ans = 0;
+////    int t;
+////    rep(i,1,n) {
+////        mn_y = h[r[i].second] - r[i].first + 1;
+////        mn_x = 0;
+////        mn = mn_x + mn_y;
+////
+////        _C(">>" << mn);
+////        rep(j,1,m) {
+////            if (w[j].second < r[i].second) continue;
+////            t = w[j].second - r[i].second + 1 + h[w[j].second + 1] - r[i].first + 1;
+////            if (t < mn) {
+////                mn = t;
+////                mn_x = h[w[j].second + 1] - r[i].first + 1;
+////                mn_y = w[j].second - r[i].second + 1;
+////            }
+////        }
+////        _C(">>" << mn << " " << mn_x << " " << mn_y);
+////        ans_x = max(ans_x,mn_x);
+////        ans_y = max(ans_y,mn_y);
+////    }
+////    printf("%d\n",ans_x + ans_y);
+//    re0;
+//}
+
+/*
+int main()
+{
+    ll n;
+    int q;
+    scl(n);
+    sci(q);
+    char cc;
+    ll k;
+    ll r = (1 + n) * n / 2,c = r;
+    ll tr = n,tc = n;
+    int visr[1000010] = {0};
+    int visc[1000010] = {0};
+    while (q --) {
+        scanf(" %c %lld",&cc,&k);
+        if (cc == 'R') {
+            if (visr[k]) puts("0");
+            else {
+                visr[k] = 1;
+                printf("%lld\n",k * tc + c);
+                r -= k;
+                tr --;
+            }
+        } else if (cc == 'C') {
+            if (visc[k]) puts("0");
+            else {
+                visc[k] = 1;
+                printf("%lld\n",k * tr + r);
+                c -= k;
+                tc --;
+            }
+        }
+    }
+    
+}
+*/
+
+/*
+pair<string,int> st[200010];
+int cnt = 0;
+int s = -1;
+int s_idx;
+string str = "";
+
+int last_index = 0;
+
+string ans = "";
+string word = "";
+
+int ok() {
+    if (word.size() <= 1) re0;
+    int up_num = 0;
+    for (int i = 0;word[i];i ++) {
+        if (isupper(word[i])) up_num ++;
+    }
+    return isupper(word[0]) && up_num == 1;
+}
+
+void ended(int i)
+{
+//    _C(s);
+//    REP(i,0,cnt) {
+//        _C(st[i].first)
+//    }
+    if (s == -1 || cnt - s <= 1) {
+        rep(j,last_index,i) {
+            printf("%c",str[j]);
+        }
+    } else {
+        rep(j,last_index,s_idx - 1) {
+            printf("%c",str[j]);
+        }
+        string x = " (";
+        REP(j,s,cnt) {
+            if (j != s) x += ' ';
+            x += st[j].first;
+            printf("%c",st[j].first[0]);
+        }
+        x += ')';
+        cout << x;
+//        _C(cnt << " " << st[cnt].first << " " << st[cnt].second)
+        rep(j,st[cnt - 1].second,i) {
+            printf("%c",str[j]);
+        }
+    }
+    cnt = 0;
+    s = -1;
+    last_index = i + 1;
+}
+
+void add(int i)
+{
+//    _C(">>" << word)
+    if (ok()) {
+        if (s == -1) {
+            s = cnt;
+            s_idx = i - (int) word.size();
+        }
+    } else {
+        if (s != -1) {
+            ended(i - (int) word.size() - 1);
+            s = -1;
+        }
+    }
+    st[cnt].first = word;
+    st[cnt ++].second = i;
+//    _C(st[cnt - 1].first << " " << st[cnt - 1].second)
+    word = "";
+}
+
+
+
+int main()
+{
+    string line;
+    while (getline(cin,line)) str += line + '\n';
+//    _C(str)
+    for (int i = 0;str[i];i ++) {
+        if (str[i] == ' ') {
+            add(i);
+        } else if (str[i] == ',' || str[i] == '.' || str[i] == '\n') {
+//            _C("\\")
+            add(i);
+//            _C(",")
+            ended(i);
+        } else word += str[i];
+    }
+    ended((int) str.size() - 1);
+    re0;
+}
+*/
+
+/*
+int main() {
+    int n,m;
+    string str;
+    int ans,ans1;
+    __T {
+        scii(n,m);
+        cin >> str;
+        ans = 0; // L
+        ans1 = 0; // R
+        if (str[m - 1] == 'R') ans ++;
+        else ans1 ++;
+        REP(i,m + 1,n) {
+            if (str[i - 1] == 'L') ans1 ++;
+        }
+        pre(i,m - 1,2) {
+            if (str[i - 1] == 'R') ans ++;
+        }
+//        _C(ans << " " << ans1)
+        printf("%d\n",min(ans,ans1));
+    }
+    
+}
+*/
+
+/*
+int n;
+
+int ok(int a,int b,int c)
+{
+    return a >= 0 && b >= 0 && c >= 0 && a < n && b < n && c < n;
+}
+
+int ok(int a,int b,int c,int d)
+{
+    return a >= 0 && b >= 0 && c >= 0 && a < n && b < n && c < n && d >= 0 && d < n;
+}
+
+int ccpc(char a,char b,char c,char d)
+{
+    return a == 'C' && b == 'C' && c == 'P' && d == 'C';
+}
+
+int main()
+{
+    string str;
+    int ans;
+    int a,b,c,d;
+    int k1,k2;
+    int okk = 0;
+    __T {
+        sci(n);
+        cin >> str;
+        ans = 0;
+        REP(i,0,n - 3) {
+            if (ccpc(str[i],str[i + 1],str[i + 2],str[i + 3])) ans ++;
+        }
+//        _C(ans)
+        okk = 0;
+        
+        // C
+        rep(i,0,n) {
+            a = i - 3;
+            b = i - 2;
+            c = i - 1;
+            k1 = 0;
+            k2 = 0;
+            if (ok(a,b,c) && ccpc(str[a],str[b],str[c],'C')) k1 ++;
+            a = i - 2;
+            b = i - 1;
+            c = i;
+            if (ok(a,b,c) && ccpc(str[a],str[b],'C',str[c])) k1 ++;
+            a = i - 1;
+            b = i;
+            c = i + 1;
+            if (ok(a,b,c) && ccpc(str[a],'C',str[b],str[c])) k1 ++;
+            a = i;
+            b = i + 1;
+            c = i + 2;
+            if (ok(a,b,c) && ccpc('C',str[a],str[b],str[c])) k1 ++;
+            
+            
+            a = i - 3;
+            b = i - 2;
+            c = i - 1;
+            d = i;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            a = i - 2;
+            b = i - 1;
+            c = i;
+            d = i + 1;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            a = i - 1;
+            b = i;
+            c = i + 1;
+            d = i + 2;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            
+            if (k1 > k2) {
+                okk = 1;
+                break;
+            }
+        }
+        
+        if (okk) {
+            printf("%d\n",ans + 1);
+            continue;
+        }
+        
+        rep(i,0,n) {
+            a = i - 3;
+            b = i - 2;
+            c = i - 1;
+            k1 = 0;
+            k2 = 0;
+            if (ok(a,b,c) && ccpc(str[a],str[b],str[c],'P')) k1 ++;
+            a = i - 2;
+            b = i - 1;
+            c = i;
+            if (ok(a,b,c) && ccpc(str[a],str[b],'P',str[c])) k1 ++;
+            a = i - 1;
+            b = i;
+            c = i + 1;
+            if (ok(a,b,c) && ccpc(str[a],'P',str[b],str[c])) k1 ++;
+            a = i;
+            b = i + 1;
+            c = i + 2;
+            if (ok(a,b,c) && ccpc('P',str[a],str[b],str[c])) k1 ++;
+            
+            
+            a = i - 3;
+            b = i - 2;
+            c = i - 1;
+            d = i;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            a = i - 2;
+            b = i - 1;
+            c = i;
+            d = i + 1;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            a = i - 1;
+            b = i;
+            c = i + 1;
+            d = i + 2;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            
+            if (k1 > k2) {
+                okk = 1;
+                break;
+            }
+        }
+        
+        printf("%d\n",ans + okk);
+        
+    }
+    return 0;
+}
+*/
+
+/*
+ll dis(ll x,ll y) {return x * x + y * y;}
+
+int main()
+{
+    int n;
+    ll R;
+    ll r;
+    pair<ll,int> a[110];
+    ll x,y;
+    int cnt;
+    ll k;
+    ll m;
+    int f;
+    vector<int> ans;
+    __T {
+        sci(n);
+        scll(R,r);
+        rep(i,1,n) {
+            scll(x,y);
+            a[i] = mpair(dis(x,y),i);
+        }
+        ans.clear();
+        sort(a + 1,a + 1 + n);
+        if (r == R) {
+            rep(i,1,n) {
+                ans.pb(i);
+            }
+        } else if (r * 2 >= R) {
+            cnt = 0;
+            k = 2 * r - R;
+            k *= k;
+            rep(i,1,n) {
+                if (a[i].first <= k) cnt ++;
+                else break;
+            }
+            if (cnt != 0) {
+                rep(i,1,cnt) {
+                    ans.pb(a[i].second);
+                }
+            } else {
+                m = a[1].first;
+                cnt = 0;
+                rep(i,1,n) {
+                    if (m == a[i].first) cnt ++;
+                    else break;
+                }
+                rep(i,1,cnt) {
+                    ans.pb(a[i].second);
+                }
+            }
+        } else {
+            cnt = 0;
+            k = R - 2 * r;
+            k *= k;
+            rep(i,1,n) {
+                if (a[i].first <= k) cnt ++;
+                else break;
+            }
+            if (cnt != 0) {
+                rep(i,1,cnt) {
+                    ans.pb(a[i].second);
+                }
+            } else {
+                m = a[1].first;
+                cnt = 0;
+                rep(i,1,n) {
+                    if (m == a[i].first) cnt ++;
+                    else break;
+                }
+                rep(i,1,cnt) {
+                    ans.pb(a[i].second);
+                }
+            }
+        }
+        printf("%lu\n",ans.size());
+        sort(ans.begin(), ans.end());
+        f = 1;
+        for (auto i : ans) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",i);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e7 + 10;
+
+ll p[MAXN];
+int n;
+
+int num[MAXN], prim[MAXN];
+int pn = 0;
+void table(){
+    memset(num, -1, sizeof(num));
+    for(int i = 2;i <= n;i++){
+        if(num[i]) prim[pn++] = i;
+        for(int j = 0;j < pn && 1LL*i*prim[j] <= n;j++){
+            num[i*prim[j]] = 0;
+            if(i % prim[j] == 0) break;
+        }
+    }
+}
+
+void pls(int l,int r,ll k)
+{
+    p[l] += k;
+    p[r + 1] -= k;
+}
+
+ll s[10000010];
+
+int main()
+{
+    sci(n);
+    ll ans;
+    table();
+    REP(i,0,pn) {
+        pls(1,n / prim[i],1);
+    }
+    s[0] = p[0];
+    rep(i,1,n) s[i] = s[i - 1] + p[i];
+    
+    ans = 0;
+    rep(i,1,n) {
+        ans += (s[i] - 1) * s[i];
+    }
+    
+    printf("%lld\n",ans);
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int a[15][20];
+    mem(a,-1);
+    
+    dscii(n,k);
+    
+    ll ans = 0;
+    int x;
+    rep(i,1,n) {
+        sci(x);
+        rep(j,1,x) sci(a[i][j]);
+    }
+    x = 0;
+    rep(j,1,19) {
+        rep(i,1,n) {
+            if (a[i][j] == -1) a[i][j] = 50;
+            if (a[i][j] >= ans) {
+                ans += a[i][j];
+                x ++;
+            }
+            if (x == k) goto end;
+        }
+    }
+    end:
+    ans += (k - x) * 50LL;
+    printf("%lld\n",ans);
+    re0;
+}
+*/
+
+/*
+int aa,bb,cc,dd;
+int n;
+
+struct Node {
+    int a,b,c,d;
+    int cnt;
+    int i;
+    
+} node[40],nn[40];
+
+int mx = 0;
+vector<int> ans;
+vector<int> k;
+
+ll sub[40];
+
+void dfs(int i,int a,int b,int c,int d,int x)
+{
+    if (i == n) {
+        if (x > mx) {
+            mx = x;
+            ans = k;
+        }
+        return;
+    }
+    if (x + sub[i] <= mx) return; // 剪枝
+    if (a >= node[i].a && b >= node[i].b && c >= node[i].c && d >= node[i].d) {
+        k.pb(node[i].i);
+        dfs(i + 1,a - node[i].a,b - node[i].b,c - node[i].c,d - node[i].d,x + node[i].cnt);
+        k.erase(k.end() - 1);
+    }
+    dfs(i + 1,a,b,c,d,x);
+}
+
+int main()
+{
+    sci(n);
+    int a,b,c,d,cnt;
+    REP(i,0,n) {
+        scii(a,b);
+        sciii(c,d,cnt);
+        nn[i] = {a,b,c,d,cnt,i};
+    }
+
+    sub[n - 1] = nn[n - 1].cnt;
+    pre(i,n - 2,0) sub[i] = sub[i + 1] + nn[i].cnt;
+
+    scii(aa,bb);
+    scii(cc,dd);
+    int ct = 0;
+    REP(i,0,n) {
+        if (nn[i].a <= aa && nn[i].b <= bb && nn[i].c <= cc && nn[i].d <= dd) node[ct ++] = nn[i];
+    }
+    n = ct;
+    
+    dfs(0,aa,bb,cc,dd,0);
+
+    printf("%lu\n",ans.size());
+    sort(ans.begin(), ans.end());
+    int f = 1;
+    for (auto i : ans) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    if (ans.size() != 0) puts("");
+    re0;
+}
+*/
+
+//
+//const int maxw = 100010;
+//ll hight[maxw],l[maxw],r[maxw];
+//ll w;
+//ll n;
+//
+//ll num(int pos,ll h){
+//    ll sum = 0;
+//    if(h<=hight[pos]||pos==w-1||pos==0)return -1;
+//    else sum+=h-hight[pos];
+//    ll temp = h;
+//    for(int i=pos+1;i<w;i++){
+//        temp--;
+//        if(temp<=hight[i])break;
+//        else{
+//            if(i==w-1)return -1;
+//            sum+=temp-hight[i];
+//        }
+//    }
+//    temp = h;
+//    for(int i=pos-1;i>=0;i--){
+//        temp--;
+//        if(temp<=hight[i])break;
+//        else{
+//            if(i==0)return -1;
+//            sum+=temp-hight[i];
+//        }
+//    }
+//    return sum;
+//}
+//ll mx = -1;
+//
+//int check(ll m)
+//{
+//    if (m <= mx) return 1;
+//    int ok = 0;
+//    ll k;
+//    REP(i,1,w - 1) {
+//        if ((k = num(i, m)) != -1 && k <= n) {
+//            ok = 1;
+//            break;
+//        }
+//    }
+//    return ok;
+//}
+//
+//int main(){
+//    scanf("%lld%lld",&w,&n);
+//    for(int i=0;i<w;i++){
+//        scanf("%lld",&hight[i]);
+//        mx = max(mx,hight[i]);
+//    }
+//
+//    ll r = 1e9;
+//    ll l = 1;
+//    ll m;
+//    while (l < r) {
+//        m = (l + r) >> 1;
+////        _C(l << " " << r)
+//        if (check(m)) l = m + 1;
+//        else r = m;
+//    }
+//    printf("%lld\n",l - 1);
+//
+//    return 0;
+//}
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        while (1) {
+            if (n % 7 == 0 && n % 4 != 0) {
+                printf("%d\n",n);
+                break;
+            }
+            n ++;
+        }
+    }
+}
+*/
+
+
+/*
+int main()
+{
+    string str;
+    string ans;
+    __T {
+        cin >> str;
+        ans = "";
+        for (int i = 0;str[i];i ++) {
+            if (i == 0) ans += str[i];
+            else if (str[i] != 'a' && str[i] != 'e' && str[i] != 'i' && str[i] != 'o' && str[i] != 'u' && str[i] != 'y') ans += str[i];
+        }
+        _C(ans);
+    }
+    return 0;
+}
+*/
+
+
+/*
+int n;
+int a[100010];
+
+int ok(int i) {
+    if (i - 1 < 1 || i + 1 > n) return 0;
+    return a[i - 1] < a[i] && a[i] > a[i + 1];
+}
+
+int main()
+{
+    int m;
+    int cnt,cnt2;
+    int s;
+    __T {
+        sci(n);
+        rep(i,1,n) sci(a[i]);
+        m = 0;
+        
+        rep(i,1,n) {
+            if (ok(i)) m ++;
+        }
+//        _C(m)
+        s = 0;
+        rep(i,1,n) {
+            cnt = 0;
+            cnt2 = 0;
+            if (ok(i - 1)) cnt ++;
+            if (ok(i)) cnt ++;
+            if (ok(i + 1)) cnt ++;
+            if (i - 2 >= 1 && i + 1 <= n && a[i - 1] > a[i - 2] && a[i - 1] > a[i + 1]) cnt2 ++;
+            if (i - 1 >= 1 && i + 2 <= n && a[i + 1] > a[i - 1] && a[i + 1] > a[i + 2]) cnt2 ++;
+            s = max(s,cnt - cnt2);
+        }
+        printf("%d\n",m - s);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[100010];
+    int b[100010];
+    int m;
+    int ans = 0;
+    __T {
+        sci(n);
+        ans = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            b[i] = a[i];
+        }
+        sort(b + 1,b + 1 + n);
+        m = n;
+        pre(i,n,1) {
+            if (a[i] == b[m]) {
+                m --;
+                ans ++;
+            }
+        }
+        printf("%d\n",n - ans);
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 1e6 + 10; ///////////
+int n,m;
+vector<int> g[MAXN];
+int vis[MAXN];
+int dis[MAXN];
+
+int cc = 0;
+vector<int> a[MAXN];
+
+priority_queue<int,vector<int>,greater<int>> q;
+
+void dij(int s)
+{
+    a[cc].clear();
+    q.push(s);
+    int top;
+    while (!q.empty()) {
+        top = q.top();
+        q.pop();
+        if (vis[top]) continue;
+        vis[top] = 1;
+        a[cc].pb(top);
+        for (auto i : g[top]) {
+            q.push(i);
+        }
+    }
+    cc ++;
+}
+
+struct Node {
+    int n;
+    int which;
+    int i;
+    int operator <(const Node &o) const {
+        return n > o.n;
+    }
+};
+
+int main()
+{
+    int u,v;
+    priority_queue<Node> k;
+    int f,x,ff,ii;
+    int cnt;
+    __T {
+        scii(n,m);
+        cc = 0;
+        rep(i,1,n) {
+            g[i].clear();
+            vis[i] = 0;
+            dis[i] = -1;
+        }
+        while (m --) {
+            scii(u,v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+        cnt = 0;
+        rep(i,1,n) {
+            if (vis[i]) continue;
+            dij(i);
+            cnt ++;
+        }
+        
+        REP(i,0,cc) {
+            k.push({a[i][0],i,0});
+        }
+        
+        printf("%d\n",cnt);
+        
+        ff = 1;
+        while (!k.empty()) {
+            f = k.top().n;
+            x = k.top().which;
+            ii = k.top().i;
+            k.pop();
+//            _C(f << " " << x)
+            if (ff) ff = 0;
+            else printf(" ");
+            printf("%d",f);
+            if (ii + 1 < a[x].size()) {
+//                _C(">>" << a[x].front());
+                k.push({a[x][ii + 1],x,ii + 1});
+            }
+        }
+        puts("");
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    ll x,y;
+    ll a[100010];
+    ll xx,yy;
+    ll sub;
+    ll ans;
+    map<ll,ll> mp;
+    ll a1;
+    ll k;
+    __T {
+        sci(n);
+        scll(x,y);
+        ans = 0;
+        xx = 0;
+        yy = 0;
+        rep(i,1,n) {
+            scl(a[i]);
+            xx += i * a[i];
+            yy += i * (a[i] * a[i]);
+        }
+        
+//        _C(xx)
+//        _C(yy)
+        if (xx == x && yy == y) {
+            mp.clear();
+            rep(i,1,n) {
+                mp[a[i]] ++;
+            }
+            for (auto i : mp) {
+                ans += i.second * (i.second - 1) / 2;
+            }
+            printf("%lld\n",ans);
+        } else if (xx == x || yy == y) {
+            printf("0\n");
+        }else {
+            sub = (yy - y) / (xx - x);
+            if ((yy - y) % (xx - x)) {
+                puts("0");
+                continue;
+            }
+            rep(i,1,n) {
+                a1 = sub - a[i];
+                if (a[i] != a1) {
+                    k = (xx - x) / (a1 - a[i]) + i;
+                    if (k > i && k <= n && a1 == a[k]) ans ++;
+                }
+            }
+            
+            printf("%lld\n",ans);
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    string a,b;
+    int x['z' + 1];
+    int y['z' + 1];
+    int ok;
+    while (cin >> a >> b) {
+        mem(x,0);
+        mem(y,0);
+        if (a == b) printf("Equal\n");
+        else if (a[0] == b[0] && a[a.size() - 1] == b[b.size() - 1]) {
+            ok = 1;
+            for (int i = 0;a[i];i ++) {
+                x[a[i]] ++;
+            }
+            for (int i = 0;b[i];i ++) {
+                y[b[i]] ++;
+            }
+            rep(i,0,'z') {
+                if (x[i] != y[i]) {
+                    ok = 0;
+                    break;
+                }
+            }
+            puts(ok ? "Yes" : "No");
+        } else {
+            puts("No");
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    
+    string str;
+    int t['z' + 1] = {0};
+    int ans = 0;
+    char c;
+    while (~sci(n))
+    {
+        cin >> str;
+        mem(t,0);
+        ans = 0;
+        for (int i = 0;str[i];i ++) {
+            c = str[i];
+            if (c == 'x') t[c] ++;
+            else if (c == 't') {
+                if (t['x'] > 0) {
+                    t['x'] --;
+                    t[c] ++;
+                }
+            } else if (c == 'C') {
+                if (t['t'] > 0) {
+                    t['t'] --;
+                    t[c] ++;
+                }
+            } else if (c == 'p') {
+                if (t['C'] > 0) {
+                    t['C'] --;
+                    t[c] ++;
+                }
+            } else if (c == 'c') {
+                if (t['p'] > 0) {
+                    t['p'] --;
+                    ans ++;
+                }
+            }
+        }
+        printf("%d\n",ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    string str[14];
+    int s['z'][10] = {0};
+    map<string,int> k;
+    REP(i,0,14) cin >> str[i];
+    REP(i,0,14) {
+        if (isdigit(str[i][0])) {
+            s[str[i][1]][str[i][0] - '0'] ++;
+        } else {
+            k[str[i]] ++;
+        }
+    }
+    set<char> n1;
+    set<char> n9;
+    if (s['s'][1]) n9.insert('s');
+    if (s['s'][9]) n9.insert('s');
+    if (s['p'][1]) n9.insert('p');
+    if (s['p'][9]) n9.insert('p');
+    if (s['w'][1]) n9.insert('w');
+    if (s['w'][9]) n9.insert('w');
+    
+    
+    re0;
+}
+*/
+
+/*
+string Manacher(string &s)
+{
+    //改造字符串
+    int n = (int) s.size();
+    string res = "$#";
+    for (int i = 0;i < n;i ++)
+    {
+        res += s[i];
+        res += "#";
+    }
+
+    //数组
+    n = (int) res.size();
+    vector<int> P(n,0);
+    int mi = 0,right = 0; //mi为最大回文串对应的中心点，right为该回文串能达到的最右端的值
+    int maxLen = 0,maxPoint = 0; //maxLen为最大回文串的长度，maxPoint为记录中心点
+    for (int i = 1;i < n;i ++)
+    {
+        P[i] = right > i ? min(P[2 * mi - i],right - i) : 1; //关键句，文中对这句以详细讲解
+        while (res[i + P[i]] == res[i - P[i]]) {
+            P[i] ++;
+        }
+        if (right < i + P[i]) //超过之前的最右端，则改变中心点和对应的最右端
+        {
+            right = i + P[i];
+            mi = i;
+        }
+        if (maxLen < P[i]) //更新最大回文串的长度，并记下此时的点
+        {
+            maxLen = P[i];
+            maxPoint = i;
+        }
+    }
+    return s.substr((maxPoint - maxLen) / 2,maxLen - 1);
+}
+
+ll Manacher_n(string &s)
+{
+    //改造字符串
+    int n = (int) s.size();
+    string res = "$#";
+    for (int i = 0;i < n;i ++)
+    {
+        res += s[i];
+        res += "#";
+    }
+
+    //数组
+    n = (int) res.size();
+    vector<ll> P(n,0);
+    ll mi = 0,right = 0; //mi为最大回文串对应的中心点，right为该回文串能达到的最右端的值
+    ll maxLen = 0,maxPoint = 0; //maxLen为最大回文串的长度，maxPoint为记录中心点
+    
+    ll ans = 0;
+    for (ll i = 1;i < n;i ++)
+    {
+        P[i] = right > i ? min(P[2 * mi - i],right - i) : 1; //关键句，文中对这句以详细讲解
+        while (res[i + P[i]] == res[i - P[i]]) {
+            P[i] ++;
+        }
+        if (right < i + P[i]) //超过之前的最右端，则改变中心点和对应的最右端
+        {
+            right = i + P[i];
+            mi = i;
+        }
+        if (maxLen < P[i]) //更新最大回文串的长度，并记下此时的点
+        {
+            maxLen = P[i];
+            maxPoint = i;
+        }
+        ans += P[i] / 2;
+    }
+    return ans;
+}
+
+
+
+int main()
+{
+    string mod,str;
+    cio
+    int n;
+    int l,r;
+    int ok;
+    int T;
+    cin >> T;
+    while (T --) {
+        cin >> mod >> str;
+        n = (int) mod.size();
+        if (mod == str) {
+            _C(Manacher_n(str));
+        } else {
+            for (l = 0;l < n;l ++) {
+                if (str[l] != mod[l]) break;
+            }
+            for (r = n - 1;r >= 0;r --) {
+                if (str[r] != mod[r]) break;
+            }
+            ok = 1;
+            rep(i,l,r) {
+                if (mod[i] != str[r - i + l]) {
+                    ok = 0;
+                    break;
+                }
+            }
+            if (!ok) _C(0)
+            else {
+                for (int i = l - 1,j = r + 1;i >= 0 && j < n;j ++,i --,ok ++) {
+                    if (mod[i] != mod[j]) break;
+                }
+                _C(ok);
+            }
+        }
+    }
+
+}
+*/
+
+/*
+const int MAXN = 1e6 + 10;
+unordered_map<int,ll> mp;
+vector<int> vec[MAXN];
+vector<int> g[MAXN];
+ll cnt[MAXN];
+int vis[MAXN];
+int in[MAXN];
+int vv[MAXN];
+
+void bfs(int n) {
+    queue<int> q;
+    q.push(n);
+    int t;
+    while (!q.empty()) {
+        t = q.front();
+        q.pop();
+        for (auto i : g[t]) {
+            in[i] --;
+            cnt[i] += cnt[t];
+            if (!in[i]) q.push(i);
+        }
+    }
+}
+
+void dfs(int n)
+{
+    if (vv[n]) return;
+    vv[n] = 1;
+    for (auto i : g[n]) {
+        in[i] ++;
+        dfs(i);
+    }
+}
+
+int main()
+{
+    int n;
+    int t,k,tt;
+    int x,y;
+    ll v;
+    ll mx;
+    ll sum;
+    __T {
+        read(n);
+        rep(i,1,n) {
+            g[i].clear();
+            vv[i] = vis[i] = in[i] = cnt[i] = 0;
+            vec[i].clear();
+        }
+        mp.clear();
+        rep(i,1,n) {
+            read(t);
+            if (t == 1) {
+                if (i == n) {
+                    sci(k);
+                    rep(ii,1,k) {
+                        read(tt);
+                        mp[tt] ++;
+                    }
+                    vis[i] = 1;
+                } else {
+                    sci(k);
+                    rep(ii,1,k) {
+                        read(tt);
+                        vec[i].push_back(tt);
+                    }
+                    vis[i] = 1;
+                }
+            } else {
+                read(x);
+                read(y);
+                g[i].push_back(x);
+                g[i].push_back(y);
+            }
+        }
+
+        mx = 0;
+        sum = 0;
+        if (mp.size()) {
+            for (auto j : mp) {
+                mx = max(mx,j.second);
+                sum += j.second;
+            }
+        } else {
+            cnt[n] = 1;
+            dfs(n);
+            bfs(n);
+            rep(i,1,n-1) {
+                if (!cnt[i] || !vis[i]) continue;
+
+                for (auto j : vec[i]) {
+                    v = mp[j] += cnt[i];
+                    mx = max(mx,v);
+                    sum += cnt[i];
+                }
+            }
+        }
+        printf("%lld\n", mx * 2 <= sum ? sum : (sum - mx) * 2);
+
+    }
+    return 0;
+}
+*/
+
+/*
+8
+1 1 1
+1 2 2 2
+2 1 2
+1 3 3 3 3
+2 3 4
+1 4 4 4 4 4
+2 3 6
+2 5 7
+*/
+
+/*
+// 线段树 - 二叉树，节点存的是一个 l，r，区间的内容n
+const int MAXN = 1e5 + 10;
+
+struct Node {
+    int l,r;
+    ll mx;
+    ll mn;
+    ll sum;
+    int lazy;
+    ll lzn;
+} tree[MAXN << 2];
+ll a[MAXN];
+
+void push_up(int i)
+{
+    tree[i].sum = tree[i << 1].sum + tree[i << 1 | 1].sum;
+    tree[i].mn = min(tree[i << 1].mn,tree[i << 1 | 1].mn);
+    tree[i].mx = max(tree[i << 1].mx,tree[i << 1 | 1].mx);
+}
+
+void push_down(int i) //下推标记
+{
+    if (tree[i].lazy == 1) {
+        tree[i << 1].sum += (tree[i << 1].r - tree[i << 1].l + 1) * tree[i].lzn;
+        tree[i << 1 | 1].sum += (tree[i << 1 | 1].r - tree[i << 1 | 1].l + 1) * tree[i].lzn;
+        
+        tree[i << 1].mx += tree[i].lzn;
+        tree[i << 1 | 1].mx += tree[i].lzn;
+        
+        tree[i << 1].mn += tree[i].lzn;
+        tree[i << 1 | 1].mn += tree[i].lzn;
+        
+        tree[i << 1].lzn += tree[i].lzn;
+        tree[i << 1 | 1].lzn += tree[i].lzn;
+        
+        tree[i << 1].lazy = tree[i].lazy;
+        tree[i << 1 | 1].lazy = tree[i].lazy;
+        
+        tree[i].lazy = 0;
+        tree[i].lzn = 0;
+    } else if (tree[i].lazy == 2) {
+        tree[i << 1].sum = (tree[i << 1].r - tree[i << 1].l + 1) * tree[i].lzn;
+        tree[i << 1 | 1].sum = (tree[i << 1 | 1].r - tree[i << 1 | 1].l + 1) * tree[i].lzn;
+        
+        tree[i << 1].mx = tree[i].lzn;
+        tree[i << 1 | 1].mx = tree[i].lzn;
+        
+        tree[i << 1].mn = tree[i].lzn;
+        tree[i << 1 | 1].mn = tree[i].lzn;
+        
+        tree[i << 1].lzn = tree[i].lzn;
+        tree[i << 1 | 1].lzn = tree[i].lzn;
+        
+        tree[i << 1].lazy = tree[i].lazy;
+        tree[i << 1 | 1].lazy = tree[i].lazy;
+        
+        tree[i].lazy = 0;
+        tree[i].lzn = 0;
+    }
+}
+
+// i - 二叉树节点编号，调用时取1
+// l，r 区间左右端下标，调用的时候取最大范围即可 build(1,n,1);
+void build(int l,int r,int i)
+{
+    tree[i].l = l;
+    tree[i].r = r;
+    tree[i].lazy = 0;
+    tree[i].lzn = 0;
+    if (l == r) {
+        tree[i].sum = a[l]; // a原数组，把原来的数值给叶子结点
+        tree[i].mx = a[l];
+        tree[i].mn = a[l];
+        return;
+    }
+    int m = (l + r) >> 1;
+    build(l,m,i << 1);
+    build(m + 1,r,i << 1 | 1);
+    push_up(i);
+}
+
+void add(int l,int r,ll x,int i) // 将区间[l,r]整个加上x，调用(l,r,x,1)
+{
+    if (l <= tree[i].l && r >= tree[i].r) {
+        tree[i].sum += (tree[i].r - tree[i].l + 1) * x;
+        tree[i].mx += x;
+        tree[i].mn += x;
+        tree[i].lzn += x;
+        
+        tree[i].lazy = 1;
+        return;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    if (l <= m) add(l,r,x,i << 1);
+    if (r > m) add(l,r,x,i << 1 | 1);
+    push_up(i);
+}
+
+void modify(int l,int r,ll x,int i) // 将区间[l,r]直接变成x，调用(l,r,x,1)
+{
+    if (l <= tree[i].l && r >= tree[i].r) {
+        tree[i].sum = (tree[i].r - tree[i].l + 1) * x;
+        tree[i].mx = x;
+        tree[i].mn = x;
+        tree[i].lzn = x;
+        
+        tree[i].lazy = 2;
+        return;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    if (l <= m) modify(l,r,x,i << 1);
+    if (r > m) modify(l,r,x,i << 1 | 1);
+    push_up(i);
+}
+
+ll query(int l,int r,int i) //查询
+{
+    if (l <= tree[i].l && r >= tree[i].r){
+        return tree[i].sum;
+//        return tree[i].mx;
+//        return tree[i].mn;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    ll sum = 0;
+//    ll mx = 0;
+//    ll mn = INT_INF;
+    if (l <= m) {
+         sum += query(l,r,i << 1);
+//         mx = max(mx,query(l,r,i << 1));
+//         mn = min(mn,query(l,r,i << 1));
+    }
+    if (r > m) {
+        sum += query(l,r,i << 1 | 1);
+//        mx = max(mx,query(l,r,i << 1 | 1));
+//        mn = min(mn,query(l,r,i << 1 | 1));
+    }
+    return sum;
+//    return mx;
+//    return mn;
+}
+
+int main()
+{
+    dscii(n,m);
+    rep(i,1,n) scl(a[i]);
+    build(1, n, 1);
+    int k,a,b;
+    ll c;
+    while (m --) {
+        sciii(k,a,b);
+        if (k == 1) {
+            printf("%lld\n",query(a, b, 1));
+        } else if (k == 2) {
+            scl(c);
+            modify(a, b, c, 1);
+            rep(i,1,n) printf("a[%d]=%lld\n",i,query(i, i, 1));
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int n,m;
+char mp[110][110];
+
+struct AZ
+{
+    int x,y;
+    char c;
+};
+
+AZ A['z'][3];
+
+struct Node {
+    int x,y;
+    int dis;
+    int t;
+    bool operator<(const Node &o) const {
+        return dis > o.dis;
+    }
+};
+
+int dis[110][110][3];
+int vis[110][110][3];
+int dx[] = {0,-1,0,1};
+int dy[] = {1,0,-1,0};
+
+void dij(int x,int y)
+{
+    priority_queue<Node> q;
+    mem(dis,-1);
+    mem(vis,0);
+
+    int k = 1;
+    if (mp[x][y] >= 'A' && mp[x][y] <= 'Z') k = 2;
+
+
+    Node t;
+    int xx,yy;
+    q.push({x,y,dis[x][y][1] = dis[x][y][2] = 0,k}); // t=1跑周围，t=2跳跃
+
+
+    AZ a1,a2;
+    while (!q.empty()) {
+        t = q.top();
+        q.pop();
+        if (vis[t.x][t.y][t.t]) continue;
+        vis[t.x][t.y][t.t] = 1;
+
+        if (t.t == 2) {
+            a1 = A[mp[t.x][t.y]][1];
+            a2 = A[mp[t.x][t.y]][2];
+            if (t.x == a1.x && t.y == a1.y) {
+                // goto 2
+                xx = a2.x;
+                yy = a2.y;
+                if (dis[xx][yy][1] == -1 || dis[t.x][t.y][2] <= dis[xx][yy][1]) {
+                    q.push({xx,yy,dis[xx][yy][1] = dis[t.x][t.y][2],1});
+                }
+            } else {
+                // goto 1
+                xx = a1.x;
+                yy = a1.y;
+                if (dis[xx][yy][1] == -1 || dis[t.x][t.y][2] <= dis[xx][yy][1]) {
+                    q.push({xx,yy,dis[xx][yy][1] = dis[t.x][t.y][2],1});
+                }
+            }
+        } else {
+            rep(i,0,3) {
+                xx = t.x + dx[i];
+                yy = t.y + dy[i];
+                if (xx >= 1 && yy >= 1 && xx <= n && yy <= m) {
+                    if (mp[xx][yy] != '1') {
+                        k = 1;
+                        if (mp[xx][yy] >= 'A' && mp[xx][yy] <= 'Z') k = 2;
+                        
+                        if (dis[xx][yy][k] == -1 || dis[t.x][t.y][1] + 1 < dis[xx][yy][k]) {
+                            q.push({xx,yy,dis[xx][yy][k] = dis[t.x][t.y][1] + 1,k});
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+}
+
+int main()
+{
+    int v['z'] = {0};
+    int k;
+    scii(n,m);
+    rep(i,1,n) {
+        scanf(" ");
+        rep(j,1,m) {
+            scanf("%c",&mp[i][j]);
+            if (mp[i][j] >= 'A' && mp[i][j] <= 'Z') {
+                k = 1;
+                if (v[mp[i][j]]) k ++;
+                v[mp[i][j]] = 1;
+                A[mp[i][j]][k] = {i,j,mp[i][j]};
+            }
+        }
+    }
+    dij(1,1);
+
+    // rep(i,1,n) {
+    //     rep(j,1,m) printf("%d ",dis[i][j]);
+    //     puts("");
+    // }
+
+    int ans = -1;
+    if (dis[n][m][1] != -1) ans = dis[n][m][1];
+    if (dis[n][m][2] != -1) {
+        if (ans == -1) ans = dis[n][m][2];
+        else ans = min(ans,dis[n][m][2]);
+    }
+
+    if (ans == -1) puts("No Solution.");
+    else printf("%d\n",ans);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int s;
+    while (~sci(n)) {
+        s = 1;
+        while (n > 1) {
+            if (s) n = n / 9 + (n % 9 ? 1 : 0);
+            else n = n / 2 + n % 2;
+            s = 1 - s;
+        }
+        puts(!s ? "Stan wins." : "Ollie wins.");
+    }
+    
+    return 0;
+}
+*/
+/*
+int main()
+{
+    int n;
+    int a[1010];
+    int t;
+    int mx = -1;
+    int ans;
+    __T {
+        sci(n);
+        mem(a,0);
+        rep(i,1,n) {
+            sci(t);
+            a[t] ++;
+        }
+        mx = -1;
+        ans = -1;
+        rep(i,1,1000) {
+            if (mx == -1) {
+                mx = a[i];
+                ans = i;
+            } else if (mx == a[i]) {
+                ans = -1;
+            } else if (a[i] > mx) {
+                mx = a[i];
+                ans = i;
+            }
+        }
+        if (ans != -1) printf("%d\n",ans);
+        else puts("Nobody");
+        
+    }
+    
+}
+*/
+
+/*
+int main()
+{
+    int s,m,d;
+    pair<int,string> k1[110];
+    pair<int,string> k2[110];
+    pair<int,string> k3[110];
+    int m1,m2,m3;
+    int ans;
+    __T {
+        sciii(s,m,d);
+        rep(i,1,s) {
+            cin >> k1[i].second >> k1[i].first;
+        }
+        sort(k1 + 1, k1 + 1 + s);
+        
+        rep(i,1,m) {
+            cin >> k2[i].second >> k2[i].first;
+        }
+        sort(k2 + 1, k2 + 1 + m);
+        
+        rep(i,1,d) {
+            cin >> k3[i].second >> k3[i].first;
+        }
+        sort(k3 + 1, k3 + 1 + d);
+        
+        m1 = s / 2 + 1;
+        m2 = m / 2 + 1;
+        m3 = d / 2 + 1;
+        
+        ans = k1[m1].first + k2[m2].first + k3[m3].first;
+        printf("%d ",ans);
+        cout << k1[m1].second << " " << k2[m2].second << " " << k3[m3].second << endl;
+    }
+    re0;
+}
+*/
+
+/*
+ll a[100000];
+ll t[100000];
+ll p[1000010];
+
+int main()
+{
+    int n;
+    ll k;
+    ll m;
+    ll ans = 0;
+    __T {
+        sci(n);
+        rep(i,1,n) {
+            scl(a[i]);
+            p[a[i]] = 0;
+            t[i] = 0;
+        }
+        
+        for (ll i = 1;i <= n;i ++) {
+            if (p[a[i]] != 0) {
+                t[i] -= p[a[i]] * (n - i + 1);
+            }
+            p[a[i]] = i;
+//            printf("%lld ",t[i]);
+        }
+        
+//        puts("");
+        
+        ans = 0;
+        k = n - 2;
+        m = n;
+        rep(i,1,n) {
+//            _C(m)
+            t[i] += m;
+            ans += a[i] * t[i];
+            m += k;
+            k -= 2;
+        }
+        printf("%lld\n",ans);
+    }
+}
+*/
+
+/*
+struct Node {
+    double s;
+    int id,pid;
+};
+
+int cmp1(const Node &a,const Node &b) {
+    return a.s > b.s;
+}
+
+int cmp2(const Node &a,const Node &b) {
+    return a.id < b.id;
+}
+
+
+int main()
+{
+    int n,q,s,c;
+    // n 队伍
+    // q 服务器
+    // s score
+    // c chk points
+    int a;
+    Node rs[110];
+    
+    
+    int ss[110][15];
+    set<pair<int,int>> ato[110];
+    int atk,dfd,svs;
+    
+    
+    int rp[110][15];
+    
+    
+    int u,tt,cnt;
+    double all;
+    
+    
+    
+    __T {
+        scii(n,q);
+        scii(s,c);
+        rep(i,1,n) {
+            rs[i].s = s;
+            rs[i].id = i;
+        }
+        
+        rep(ii,1,c) {
+            mem(ss,0);
+            rep(i,1,n) ato[i].clear();
+            
+            // attack
+            
+            sci(a);
+            rep(i,1,a) {
+                sciii(atk,dfd,svs);
+                if (ato[atk].find(mpair(dfd,svs)) == ato[atk].end()) ss[dfd][svs] ++;
+                ato[atk].insert(mpair(dfd,svs));
+            }
+            
+            rep(i,1,n) {
+                rep(j,1,q) {
+                    if (ss[i][j]) rs[i].s -= n - 1;
+                }
+                for (auto j : ato[i]) {
+                    rs[i].s += (n - 1) / (double) ss[j.first][j.second];
+                }
+            }
+            
+            // repair
+            rep(i,1,q) {
+                all = 0;
+                cnt = 0;
+                rep(j,1,n) {
+                    sci(rp[i][j]);
+                    if (!rp[i][j]) {
+                        rs[j].s -= n - 1;
+                        all += n - 1;
+                    } else cnt ++;
+                }
+                rep(j,1,n) {
+                    if (rp[i][j]) {
+                        rs[j].s += all / (double) cnt;
+                    }
+                }
+            }
+//
+//            rep(i,1,n) {
+//                ok = 1;
+//                rep(j,1,q) {
+//                    if (!rp[j][i]) ok = 0;
+//                }
+//                if (ok) cnt ++;
+//            }
+//
+//            rep(i,1,n) {
+//                ok = 1;
+//                rep(j,1,q) {
+//                    if (!rp[j][i]) ok = 0;
+//                }
+//                if (ok) rs[i].s += all / (double) cnt;
+//            }
+            
+            
+            
+            // query
+            sort(rs + 1, rs + 1 + n, cmp1);
+            rs[1].pid = 1;
+            rep(i,2,n) {
+                if (abs(rs[i].s - rs[i - 1].s) <= 1e-6) rs[i].pid = rs[i - 1].pid;
+                else rs[i].pid = i;
+            }
+            
+            sort(rs + 1, rs + 1 + n, cmp2);
+            
+            sci(u);
+            rep(i,1,u) {
+                sci(tt);
+                printf("%.8f %d\n",rs[tt].s,rs[tt].pid);
+            }
+        }
+        
+        
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int main() {
+    int n,m;
+    int a[MAXN];
+    int cnt;
+    int mn = -1;
+    ll ans;
+    __T {
+        scii(n,m);
+        cnt = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            if (!a[i]) cnt ++;
+        }
+        if (n == m) {
+            puts("Richman");
+            continue;
+        }
+        if (cnt > m) {
+            puts("Impossible");
+            continue;
+        }
+        m -= cnt;
+        mn = -1;
+        ans = 0;
+        rep(i,1,n) {
+            if (!a[i]) continue;
+            if (m > 0) {
+                ans += a[i];
+                m --;
+            } else {
+                if (mn == -1) mn = a[i];
+                else mn = min(mn,a[i]);
+            }
+        }
+        printf("%lld\n",ans + mn - 1);
+        
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    string a,b;
+    int aa[1000010];
+    int cnt = 0;
+    int c1;
+    int idx;
+    __T {
+        sci(n);
+        cin >> a >> b;
+        c1 = cnt = 0;
+        idx = -1;
+        rep(i,0,n-1) {
+            aa[i + 1] = (a[i] != b[i]);
+//            printf("%d",aa[i + 1]);
+            if (aa[i + 1]) {
+                c1 ++;
+                if (idx == -1) idx = i + 1;
+            }
+        }
+//        puts("");
+        if (aa[n]) cnt ++;
+        rep(i,1,n) {
+            if (aa[i] != aa[i - 1] && aa[i - 1]) cnt ++;
+        }
+//        _C(cnt)
+        if (cnt == 2) printf("6\n");
+        else if (cnt == 0) {
+            printf("%lld\n",(n + 1LL) * n / 2);
+        } else if (cnt == 1) {
+            printf("%d\n",(n - 1) * 2);
+        } else printf("0\n");
+    }
+    re0;
+}
+*/
+
+/*
+inline double func(double x) {
+    return 1 - x - sin(x);
+}
+
+int main()
+{
+    double l = 0,r = 1;
+    const double exp = 5e-5;
+    double m;
+    int cnt = 0;
+    while (r - l > exp) {
+        m = (l + r) / 2;
+        if (func(m) * func(l) < 0) r = m;
+        else l = m;
+        cnt ++;
+    }
+    printf("%d %f\n",cnt,l);
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+ll t[55];
+ll a[MAXN];
+
+int main()
+{
+    int n;
+    ll x;
+    ll ans;
+    __T {
+        sci(n);
+        mem(t,0);
+        rep(i,1,n) {
+            scl(a[i]);
+            for (ll j = 1,k = 1;j <= 1e9;j <<= 1,k ++) {
+                if (a[i] >= (j << 1) && a[i] % (j << 1) < j) t[k] ++;
+            }
+        }
+        ans = 0;
+        rep(i,1,n) {
+            x = log2(a[i]);
+            x ++;
+            ans += t[x];
+        }
+        printf("%lld\n",ans);
+    }
+    
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    map<double,ll> ka;
+    ll kb;
+    
+    ll x1,x2,y1,y2;
+    int n;
+    ull cnt;
+    map<pair<double,double>,ll> sameA;
+    map<ll,ll> sameB;
+    pair<double,double> l;
+    double k;
+    ll ans;
+    __T {
+        kb = cnt = 0;
+        sci(n);
+        ka.clear();
+        sameB.clear();
+        sameA.clear();
+        rep(ii,1,n) {
+            scll(x1,y1);
+            scll(x2,y2);
+            if (x1 - x2 == 0) {
+                kb ++;
+                cnt += sameB[x1] ++;
+            }
+            else {
+                ka[k = (y1 - y2) / (double) (x1 - x2)] ++;
+                
+                l = make_pair(k, (x1 * y2 - x2 * y1) / (double) (x1 - x2));
+                cnt += sameA[l] ++;
+            }
+        }
+
+        ans = 0;
+        ans += (n - kb) * kb;
+        for (auto i : ka) {
+            ans += (n - i.second) * i.second;
+        }
+        printf("%lld\n",ans / 2 + cnt);
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    ll l,r;
+};
+
+int cmp(const Node &a,const Node &b) {
+    return a.r < b.r;
+}
+
+int cmp1(const Node &a,const Node &b) {
+    return a.l < b.l;
+}
+
+int n;
+
+ll get(Node *lx,Node *rx)
+{
+    ll sumx,subx[100010];
+    ll ok;
+    ll m1,m2;
+    
+    sort(rx + 1,rx + 1 + n,cmp);
+    sort(lx + 1,lx + 1 + n,cmp1);
+    
+    subx[n] = lx[n].l;
+    pre(i,n - 1,1) subx[i] = subx[i + 1] + lx[i].l;
+    
+    sumx = 0;
+    m1 = -1;
+    for (int i = 1,j = 1;i <= n ;i ++) {
+        ok = 0;
+        while (j <= n) {
+            if (lx[j].l > rx[i].r) {
+                ok = subx[j];
+                break;
+            }
+            j ++;
+        }
+        ok -= (n - j + 1) * rx[i].r;
+        
+        ok += rx[i].r * (i - 1);
+        ok -= sumx;
+        
+        if (m1 == -1) m1 = ok;
+        else m1 = min(m1,ok);
+        
+        sumx += rx[i].r;
+    }
+            
+            
+    subx[1] = rx[1].r;
+    rep(i,2,n) subx[i] = subx[i - 1] + rx[i].r;
+    
+    sumx = 0;
+    m2 = -1;
+    for (int i = n,j = n;i >= 1;i --) {
+        ok = 0;
+        while (j >= 1) {
+            if (rx[j].r < lx[i].l) {
+                ok = subx[j];
+                break;
+            }
+            j --;
+        }
+        ok = j * lx[i].l - ok;
+        
+        ok -= lx[i].l * (n - i);
+        ok += sumx;
+        
+        if (m2 == -1) m2 = ok;
+        else m2 = min(m2,ok);
+                
+        sumx += lx[i].l;
+    }
+    return min(m1,m2);
+}
+
+int main()
+{
+    Node lx[100010];
+    Node rx[100010];
+    
+    Node ly[100010];
+    Node ry[100010];
+    int x1,x2,y1,y2;
+    
+    __T {
+        sci(n);
+        rep(i,1,n) {
+            scii(x1,y1);
+            scii(x2,y2);
+            lx[i] = {x1,x2};
+            rx[i] = {x1,x2};
+            ly[i] = {y1,y2};
+            ry[i] = {y1,y2};
+        }
+        printf("%lld\n",get(lx,rx) + get(ly,ry));
+    }
+    return 0;
+}
+*/
+
+/*
+ll quickpow(ll a, ll b, ll n)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) {
+            if (a == -1) return -1;
+            ans = a * ans;
+            if (ans >= n) return -1;
+        }
+        if (a != -1) a = a * a;
+        if (a >= n) a = -1;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    int n,k;
+    ll m,l;
+    ll ans;
+    int i;
+    int T = 1;
+    __T  {
+        scii(n,k);
+        if (k == 1) {
+            printf("Case #%d: %d\n",T ++,n);
+            continue;
+        }
+        l = 1;
+        ans = 0;
+        for (i = 2;i <= n;i ++) {
+            m = quickpow(i, k, n);
+            if (m == -1) break;
+            ans += ((m - 1) - l) / (i - 1) + 1;
+            l = m;
+        }
+        ans += (n - l) / (i - 1) + 1;
+        printf("Case #%d: %lld\n",T ++,ans);
+    }
+}
+*/
+
+/*
+struct Node {
+    int n;
+    int i;
+};
+
+int cmp(const Node &a,const Node &b) {
+    return a.n < b.n;
+}
+
+int main()
+{
+    int n,max1;
+    ll p;
+    Node a[400010];
+    int vis[200010];
+    Node l,r;
+    int li,ri;
+    int start;
+    int ans;
+    int m;
+    int T = 1;
+    __T {
+        max1 = 0;
+        sci(n);
+        scl(p);
+        for (int i = 1,j = 1;i <= n;i ++) {
+            sci(a[j ++].n);
+            a[j - 1].i = i;
+            sci(a[j ++].n);
+            a[j - 1].i = i;
+            max1 = max(max1,a[j-1].n);
+            vis[i] = 0;
+        }
+        
+        
+        sort(a + 1,a + 1 + n * 2,cmp);
+        
+        
+        m = ans = 0;
+        start = n * 2;
+        pre(i,n*2,1) {
+            if (a[i].n >= max1) {
+                l = {(int) ceil(a[i].n * p / 100.0)};
+                r = {a[i].n};
+//                _C(">>" << a[i].n)
+//                _C(l.n << " " << r.n)
+                li = (int) (lower_bound(a + 1, a + 1 + n * 2, l, cmp) - a);
+                ri = i;
+//                _C("lr> " << li << " " << ri)
+                
+                pre(j,start,li) {
+                    if (!vis[a[j].i]) m ++;
+                    vis[a[j].i] ++;
+                }
+                start = li - 1;
+//                _C("m1=" << m)
+                if (i + 1 <= n * 2) {
+                    vis[a[i + 1].i] --;
+//                    _C(vis[a[i + 1].i])
+                    if (!vis[a[i + 1].i]) m --;
+                }
+//                _C("m2=" << m)
+                ans = max(ans,m);
+            } else break;
+        }
+        printf("Case #%d: %d\n",T ++, ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int s;
+    int ans;
+    __T {
+        cin >> str;
+        s = str[0] ^ 48;
+        ans = 10 * (s - 1);
+        for (int i = 0;str[i];i ++) ans += (i + 1);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[5010];
+    int vis[5010];
+    int ok;
+    __T {
+        sci(n);
+        ok = 1;
+        rep(i,1,n) {
+            sci(a[i]);
+            vis[i] = 0;
+            if (i != 1) {
+                if (a[i] != a[i - 1]) ok = 0;
+            }
+        }
+        if (ok) {
+            puts("NO");
+            continue;
+        }
+        puts("YES");
+        rep(i,2,n) {
+            if (a[i] != a[1]) {
+                printf("1 %d\n",i);
+                vis[i] = 1;
+            }
+        }
+        rep(i,2,n) {
+            if (vis[i]) {
+                rep(j,2,n) {
+                    if (!vis[j]) {
+                        printf("%d %d\n",i,j);
+                    }
+                }
+                break;
+            }
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+int cmp(const pair<int,int> &a,const pair<int,int> &b) {
+    if (a.second == b.second) return a.first < b.first;
+    return a.second < b.second;
+}
+
+int main()
+{
+    
+    int n,q;
+    scii(n,q);
+    pair<int,int> px[2010];
+    pair<int,int> py[2010];
+    rep(i,1,n) {
+        scii(px[i].first,px[i].second);
+        py[i] = px[i];
+    }
+    sort(px + 1,px + 1 + n);
+    sort(py + 1,py + 1 + n,cmp);
+    int u,v;
+    int cnt;
+    while (q --) {
+        scii(u,v);
+        cnt = 0;
+        rep(i,1,n) {
+            
+        }
+    }
+    return 0;
+}
+*/
+
+
+/*
+int n,m;
+
+const int MAXN = 500010;
+
+struct Edge {
+    Edge(){}
+    Edge(int to,int nxt,int v):to(to),nxt(nxt),v(v){}
+    int to;
+    int nxt;
+    int v;
+} e[MAXN * 2];
+int g[MAXN];
+
+int cnt = 0;
+
+void init()
+{
+    cnt = 0;
+    mem(g,-1);
+}
+
+void add(int u,int v)
+{
+    e[cnt] = Edge(v,g[u],-1);
+    g[u] = cnt ++;
+}
+
+int vis[MAXN];
+int dps[MAXN];
+vector<ll> cc;
+
+void dfs(int k,int f,int d)
+{
+    if (vis[k]) {
+        cc.pb(d - dps[k]);
+        return;
+    }
+    vis[k] = 1;
+    dps[k] = d;
+    for (int i = g[k];~i;i = e[i].nxt) {
+        if (e[i].to == f || dps[e[i].to] > d) continue;
+        dfs(e[i].to,k,d + 1);
+    }
+}
+
+const int mod = 998244353;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    scii(n,m);
+    init();
+    int u,v;
+    rep(i,1,m) {
+        scii(u,v);
+        add(u,v);
+        add(v,u);
+    }
+    rep(i,1,n) {
+        if (vis[i]) continue;
+        dfs(i,-1,0);
+    }
+    ll ans = 1;
+    ll s = 0;
+    for (auto i : cc) {
+        s += i;
+        ans *= (quickpow(2, i) + mod - 1) % mod;
+        ans %= mod;
+    }
+    
+    ans *= quickpow(2, m - s);
+    printf("%lld\n",ans % mod);
+    re0;
+}
+*/
+
+/*
+char str[100010];
+
+int get(char a[],char b[]) {
+    if (a[0] == b[0] && a[1] == b[1] && a[2] == b[2]) return 0;
+    if(a[1] == b[0] && a[2] == b[1]) return 1;
+    if(a[2] == b[0]) return 2;
+    return 3;
+}
+
+ll dp[100010][7];
+
+struct Node {
+    int n;
+    char str[7][3];
+} x['Z' + 1];
+
+int main()
+{
+    x['Y'] = {1,{
+        {'Q','Q','Q'}
+    }};
+    x['V'] = {3,{
+        {'Q','Q','W'},
+        {'Q','W','Q'},
+        {'W','Q','Q'},
+    }};
+    x['G'] = {3,{
+        {'Q','Q','E'},
+        {'Q','E','Q'},
+        {'E','Q','Q'},
+    }};
+    x['C'] = {1,{
+        {'W','W','W'},
+    }};
+    x['X'] = {3,{
+        {'Q','W','W'},
+        {'W','W','Q'},
+        {'W','Q','W'},
+    }};
+    x['Z'] = {3,{
+        {'W','E','W'},
+        {'W','W','E'},
+        {'E','W','W'},
+    }};
+    x['T'] = {1,{
+        {'E','E','E'},
+    }};
+    x['F'] = {3,{
+        {'Q','E','E'},
+        {'E','E','Q'},
+        {'E','Q','E'},
+    }};
+    x['D'] = {3,{
+        {'W','E','E'},
+        {'E','W','E'},
+        {'E','E','W'},
+    }};
+    x['B'] = {6,{
+        {'Q','E','W'},
+        {'Q','W','E'},
+        {'W','Q','E'},
+        {'W','E','Q'},
+        {'E','Q','W'},
+        {'E','W','Q'},
+    }};
+    char ch;
+    int n = 0;
+    while ((ch = getchar()) != '\n') {
+        str[n ++] = ch;
+    }
+    str[n] = '\0';
+//    puts(str);
+    mem(dp,-1);
+    REP(i,0,6) {
+        dp[0][i] = 3;
+    }
+//    REP(j,0,6) {
+//        printf("%lld ",dp[0][j]);
+//    }
+//    puts("");
+    
+//    _C(n)
+    
+    REP(i,1,n) {
+        REP(j,0,x[str[i - 1]].n) {
+            REP(k,0,x[str[i]].n) {
+                if (dp[i][k] == -1) dp[i][k] = dp[i - 1][j] + get(x[str[i - 1]].str[j],x[str[i]].str[k]);
+                else dp[i][k] = min(dp[i - 1][j] + get(x[str[i - 1]].str[j],x[str[i]].str[k]),dp[i][k]);
+            }
+        }
+//        REP(j,0,6) {
+//            printf("%lld ",dp[i][j]);
+//        }
+//        puts("");
+    }
+    ll ans = -1;
+    REP(i,0,6) {
+        if (dp[n - 1][i] != -1) {
+            if (ans == -1) ans = dp[n - 1][i];
+            else ans = min(ans,dp[n - 1][i]);
+        }
+    }
+    printf("%lld\n",ans + n);
+}
+*/
+
+/////kmp
+/*
+const int MAXN = 1e6 + 10;
+string str;
+string p;
+int n;
+int m;
+
+int nxt[MAXN];
+
+void make()
+{
+    // nxt(标号从[1,m]，m是匹配串长度)数组意义：nxt[i]是取出从1到i的前缀，对于这个前缀s，存在一个它的子串t，并且t != s，同时t既是s的前缀又是s的后缀，nxt[i] = max(|t|)。
+    nxt[0] = -1;
+    nxt[1] = 0;
+    for (int i = 0,k = -1;i < m;)
+    {
+        if (k == -1 || p[i] == p[k]) nxt[++ i] = ++ k;
+        else k = nxt[k];
+    }
+}
+
+int kmp()
+{
+    int ok = 0;
+    make();
+    
+    //int f = 0;
+    for (int i = 0,j = 0;i < n;)
+    {
+        if (str[i] == p[j]) {
+            j ++;
+            i ++;
+            if (j == m) {
+                //printf("Found: %lu\n",i - m); // 找到一个p串在str串中的下标
+                ok ++;
+                //f = 1;
+                j = nxt[j];
+            }
+        }
+        else {
+            if (j == 0) i ++;
+            j = nxt[j];
+        }
+        
+    }
+    //if (!f) printf("Not Found!\n");
+    return ok;
+}
+
+int main()
+{
+    cin >> str >> p;
+    n = (int) str.size();
+    m = (int) p.size();
+    printf("%d\n",kmp());
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int main()
+{
+    int f,n;
+    scii(f,n);
+    int nxt[MAXN];
+    int a[MAXN];
+    
+    int addr,num,next;
+    
+    mem(nxt,-1);
+    rep(i,1,n) {
+        sciii(addr,num,next);
+        a[addr] = num;
+        nxt[addr] = next;
+    }
+    
+    int vis[10010] = {0};
+    int ff = -1;
+    int cc = ff;
+    
+    int c = f;
+    int l = -1;
+    while (c != -1) {
+        if (vis[abs(a[c])]) {
+            nxt[l] = nxt[c];
+            if (ff == -1) {
+                ff = c;
+                cc = c;
+            } else {
+                nxt[cc] = c;
+                cc = c;
+            }
+        } else l = c;
+        vis[abs(a[c])] = 1;
+        c = nxt[c];
+        nxt[cc] = -1;
+    }
+    c = f;
+    while (c != -1) {
+        printf("%05d %d ",c,a[c]);
+        if (nxt[c] == -1) printf("-1");
+        else printf("%05d",nxt[c]);
+        puts("");
+        c = nxt[c];
+    }
+    c = ff;
+    while (c != -1) {
+        printf("%05d %d ",c,a[c]);
+        if (nxt[c] == -1) printf("-1");
+        else printf("%05d",nxt[c]);
+        puts("");
+        c = nxt[c];
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int na,nb;
+    
+    vector<pair<int,int>> a;
+    vector<pair<int,int>> b;
+    int x,y;
+    
+    sci(na);
+    rep(i,1,na) {
+        scii(x,y);
+        a.pb(mpair(x,y));
+    }
+    
+    sci(nb);
+    rep(i,1,nb) {
+        scii(x,y);
+        b.pb(mpair(x,y));
+    }
+    
+    int multy[10010];
+    int add[10010];
+    
+    mem(multy,0);
+    for (auto i : a) {
+        for (auto j : b) {
+            multy[i.second + j.second + 3000] += i.first * j.first;
+        }
+    }
+    int f = 1;
+    pre(i,10000,0) {
+        if (multy[i]) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d %d",multy[i],i - 3000);
+        }
+    }
+    if (f) printf("0 0");
+    puts("");
+    
+    mem(add,0);
+    for (auto i : a) {
+        add[i.second + 3000] += i.first;
+    }
+    for (auto i : b) {
+        add[i.second + 3000] += i.first;
+    }
+    
+    f = 1;
+    pre(i,10000,0) {
+        if (add[i]) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d %d",add[i],i - 3000);
+        }
+    }
+    if (f) printf("0 0");
+    puts("");
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 100010;
+
+int main()
+{
+    int f,n,k;
+    sciii(f,n,k);
+    int num[MAXN];
+    int nxt[MAXN];
+    int pre[MAXN];
+    
+    int addr,nn,nt;
+    
+    int last = -1;
+    rep(i,1,n) {
+        sciii(addr,nn,nt);
+        num[addr] = nn;
+        nxt[addr] = nt;
+    }
+    
+    int c = f;
+    int cc = 0;
+    while (c != -1) {
+        pre[c] = last;
+        last = c;
+        c = nxt[c];
+        cc ++;
+    }
+    n = cc;
+    
+    int cnt = 0;
+    int ff = f;
+    int sf = 0;
+    c = f;
+//    int cc;
+    
+    int x = 0;
+    int mx = n / k;
+    last = -1;
+    while (c != -1) {
+        cnt ++;
+        nt = nxt[c];
+        
+        if (x < mx) swap(nxt[c],pre[c]);
+        
+        if (cnt == k) {
+            swap(pre[c],nxt[f]);
+            if (nt != -1) pre[nt] = c;
+            if (last != -1) nxt[last] = c;
+            last = f;
+            f = nt;
+            if (!sf) {
+                sf = 1;
+                ff = c;
+            }
+            cnt = 0;
+            x ++;
+            
+        }
+        c = nt;
+    }
+    
+    c = ff;
+    while (c != -1) {
+        printf("%05d %d ",c,num[c]);
+        if (nxt[c] == -1) printf("-1");
+        else printf("%05d",nxt[c]);
+        puts("");
+        c = nxt[c];
+    }
+    
+    re0;
+}
+*/
+
+
+// AC自动机
+// 给定n个模式串s_i和一个文本串t，求有多少个不同的模式串在文本串里出现过。两个模式串不同当且仅当他们编号不同。
+
+/*
+const int MAXN = 5e5 + 10;
+
+struct AC_Auto {
+    int next[MAXN][26],fail[MAXN],end[MAXN];
+    int root,cnt;
+
+    inline int newNode() {
+        for (int i = 0;i < 26;i ++) next[cnt][i] = -1;
+        end[cnt ++] = 0;
+        return cnt - 1;
+    }
+    void init() {
+        cnt = 0;
+        root = newNode();
+    }
+
+    void insert(char str[]) {
+        int len = (int) strlen(str);
+        int now = root;
+        for (int i = 0;i < len;i++) {
+            if (next[now][str[i] - 'a'] == -1) next[now][str[i] - 'a'] = newNode();
+            now = next[now][str[i] - 'a'];
+        }
+        end[now] ++;
+    }
+
+    void build() {
+        queue<int> q;
+        fail[root] = root;
+        for(int i = 0;i < 26;i++)
+        {
+            if (next[root][i] == -1) next[root][i] = root;
+            else
+            {
+                fail[next[root][i]] = root;
+                q.push(next[root][i]);
+            }
+        }
+        while (!q.empty()) {
+            int now = q.front();
+            q.pop();
+            for (int i = 0;i < 26;i++)
+            {
+                if (next[now][i] == -1) next[now][i] = next[fail[now]][i];
+                else
+                {
+                    fail[next[now][i]] = next[fail[now]][i];
+                    q.push(next[now][i]);
+                }
+            }
+        }
+    }
+
+    int query(char *s) {
+        int len = (int) strlen(s);
+        int now = 0,ans = 0;
+        for (int i = 0;i < len;i ++){
+            now = next[now][s[i] - 'a'];
+            for (int t = now;t && ~end[t];t = fail[t]) {
+                ans += end[t];
+                end[t] = -1;
+            }
+        }
+        return ans;
+    }
+
+    void debug() {
+        for (int i = 0;i < cnt;i ++) {
+            printf("id = %3d,fail = %3d,end = %3d,chi = [",i,fail[i],end[i]);
+            for (int j = 0;j < 26;j ++) printf("%2d",next[i][j]);
+            printf("]\n");
+        }
+    }
+};
+
+AC_Auto ac;
+char str[MAXN << 1];
+
+int main()
+{
+    int n;
+    __T {
+        scanf("%d",&n);
+        ac.init();
+        rep(i,1,n) {
+            scanf("%s",str);
+            ac.insert(str);
+        }
+        ac.build();
+        scanf("%s",str);
+        printf("%d\n",ac.query(str));
+    }
+    return 0;
+}
+*/
+
+//
+//int n = 2,m = 2;
+//
+//// 0 u
+//// 1 d
+//// 2 l
+//// 3 r
+//
+//int vis[110][110] = {0};
+//int ans = 0;
+//
+//void dfs(int i,int j,int dir,int cnt)
+//{
+//    _C(i << " " << j)
+//    if (vis[i][j]) return;
+//    vis[i][j] = 1;
+//    if (cnt == n * m) {
+//        ans ++;
+//        return;
+//    }
+//    int ii,jj;
+//    switch (dir) {
+//        case 0:
+//            ii = i;
+//            jj = j + 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,3,cnt + 1);
+//            ii = i - 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,0,cnt + 1);
+//            break;
+//        case 1:
+//            ii = i;
+//            jj = j - 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,2,cnt + 1);
+//            ii = i + 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,1,cnt + 1);
+//            break;
+//        case 2:
+//            ii = i - 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,0,cnt + 1);
+//            ii = i;
+//            jj = j - 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,2,cnt + 1);
+//            break;
+//        case 3:
+//            ii = i + 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,1,cnt + 1);
+//            ii = i + 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,3,cnt + 1);
+//            break;
+//        default:
+//            break;
+//    }
+//    vis[i][j] = 0;
+//}
+//
+//int main()
+//{
+//    int ii,jj;
+//    rep(i,1,n) {
+//        rep(j,1,m) {
+//            vis[i][j] = 1;
+//
+//            ii = i - 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,0,2);
+//            puts("");
+//            ii = i + 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,1,2);
+//            puts("");
+//            ii = i;
+//            jj = j - 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,2,2);
+//            puts("");
+//            ii = i;
+//            jj = j + 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,3,2);
+//            puts("");
+//            puts("");
+//
+//            vis[i][j] = 0;
+//        }
+//    }
+//    _C(ans)
+//    return 0;
+//}
+//
+//
+
+/*
+int main()
+{
+    int n,m;
+    int ans;
+    int T = 1;
+    __T {
+        scii(n,m);
+        if (m < n) swap(m, n);
+        
+        if (n == 1) {
+            if (m == 1) ans = 1;
+            else ans = 2;
+        }
+        else if (n == 2) {
+            ans = 2 * m;
+        } else {
+            ans = (n - 2) * 2 + (m - 2) * 2 + 4;
+        }
+        printf("Case #%d: %d\n",T++,ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int T = 1;
+    __T {
+        sci(n);
+        printf("Case #%d:\n",T ++);
+        puts("YES");
+        rep(i,1,n) {
+            rep(j,i,n) {
+                printf("%d %d %d %d %d %d %d %d\n",i,j, 0,j,i , 1,j,i);
+            }
+        }
+    }
+    re0;
+}
+*/
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int main()
+{
+    int n;
+    int a[100010];
+    int x;
+    ll pre[100010],sub[100010];
+    ll ans = 1;
+    __T {
+        sci(n);
+        rep(i,1,n) sci(a[i]);
+        pre[1] = a[1];
+        sub[n] = a[n];
+        rep(i,2,n) pre[i] = gcd(a[i],pre[i - 1]);
+        pre(i,n - 1,1) sub[i] = gcd(a[i],sub[i + 1]);
+        ans = 1;
+        rep(i,1,n) {
+            if (i == 1) ans = max(ans,sub[i+1]);
+            else if (i == n) ans = max(ans,pre[i-1]);
+            else ans = max(ans,gcd(pre[i-1],sub[i+1]));
+        }
+        printf("%d\n",ans);
+    }
+}*/
+
+/*
+struct Node {
+    ll pos,c;
+    bool operator<(const Node &o) const {
+        return pos < o.pos;
+    }
+};
+
+ll dp[3010][3010];
+ll m[3010];
+ll jj[3010];
+
+int main()
+{
+    int n;
+    Node a[3010];
+    ll pos,c;
+    ll ans;
+    int t1,t2;
+    int last;
+    while (~sci(n)) {
+        rep(i,1,n) {
+            scll(pos,c);
+            a[i].pos = pos;
+            a[i].c = c;
+        }
+        sort(a + 1,a + 1 + n);
+        jj[1] = m[1] = dp[1][1] = a[1].c;
+        
+
+        rep(i,2,n) {
+            m[i] = (dp[i][i-1] = jj[i-1] + a[i].pos - a[i-1].pos);
+            rep(j,1,i-2) {
+                dp[i][j] = dp[i-1][j] + a[i].pos - a[j].pos;
+                m[i] = min(m[i],dp[i][j]);
+            }
+            jj[i] = m[i - 1] + a[i].c;
+            m[i] = min(m[i],jj[i]);
+        }
+        printf("%lld\n",m[n]);
+    }
+    re0;
+}
+*/
+
+
+//
+//int main() {
+//    string c[10];
+//    int a[10];
+//    int b[10];
+//    const int x = 1 << 5;
+//    int niu,niu_cnt,no;
+//    int ok1 = 0;
+//    int t;
+//    __T {
+//        rep(i,1,5) cin >> c[i];
+//        rep(i,1,5) {
+//            if (c[i] == "A") a[i] = 1;
+//            else if (c[i] == "10" || c[i] == "J" || c[i] == "K" || c[i] == "Q") a[i] = 10;
+//            else a[i] = c[i][0] ^ 48;
+//            _C(a[i])
+//        }
+//
+//        rep(i,1,5) cin >> c[i];
+//        rep(i,1,5) {
+//            if (c[i] == "A") b[i] = 1;
+//            else if (c[i] == "10" || c[i] == "J" || c[i] == "K" || c[i] == "Q") b[i] = 10;
+//            else b[i] = c[i][0] ^ 48;
+//            _C(b[i])
+//        }
+//
+//        ok1 = -1;
+//
+//        REP(i,0,x) {
+//            niu = 0;
+//            niu_cnt = 0;
+//            no = 0;
+//            for (int j = i,k = 1;k <= 5;k ++,j >>= 1) {
+//                if (j & 1) {
+//                    niu_cnt ++;
+//                    niu += a[k];
+//                } else no += a[k];
+//            }
+//            if (niu_cnt == 3) {
+//                if (niu % 10 == 0) {
+//                    t = no % 10;
+//                    if (ok1 == -1 || t == 0) ok1 = t;
+//                    else if (ok1 != 0) ok1 = max(ok1,t);
+//                }
+//            }
+//        }
+//    }
+//    re0;
+//}
+
+/*
+const double esp = 5e-5;
+
+inline double f(double x) {
+    return x * x * x - 2 * x - 5;
+}
+
+int main()
+{
+    double l = 2,r = 3;
+    double m;
+    while (r - l > esp) {
+        m = (l + r) / 2;
+        if (f(m) * f(l) < 0) r = m;
+        else l = m;
+    }
+    printf("%f\n",l);
+    return 0;
+}
+*/
+
+/*
+const double esp = 1e-4;
+
+inline double f(double x) {
+    return x * x * x + 10 * x - 20;
+}
+
+int main()
+{
+    double l = 1,r = 2;
+    double m;
+    while (r - l > esp) {
+        m = (l + r) / 2;
+        if (f(m) * f(l) < 0) r = m;
+        else l = m;
+    }
+    printf("%f\n",l);
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e7 + 10;
+
+int is_prime[MAXN];
+int is_prime_small[MAXN];
+
+void segment_sieve(ll a,ll b)
+{
+    for (ll i = 0;i * i <= b;i ++) is_prime_small[i] = 1;
+    for (ll i = 0;i <= b - a;i ++) is_prime[i] = 1;
+    for (ll i = 2;i * i <= b;i ++)
+    {
+        if (is_prime_small[i])
+        {
+            for (ll j = 2 * i;j * j <= b;j += i) is_prime_small[j] = 0;
+            for (ll j = max(2LL,(a + i - 1) / i) * i; j <= b;j += i) is_prime[j - a] = 0;
+        }
+    }
+}
+
+ll primes[MAXN];
+
+int main()
+{
+    ll l,r;
+    int cnt;
+    ll ln,lx,lnl,lnr,lxl,lxr;
+    ll t;
+    int cc;
+    while (~scll(l,r)) {
+        cnt = 0;
+        segment_sieve(l, r);
+        for (ll i = 0;i <= r - l;i ++) {
+            if (is_prime[i]) {
+                primes[cnt ++] = i + l;
+            }
+        }
+        ln = -1;
+        lx = -1;
+        
+        cc = 0;
+        if (primes[0] != 1) cc ++;
+        
+        REP(i,1,cnt) {
+            if (primes[i] != 1) cc ++;
+            if (primes[i] == 1 || primes[i - 1] == 1) continue;
+            
+            t = primes[i] - primes[i - 1];
+            if (ln == -1 || t < ln) {
+                ln = t;
+                lnl = primes[i-1];
+                lnr = primes[i];
+            }
+            if (t > lx) {
+                lx = t;
+                lxl = primes[i-1];
+                lxr = primes[i];
+            }
+        }
+        if (cc < 2) {
+            printf("There are no adjacent primes.\n");
+            continue;
+        }
+        printf("%lld,%lld are closest, %lld,%lld are most distant.\n",lnl,lnr,lxl,lxr);
+    }
+}
+*/
+
+/*
+const int S = 9; //随机算法判定次数，一般8~10就够了
+
+// 计算ret = (a*b)%c a,b,c < 2^63
+long long mult_mod(ll a,ll b,ll c)
+{
+    a %= c;
+    b %= c;
+    ll ret = 0;
+    ll tmp = a;
+    while (b) {
+        if (b & 1) {
+            ret += tmp;
+            if (ret > c)ret -= c;//直接取模慢很多
+        }
+        tmp <<= 1;
+        if (tmp > c) tmp -= c;
+        b >>= 1;
+    }
+    return ret;
+}
+
+// 计算 ret = (a^n)%mod
+long long pow_mod(ll a,ll n,ll mod)
+{
+    ll ret = 1;
+    ll temp = a % mod;
+    
+    while (n)
+    {
+        if (n & 1) ret = mult_mod(ret,temp,mod);
+        temp = mult_mod(temp,temp,mod);
+        n >>= 1;
+    }
+    return ret;
+}
+    
+// 通过 a^(n-1)=1(mod n)来判断n是不是素数
+// n-1 = x*2^t 中间使用二次判断
+// 是合数返回true, 不一定是合数返回false
+bool check(ll a,ll n,ll x,ll t)
+{
+    ll ret = pow_mod(a,x,n);
+    ll last = ret;
+    for (int i = 1;i <= t;i ++)
+    {
+        ret = mult_mod(ret,ret,n);
+        if (ret == 1 && last != 1 && last != n-1) return true; //合数
+        last = ret;
+    }
+    if (ret != 1) return true;
+    else return false;
+}
+
+bool Miller_Rabin(ll n)
+{
+    if (n < 2) return false;
+    if (n == 2) return true;
+    if ((n & 1) == 0) return false; //偶数
+    ll x = n - 1;
+    ll t = 0;
+    while ((x & 1) ==0) {
+        x >>= 1;
+        t ++;
+    }
+    srand((uint) time(NULL));
+    ll a;
+    for (int i = 0;i < S;i ++)
+    {
+        a = rand() % (n - 1) + 1;
+        if (check(a,n,x,t)) return false;
+    }
+    return true;
+}
+
+ll factor[100]; //质因素分解结果(刚返回时时无序的)
+int tol; //质因素的个数，编号0~tol-1
+
+ll gcd(ll a,ll b) {
+    ll t;
+    while (b)
+    {
+        t = a;
+        a = b;
+        b = t % b;
+    }
+    if (a >= 0) return a;
+    else return -a;
+}
+
+// 找出一个因子
+ll pollard_rho(ll x,ll c) {
+    ll i = 1, k = 2;
+    srand((uint) time(NULL));
+    ll x0 = rand() % (x - 1) + 1;
+    ll y = x0;
+    ll d;
+    while (1)
+    {
+        i ++;
+        x0 = (mult_mod(x0,x0,x) + c) % x;
+        d = gcd(y - x0,x);
+        if (d != 1 && d != x) return d;
+        if (y == x0) return x;
+        if (i == k) {
+            y = x0;
+            k += k;
+        }
+    }
+}
+
+// 对n进行素因子分解，存入factor. k设置为107左右即可
+void findfac(ll n,int k)
+{
+    if (n == 1) return;
+    if (Miller_Rabin(n)) {
+        factor[tol ++] = n;
+        return;
+    }
+    ll p = n;
+    int c = k;
+    while (p >= n) p = pollard_rho(p,c --); // 值变化，防止死循环k
+    findfac(p,k);
+    findfac(n / p,k);
+}
+
+
+
+// 找出一个数字所有的质因子，若有重复的质因子，则输出yes CCPC2020威海
+int main()
+{
+    ll n;
+    int ok = 0;
+    __T {
+        scl(n); // 读取一个ll数
+        tol = 0; // 质数的个数=0
+        findfac(n, 107); // 找出所有的因子
+        sort(factor, factor + tol); // 排序
+        
+        ok = 0;
+        REP(i,1,tol) {
+            if (factor[i - 1] == factor[i]) { // 找出了一样的了
+                ok = 1;
+                break;
+            }
+        }
+        puts(ok ? "yes" : "no");
+    }
+}
+*/
+
+/*
+int main()
+{
+    int m,n,k;
+    sciii(m,n,k);
+    stack<int> s;
+    int a[1010];
+    int ok;
+    int j;
+    while (k --) {
+        rep(i,1,n) sci(a[i]);
+        ok = 0;
+        j = 1;
+        rep(i,1,n+1) {
+            while (s.size() != 0 && s.top() == a[j]) {
+                j ++;
+                s.pop();
+                ok ++;
+            }
+            if (i <= n && s.size() < m) s.push(i);
+        }
+        while (!s.empty()) s.pop();
+        puts(ok == n ? "YES" : "NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    int a[1010];
+    int b[1010];
+    int an = 0,bn = 0;
+    int t;
+    rep(i,1,n) {
+        sci(t);
+        if (t & 1) a[++ an] = t;
+        else b[++ bn] = t;
+    }
+    int i = 1,j = 1;
+    int cnt = 0;
+    int f = 1;
+    while (i <= an || j <= bn) {
+        cnt ++;
+        if (i <= an) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",a[i]);
+            i ++;
+        }
+        if (!(cnt & 1)) {
+            if (j <= bn) {
+                if (f) f = 0;
+                else printf(" ");
+                printf("%d",b[j]);
+                j ++;
+            }
+        }
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int mp[1010][1010];
+int mm[1010][1010];
+int dx[] = {0,1,-1,0};
+int dy[] = {1,0,0,-1};
+
+const int MAXN = 1e6 + 10;
+const int mod = 1e9 + 7;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN << 3];
+int g[MAXN];
+
+int cnt;
+
+void add(int u,int v) {
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+int in[MAXN];
+int out[MAXN];
+int id;
+
+ll step[MAXN][5];
+
+
+
+ll Tuopu()
+{
+    queue<int> q;
+    rep(i,1,id) {
+//        _C(i << " " << in[i])
+        if (in[i] == 0) {
+            q.push(i);
+            step[i][1] = 1;
+        }
+    }
+    int top;
+    int to;
+    int cnt;
+    while (!q.empty()) {
+        top = q.front();
+        q.pop();
+        for (int i = g[top];~i;i = e[i].nxt) {
+            to = e[i].to;
+            
+            rep(i,1,4) {
+                cnt = i + 1;
+                if (cnt > 4) cnt = 4;
+                step[to][cnt] += step[top][i];
+                step[to][cnt] %= mod;
+            }
+            
+            in[to] --;
+            if (in[to] == 0) q.push(to);
+        }
+    }
+    
+    ll ans = 0;
+    
+    rep(i,1,id) {
+        if (out[i] == 0) {
+            ans += step[i][4];
+            ans %= mod;
+        }
+    }
+    return ans;
+}
+
+int main()
+{
+    mem(g,-1);
+    cnt = 0;
+    id = 0;
+    int n,m;
+    scii(n,m);
+    rep(i,1,n) {
+        rep(j,1,m) {
+            sci(mp[i][j]);
+            mm[i][j] = ++ id;
+        }
+    }
+    int ii,jj;
+    rep(i,1,n) {
+        rep(j,1,m) {
+            REP(k,0,4) {
+                ii = i + dy[k];
+                jj = j + dx[k];
+                if (ii >= 1 && ii <= n && jj <= m && jj >= 1) {
+                    if (mp[i][j] + 1 == mp[ii][jj]) {
+                        add(mm[i][j],mm[ii][jj]);
+                        in[mm[ii][jj]] ++;
+                        out[mm[i][j]] ++;
+                    }
+                }
+            }
+        }
+    }
+    printf("%lld\n",Tuopu());
+    re0;
+}
+*/
+
+
+/*
+const int MAXN = 100010;
+
+vector<int> g[MAXN];
+
+int n;
+int color[MAXN];
+
+int weight[MAXN];
+
+int getMaxSon(int x,int f)
+{
+    int mx = -1;
+    int nmx = -1;
+    int t;
+    int ch = 1;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        t = getMaxSon(i,x);
+        if (t > mx) {
+            mx = t;
+            nmx = i;
+        }
+        ch += t;
+    }
+    weight[x] = nmx;
+    return ch;
+}
+
+int vis[MAXN];
+int ans[MAXN];
+int heavy;
+
+int count(int x,int f,int type) // type = 1统计，type = -1清空
+{
+//    _C(x << " " << type)
+    int t = 0;
+    if (!vis[color[x]]) t ++;
+    vis[color[x]] += type;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        if (i != heavy)
+            t += count(i,x,type);
+    }
+    return t;
+}
+
+int dfs(int x,int f,int keep) // keep 是否保留
+{
+    
+    int t = 0;
+    for (auto i : g[x]) {
+        if (f == i) continue;
+        if (weight[x] != i) {
+            dfs(i,x,0); // 遍历轻儿子
+        }
+    }
+    if (weight[x] != -1) {
+        t += dfs(weight[x],x,1); // 遍历重儿子
+        heavy = weight[x];
+    }
+    
+//    _C(">>" << x << " " << keep)
+    t += count(x, f, 1);
+    heavy = 0;
+    ans[x] = t;
+
+    if (!keep) count(x, f, -1);
+    return t;
+}
+
+int main()
+{
+    sci(n);
+
+    int u,v;
+    rep(i,1,n-1) {
+        scii(u,v);
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+    rep(i,1,n) sci(color[i]);
+
+    getMaxSon(1, -1);
+    dfs(1, -1, 1);
+
+    int t;
+    __T {
+        sci(t);
+        printf("%d\n",ans[t]);
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 200010;
+
+vector<int> g[MAXN];
+
+int n;
+
+// -----统计重儿子（节点数最多的儿子）-----
+int weight[MAXN];
+
+int getMaxSon(int x,int f)
+{
+    int mx = -1;
+    int nmx = -1;
+    int t;
+    int ch = 1;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        t = getMaxSon(i,x);
+        if (t > mx) {
+            mx = t;
+            nmx = i;
+        }
+        ch += t;
+    }
+    weight[x] = nmx;
+    return ch;
+}
+// ----------------------------------
+
+
+int vis[MAXN];
+int ans[MAXN];
+int heavy;
+
+int count(int x,int f,int type) // type = 1统计，type = -1清空
+{
+    int t = 0;
+    
+    // ---------------在此修改计数方式---------------
+    if (vis[x - 1] && vis[x + 1]) t --;
+    else if (!vis[x - 1] && !vis[x + 1]) t ++;
+    // -------------------------------------------
+    
+    vis[x] += type;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        if (i != heavy) // 跳过重儿子
+            t += count(i,x,type);
+    }
+    return t;
+}
+
+int dfs(int x,int f,int keep) // keep 是否保留，调用直接(root,-1,1)
+{
+    
+    int t = 0;
+    for (auto i : g[x]) {
+        if (f == i) continue;
+        if (weight[x] != i) {
+            dfs(i,x,0); // 遍历轻儿子，不保留
+        }
+    }
+    if (weight[x] != -1) {
+        t += dfs(weight[x],x,1); // 遍历重儿子，保留
+        heavy = weight[x]; // 记录当前重儿子
+    }
+    
+    t += count(x, f, 1); // 计算答案
+    heavy = -1; // 清空重儿子记录
+    ans[x] = t; // 记录答案
+
+    if (!keep) count(x, f, -1); // 不保留直接清除vis
+    return t;
+}
+
+int main()
+{
+    int u,v;
+    int T = 1;
+    __T {
+        sci(n);
+        rep(i,1,n + 5) {
+            g[i].clear();
+            ans[i] = vis[i] = 0; // 注意清空
+        }
+        heavy = -1; // 注意清空
+        rep(i,1,n - 1) {
+            scii(u,v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+        getMaxSon(1, -1);
+        dfs(1, -1, 1);
+        printf("Case #%d:",T ++);
+        rep(i,1,n) printf(" %d",ans[i]);
+        puts("");
+    }
+    return 0;
+}
+*/
+
+
+/*
+// ***************************************************
+// *                                                 *
+// *     启发式树上合并：用于统计树上子树中特定节点的个数     *
+// *                                                 *
+// ***************************************************
+const int MAXN = 200010;
+
+vector<int> g[MAXN];
+
+int n;
+
+// -----统计重儿子（节点数最多的儿子）-----
+int weight[MAXN];
+
+int getMaxSon(int x,int f)
+{
+    int mx = -1;
+    int nmx = -1;
+    int t;
+    int ch = 1;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        t = getMaxSon(i,x);
+        if (t > mx) {
+            mx = t;
+            nmx = i;
+        }
+        ch += t;
+    }
+    weight[x] = nmx;
+    return ch;
+}
+// ----------------------------------
+
+
+int vis[MAXN];
+int ans[MAXN];
+int heavy;
+
+int count(int x,int f,int type) // type = 1统计，type = -1清空
+{
+    int t = 0;
+    
+    // ---------------在此修改计数方式---------------
+    if (vis[x - 1] && vis[x + 1]) t --;
+    else if (!vis[x - 1] && !vis[x + 1]) t ++;
+    // -------------------------------------------
+    
+    // -----根据题意改变vis什么，若是统计颜色的则vis[color[x]] += type-----
+    vis[x] += type;
+    // -------------------------------------------------------------
+    
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        if (i != heavy) // 跳过重儿子
+            t += count(i,x,type);
+    }
+    return t;
+}
+
+int dfs(int x,int f,int keep) // keep 是否保留，调用直接(root,-1,1)
+{
+    int t = 0;
+    for (auto i : g[x]) {
+        if (f == i) continue;
+        if (weight[x] != i) {
+            dfs(i,x,0); // 遍历轻儿子，不保留
+        }
+    }
+    if (weight[x] != -1) {
+        t += dfs(weight[x],x,1); // 遍历重儿子，保留
+        heavy = weight[x]; // 记录当前重儿子
+    }
+    
+    t += count(x, f, 1); // 计算答案
+    heavy = -1; // 清空重儿子记录
+    ans[x] = t; // 记录答案
+
+    if (!keep) count(x, f, -1); // 不保留直接清除vis
+    return t;
+}
+
+int main()
+{
+    int u,v;
+    int T = 1;
+    __T {
+        sci(n);
+        rep(i,1,n + 5) {
+            g[i].clear();
+            ans[i] = vis[i] = 0; // 注意清空
+        }
+        heavy = -1; // 注意清空
+        rep(i,1,n - 1) {
+            scii(u,v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+        getMaxSon(1, -1);
+        dfs(1, -1, 1);
+        printf("Case #%d:",T ++);
+        rep(i,1,n) printf(" %d",ans[i]);
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 500010;
+
+struct Edge {
+    int to;
+    ll w;
+    int nxt;
+} e[MAXN << 2];
+int g[MAXN]; // Please call init() to memset it to -1!
+int cnt = 0;
+
+void init(int n)
+{
+    cnt = 0;
+    memset(g, -1, sizeof(int) * n);
+}
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+int s,t,n,m;
+int dis[MAXN];
+int cur[MAXN]; // 替代g数组，记住上次dfs最后跑到的地方，优化，减少dfs的跑的次数
+
+int bfs()
+{
+    memset(dis, -1, sizeof(int) * (n + 5));
+
+    queue<int> q;
+    q.push(s);
+    dis[s] = 0;
+
+    int to,current,k;
+
+    while (!q.empty()) {
+        current = q.front();
+        q.pop();
+
+        for (int i = g[current];~i;i = e[i].nxt) {
+            to = e[i].to;
+            k = dis[current] + 1;
+            if (dis[to] == -1 && e[i].w > 0) { // 只有没有访问过的，且该通路可以走(w > 0)
+                dis[to] = k;
+                if (to == t) return 1;
+                q.push(to);
+            }
+        }
+    }
+
+    return 0;
+}
+
+ll dfs(int node,ll flow)
+{
+    if (node == t) return flow;
+    int to;
+    ll d;
+    for (int &i = cur[node];~i;i = e[i].nxt) { // 改变i的同时，cur[node]的值也会被改变
+        to = e[i].to;
+        if (dis[node] + 1 == dis[to] && e[i].w > 0) {
+            d = dfs(to,min(e[i].w,flow));
+            if (d > 0) {
+                e[i].w -= d;
+                e[i ^ 1].w += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+ll dinic()
+{
+    ll ans = 0;
+    ll d;
+    while (bfs()) {
+        rep(i,1,n) cur[i] = g[i];
+        while ((d = dfs(s,INT_INF)))
+            ans += d;
+    }
+    return ans;
+}
+
+// ***********************************************
+// *             二分图匹配 - 网络流算法             *
+// *   思路：建立超级源点到各个左部点的联系（权重为1），  *
+// * 建立右部点到超级汇点的联系，以及左右部分点之间的联系，*
+// *               最后直接最大流板子。              *
+// ***********************************************
+
+int main()
+{
+    // **注意：MAXN尽量开大点，不然很容易RE**
+    int nn,mm,e;
+    scanf("%d%d%d",&nn,&mm,&e);
+    init(nn + mm + 10);
+    int u,v;
+    // nn + mm + 1 源点
+    // nn + mm + 2 汇点
+    while (e --) {
+        scanf("%d%d",&u,&v);
+        add_edge(u, v + nn, 1); // 建立 左部点 到 右部点 的联系
+        add_edge(v + nn, u, 0);
+    }
+    rep(i,1,nn) {
+        add_edge(nn + mm + 1, i, 1); // 建立超级源点到各个左部点的联系
+        add_edge(i, nn + mm + 1, 0);
+    }
+    
+    rep(i,nn + 1,nn + mm) {
+        add_edge(i, nn + mm + 2, 1); // 建立 右部点 到超级汇点的联系
+        add_edge(nn + mm + 2, i, 0);
+    }
+    
+    n = nn + mm + 2; // 设置总点量
+    s = nn + mm + 1; // 设置起点
+    t = nn + mm + 2; // 设置终点
+    printf("%lld\n",dinic());
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 500010;
+
+struct Edge {
+    int to;
+    ll w;
+    int nxt;
+} e[MAXN << 1];
+int g[MAXN]; // Please call init() to memset it to -1!
+int cnt = 0;
+
+void init(int n)
+{
+    cnt = 0;
+    memset(g, -1, sizeof(int) * n);
+}
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+int s,t,n,m;
+int dis[MAXN];
+int cur[MAXN]; // 替代g数组，记住上次dfs最后跑到的地方，优化，减少dfs的跑的次数
+
+int bfs()
+{
+    memset(dis, -1, sizeof(int) * (n + 5));
+
+    queue<int> q;
+    q.push(s);
+    dis[s] = 0;
+
+    int to,current,k;
+
+    while (!q.empty()) {
+        current = q.front();
+        q.pop();
+
+        for (int i = g[current];~i;i = e[i].nxt) {
+            to = e[i].to;
+            k = dis[current] + 1;
+            if (dis[to] == -1 && e[i].w > 0) { // 只有没有访问过的，且该通路可以走(w > 0)
+                dis[to] = k;
+                if (to == t) return 1;
+                q.push(to);
+            }
+        }
+    }
+
+    return 0;
+}
+
+ll dfs(int node,ll flow)
+{
+    if (node == t) return flow;
+    int to;
+    ll d;
+    for (int &i = cur[node];~i;i = e[i].nxt) { // 改变i的同时，cur[node]的值也会被改变
+        to = e[i].to;
+        if (dis[node] + 1 == dis[to] && e[i].w > 0) {
+            d = dfs(to,min(e[i].w,flow));
+            if (d > 0) {
+                e[i].w -= d;
+                e[i ^ 1].w += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+ll dinic()
+{
+    ll ans = 0;
+    ll d;
+    while (bfs()) {
+        rep(i,1,n) cur[i] = g[i];
+        while ((d = dfs(s,INT_INF)))
+            ans += d;
+    }
+    return ans;
+}
+
+int main()
+{
+    int nn,m,k;
+    sciii(nn,m,k);
+    int tmp;
+    
+    s = 1;
+    t = 3;
+    int v;
+    init(nn + m + 10);
+    n = nn + m + 3;
+    rep(i,1,nn) {
+        sci(tmp);
+        while (tmp --) {
+            sci(v);
+            add_edge(i + 3, v + nn + 3, 1);
+            add_edge(v + nn + 3, i + 3, 0);
+        }
+        add_edge(1, i + 3, 1);
+        add_edge(i + 3, 1, 0);
+        
+        add_edge(2, i + 3, 1);
+        add_edge(i + 3, 2, 0);
+    }
+    
+    rep(i,1,m) {
+        add_edge(nn + i + 3, 3, 1);
+        add_edge(3, nn + i + 3, 0);
+    }
+    
+    add_edge(1, 2, k);
+    add_edge(2, 1, 0);
+    
+    
+    printf("%lld\n",dinic());
+    
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e6 + 10;
+
+int a[MAXN];
+
+int isP[MAXN];
+vector<int> p[MAXN];
+
+void sheive()
+{
+    isP[1] = 1;
+    rep(i,2,1000000) {
+        if (isP[i]) continue;
+        p[i].pb(i);
+        for (int j = i + i;j <= 1000000;j += i) {
+            p[j].pb(i);
+            isP[j] = 1;
+        }
+    }
+}
+
+ll last[MAXN];
+
+int main()
+{
+    sheive();
+    int n;
+    scanf("%d",&n);
+    rep(i,1,n) scanf("%d",a + i);
+    ll ans = 0;
+    rep(i,1,n) {
+        for (auto j : p[a[i]]) {
+            ans += (i - last[j]) * (n - i + 1);
+            last[j] = i;
+        }
+    }
+    printf("%lld\n",ans);
+    
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    ll i,j,k;
+} ans[500];
+
+int main()
+{
+    ll k,m,n,s;
+    int ok;
+    int a[500] = {0};
+    printf("%lu\n",time(NULL));
+    rep(x,0,200) {
+        ok = 0;
+        for (ll i = -5000;i <= 5000;i ++) {
+            for (ll j = -5000;j <= 5000;j ++) {
+                k = i*i*i + j*j*j;
+                m = x - k;
+                n = pow(m,1/3.0);
+                s = 0;
+                if (n * n * n == m) {
+                    s = n;
+                    ok = 1;
+                } else if ((n+1) * (n+1) * (n+1) == m) {
+                    s = n + 1;
+                    ok = 1;
+                } else if ((n-1) * (n-1) * (n-1) == m) {
+                    s = n - 1;
+                    ok = 1;
+                }
+                if (abs(s) > 5000) ok = 0;
+                if (ok) {
+                    ans[x] = {i,j,s};
+                    goto end;
+                }
+            }
+        }
+        end:
+        a[x] = ok;
+        printf("%d\n",x);
+    }
+    printf("int ok[] = {");
+    rep(i,0,200) printf("%d,",a[i]);
+    printf("};\n");
+    printf("int ans[][3]={");
+    rep(i,0,200) printf("{%lld,%lld,%lld},",ans[i].i,ans[i].j,ans[i].k);
+    printf("};\n");
+    printf("%lu\n",time(NULL));
+    return 0;
+}
+*/
+
+/*
+int ok[] = {1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,1,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,0,0,1,0,0,1,1,1,0,1,1,1,0,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,};
+int ans[][3]={{-5000,0,5000},{-5000,1,5000},{-4373,-486,4375},{-5,4,4},{0,0,0},{0,0,0},{-637,-205,644},{-169,44,168},{-5000,2,5000},{-216,-52,217},{-650,-353,683},{-695,-641,843},{-11,7,10},{0,0,0},{0,0,0},{-265,-262,332},{-4114,-588,4118},{-3331,2195,2977},{-1373,-1276,1671},{-95,47,91},{-2816,-741,2833},{-401,-287,445},{0,0,0},{0,0,0},{-10,8,8},{-2683,1839,2357},{-2107,237,2106},{-5000,3,5000},{-2268,-249,2269},{-233,-69,235},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{-1555,-244,1557},{-1120,-509,1154},{-3223,2358,2731},{-444,-84,445},{-27,16,25},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{-823,-307,837},{-7,-5,8},{-2369,1709,2025},{-758,-473,815},{-141,49,139},{-3950,-1247,3991},{0,0,0},{0,0,0},{-796,602,659},{0,0,0},{-2370,1518,2141},{-3885,-648,3891},{-3329,1837,3131},{-672,505,559},{-998,361,982},{0,0,0},{0,0,0},{-1201,-163,1202},{-966,668,845},{-2744,-1561,2903},{-161,102,146},{-5000,4,5000},{-929,403,903},{1,1,4},{0,0,0},{0,0,0},{-403,134,398},{-2359,824,2325},{-533,401,443},{-432,-104,434},{-335,-146,344},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{-2080,-829,2123},{-706,-196,711},{-1300,-706,1366},{-2368,-1719,2638},{-1317,847,1188},{-3707,1315,3651},{0,0,0},{0,0,0},{0,0,0},{-4126,-1972,4271},{-1390,-1282,1686},{-2514,1953,2036},{-1803,365,1798},{-3389,-2912,3992},{-4052,861,4039},{-248,-98,253},{0,0,0},{0,0,0},{-22,14,20},{-3168,-991,3200},{-2101,-1638,2391},{-893,-622,984},{-1797,-903,1870},{-2327,319,2325},{-239,118,229},{0,0,0},{0,0,0},{-7,-4,8},{-2689,-1165,2760},{-1309,947,1117},{-1165,-948,1345},{-2948,853,2924},{0,0,0},{-4793,-2312,4966},{0,0,0},{0,0,0},{0,0,0},{-12,8,11},{-1906,-757,1945},{-896,-555,962},{-4328,383,4327},{-3677,-1673,3789},{-2804,1219,2725},{0,0,0},{0,0,0},{-37,-16,38},{-1,0,5},{-5000,5,5000},{-2212,-419,2217},{-4034,-3881,4988},{-3989,-726,3997},{-1580,-1238,1801},{0,0,0},{0,0,0},{-1,2,5},{-399,167,389},{-3013,-1766,3203},{-1351,-629,1395},{-1116,816,946},{-758,-428,801},{-86,-77,103},{0,0,0},{0,0,0},{-139,104,116},{-7,-3,8},{0,0,0},{-2746,-2552,3342},{-8,-7,10},{-327,-263,376},{-2366,1528,2131},{0,0,0},{0,0,0},{-367,260,317},{-463,215,447},{-805,486,741},{-3736,-695,3744},{-2135,-516,2145},{-3693,-1049,3721},{0,0,0},{0,0,0},{0,0,0},{-1534,383,1526},{-3874,-1654,3972},{-4767,-2476,4980},{-4125,-1417,4180},{-3423,-2943,4033},{-66,-59,79},{0,0,0},{0,0,0},{0,0,0},{-802,-574,890},{-1354,-1012,1521},{-3834,-2149,4047},{-1328,891,1178},{0,0,0},{0,0,0},{-335,-170,349},{0,0,0},{0,0,0},{-1168,-160,1169},{-13,-10,15},{-2839,1503,2691},{0,0,0},{-4874,974,4861},{-90,-29,91},{-4889,976,4876},{0,0,0},{0,0,0},{-4,5,5},{-1885,-1092,2000},{-1639,318,1635},{-1702,-1403,1974},{-4812,-593,4815},{-377,-215,399},{-20,16,16},{0,0,0},{0,0,0},{0,0,0},{-1057,-579,1112},{-2867,-1606,3026},{-3752,-1347,3809},{-2208,508,2199},{-2318,-638,2334},};
+
+int main()
+{
+    int x;
+    __T {
+        scanf("%d",&x);
+        if (ok[x]) printf("%d %d %d\n",ans[x][0],ans[x][1],ans[x][2]);
+        else puts("impossible");
+    }
+}
+*/
+
+/*
+int dp[1010][1010];
+
+int main()
+{
+    int n,v;
+    int val[1010];
+    int vol[1010];
+    __T {
+        scanf("%d%d",&n,&v);
+        rep(i,1,n) scanf("%d",val + i);
+        rep(i,1,n) scanf("%d",vol + i);
+        rep(j,0,v) dp[0][j] = 0;
+        rep(i,1,n) {
+            rep(j,0,v) {
+                if (vol[i] <= j) dp[i][j] = max(dp[i - 1][j - vol[i]] + val[i],dp[i - 1][j]);
+                else dp[i][j] = dp[i - 1][j];
+            }
+        }
+        printf("%d\n",dp[n][v]);
+    }
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+ll a[MAXN];
+
+int n;
+
+int check(ll t) {
+    ll x = 0;
+    t --;
+    rep(i,1,n) {
+        if (a[i] < t) x += t - a[i];
+    }
+    return x <= t;
+}
+
+
+int main()
+{
+    
+    ll l,r,m;
+    int T = 1;
+    __T {
+        scanf("%d",&n);
+        rep(i,1,n) {
+            scanf("%lld",a + i);
+        }
+        l = 1;
+        r = 1e10;
+        while (l < r) {
+            m = (l + r) >> 1;
+            if (check(m)) l = m + 1;
+            else r = m;
+        }
+        printf("Case #%d: %lld\n",T ++,l - 1);
+    }
+    return 0;
+}
+*/
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int main()
+{
+    ll x;
+    int T = 1;
+    ll n;
+    ll ans;
+    __T {
+        scanf("%lld",&x);
+        printf("Case #%d: ",T ++);
+        if (x == 6 || x < 5) printf("-1\n");
+        else {
+            if (x & 1) puts("1");
+            else {
+                if (x % 4 == 0) printf("2\n");
+                else {
+                    n = x / 3;
+                    ans = 4;
+                    repl(i,n-2,n+2) {
+                        repl(j,n-2,n+2) {
+                            repl(k,n-2,n+2) {
+                                if (i + j + k == x && i > 1 && j > 1 && k > 1 && gcd(i,j) == 1 && gcd(i,k) == 1 && gcd(j,k) == 1) {
+                                    ans = min(ans,max(i,max(j,k)) - min(i,min(j,k)));
+                                }
+                            }
+                        }
+                    }
+                    printf("%lld\n",ans);
+                }
+            }
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+struct Node {
+    int l,r;
+    ll mx;
+    int lazy;
+    ll lzn;
+} tree[MAXN << 2];
+ll a[MAXN];
+
+void push_up(int i)
+{
+    tree[i].mx = max(tree[i << 1].mx,tree[i << 1 | 1].mx);
+}
+
+void push_down(int i) //下推标记
+{
+    if (tree[i].lazy) {
+        tree[i << 1].mx = max(tree[i].lzn,tree[i << 1].mx);
+        tree[i << 1 | 1].mx = max(tree[i].lzn,tree[i << 1 | 1].mx);
+
+        tree[i << 1].lzn = max(tree[i].lzn,tree[i << 1].lzn);
+        tree[i << 1 | 1].lzn = max(tree[i].lzn,tree[i << 1 | 1].lzn);
+
+        tree[i << 1].lazy = tree[i].lazy;
+        tree[i << 1 | 1].lazy = tree[i].lazy;
+
+        tree[i].lazy = 0;
+        tree[i].lzn = 0;
+    }
+}
+
+// i - 二叉树节点编号，调用时取1
+// l，r 区间左右端下标，调用的时候取最大范围即可 build(1,n,1);
+void build(int l,int r,int i)
+{
+    tree[i].l = l;
+    tree[i].r = r;
+    tree[i].lazy = 0;
+    tree[i].lzn = 0;
+    if (l == r) {
+        tree[i].mx = a[l];
+        return;
+    }
+    int m = (l + r) >> 1;
+    build(l,m,i << 1);
+    build(m + 1,r,i << 1 | 1);
+    push_up(i);
+}
+
+
+void modify(int l,int r,ll x,int i) // 将区间[l,r]直接变成x，调用(l,r,x,1)
+{
+    if (l <= tree[i].l && r >= tree[i].r) {
+        tree[i].mx = max(x,tree[i].mx);
+        
+        tree[i].lzn = max(tree[i].lzn,x);
+        tree[i].lazy = 1;
+        return;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    if (l <= m) modify(l,r,x,i << 1);
+    if (r > m) modify(l,r,x,i << 1 | 1);
+    push_up(i);
+}
+
+ll query(int l,int r,int i) //查询
+{
+    if (l <= tree[i].l && r >= tree[i].r){
+        return tree[i].mx;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    ll mx = 0;
+    if (l <= m) {
+         mx = max(mx,query(l,r,i << 1));
+    }
+    if (r > m) {
+        mx = max(mx,query(l,r,i << 1 | 1));
+    }
+    return mx;
+}
+
+struct pr {
+    pr(int x,int t):x(x),t(t){}
+    pr(){}
+    int x,t;
+    bool operator<(const pr &o) const {
+        if (t == o.t) return x > o.x;
+        return t < o.t;
+    }
+    bool operator!=(const pr &o) const {
+        return t != o.t;
+    }
+} p[MAXN],pp[MAXN];
+
+int main()
+{
+    int n,m;
+    int u,v;
+    int T = 1;
+    int cnt;
+    __T {
+        read(n);
+        read(m);
+        build(1, m, 1);
+        rep(i,1,n) {
+            read(v);
+            read(u);
+            p[i] = pr(u,v);
+        }
+        cnt = 0;
+        sort(p + 1,p + 1 + n);
+        pp[++ cnt] = p[1];
+        rep(i,2,n) {
+            if (p[i] != p[i - 1]) pp[++ cnt] = p[i];
+        }
+        
+        rep(i,1,cnt) {
+            u = pp[i].x;
+            v = pp[i].t;
+            for (int j = 1;j <= m;j += 2 * v) {
+                modify(j, min(m,j + v - 1), u, 1);
+            }
+        }
+        
+        
+        printf("Case #%d:",T ++);
+        rep(i,1,m) {
+            printf(" %lld",query(i, i, 1));
+        }
+        printf("\n");
+    }
+    
+    re0;
+}
+*/
+
+
+/*
+const int MAXN = 1e6 + 10;
+
+int is_prime[MAXN];
+int is_prime_small[MAXN];
+
+void segment_sieve(ll a,ll b)
+{
+    for (ll i = 0;i * i <= b;i ++) is_prime_small[i] = 1;
+    for (ll i = 0;i <= b - a;i ++) is_prime[i] = 1;
+    for (ll i = 2;i * i <= b;i ++)
+    {
+        if (is_prime_small[i])
+        {
+            for (ll j = 2 * i;j * j <= b;j += i) is_prime_small[j] = 0;
+            for (ll j = max(2LL,(a + i - 1) / i) * i; j <= b;j += i) is_prime[j - a] = 0;
+        }
+    }
+}
+
+
+int main()
+{
+    int l,r;
+    int cnt;
+    __T {
+        scanf("%d%d",&l,&r);
+        if (r - l >= 100) puts("Yes");
+        else {
+            segment_sieve(l, r);
+            cnt = 0;
+            rep(i,0,r - l) if (is_prime[i]) cnt ++;
+            if (cnt * 3 < r - l + 1) puts("Yes");
+            else puts("No");
+        }
+    }
+}
+*/
+
+/*
+int main()
+{
+    ll l,r;
+    ll s;
+    ll kl,kr;
+    ll ans;
+    ll m;
+    ll sub[100],pre[100];
+    ll sub_cnt,pre_cnt;
+    __T {
+        scanf("%lld%lld%lld",&l,&r,&s);
+        kl = l;
+        kr = r;
+        for (ll i = l;;i ++) {
+            kl = i;
+            if ((i & 1) == 0 && ((i >> 1) & 1) == 0) break;
+        }
+        for (ll i = r;;i --) {
+            kr = i;
+            if ((i & 1) == 1 && ((i >> 1) & 1) == 1) break;
+        }
+//        _C(kl << " " << kr)
+        if (kr > kl) {
+            ans = 0;
+            pre_cnt = sub_cnt = 0;
+            pre[0] = sub[0] = 0;
+            prel(i,kl-1,l) {
+                sub[sub_cnt + 1] = i ^ sub[sub_cnt];
+                sub_cnt ++;
+            }
+            
+            repl(i,kr+1,r) {
+                pre[pre_cnt + 1] = i ^ pre[pre_cnt];
+                pre_cnt ++;
+            }
+            
+            rep(i,0,sub_cnt) {
+                rep(j,0,pre_cnt) {
+                    if ((sub[i] ^ pre[j]) <= s) {
+                        ans = max(ans,(ll)j + i);
+                    }
+                }
+            }
+            
+//            _C(">>" << ans)
+            
+            ans += kr - kl + 1;
+        } else {
+            ans = -1;
+            repl(i,l,r) {
+                repl(j,i,r) {
+                    m = 0;
+                    repl(k,i,j) {
+                        m ^= k;
+                    }
+                    if (m <= s) ans = max(ans,j-i+1);
+                }
+            }
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    ll first;
+    ll second;
+    int num;
+} x[110];
+
+int cmp(const Node &a,const Node &b)
+{
+    if (a.first == b.first) return a.second > b.second;
+    return a.first > b.first;
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    ll s[110][110];
+    rep(i,1,n) {
+        rep(j,1,n) scanf("%lld",&s[i][j]);
+        x[i] = {0ll,0ll,i};
+    }
+    
+    rep(i,1,n) {
+        rep(j,1,n) {
+            if (i == j) continue;
+            if (s[i][j] > s[j][i]) x[i].first += 3;
+            else if (s[i][j] == s[j][i]) x[i].first += 1;
+            x[i].second += s[i][j] - s[j][i];
+        }
+    }
+    sort(x+1,x+1+n,cmp);
+    
+//    rep(i,1,n) {
+//        printf("%d ",x[i].num);
+//    }
+//    puts("");
+//    rep(i,1,n) {
+//        printf("%lld ",x[i].first);
+//    }
+//    puts("");
+//    rep(i,1,n) {
+//        printf("%lld ",x[i].second);
+//    }
+    
+    if (n == 1) printf("1\n");
+    else {
+        if (x[1].first != x[2].first) printf("%d\n",x[1].num);
+        else {
+            if (x[1].second != x[2].second) printf("%d\n",x[1].num);
+            else puts("play-offs");
+        }
+    }
+    
+    return 0;
+}
+*/
+
+/*
+const ll t = 998857459;
+ll kk[100010];
+ll x[100010];
+ll num[100010];
+
+ll ans[100010];
+
+int main()
+{
+    kk[1] = 1;
+    int n,m;
+    scanf("%d%d",&n,&m);
+    rep(i,2,2802) {
+        kk[i] = kk[i-1] * i;
+        kk[i] %= t;
+    }
+    
+    int a;
+    int cnt = 0;
+    x[0] = num[0] = 0;
+    int k = -1;
+    rep(i,1,n) {
+        scanf("%d",&a);
+        if (a >= 2803) {
+            if (k != -1) k ++;
+        } else {
+            if (k == -1) k = 1;
+            cnt ++;
+            x[cnt] = kk[a] + x[cnt - 1];
+            num[cnt] = k + num[cnt - 1];
+            k = 1;
+        }
+    }
+//    rep(i,1,cnt) {
+//        printf("%lld ",x[i]);
+//    }
+//    puts("");
+//
+//    rep(i,1,cnt) {
+//        printf("%lld ",num[i]);
+//    }
+//    puts("");
+    
+    rep(i,1,cnt) {
+        rep(j,i,cnt) {
+            ans[num[j]-num[i]+1] = max(ans[num[j]-num[i]+1],(x[j] - x[i-1])%t);
+        }
+    }
+    rep(i,2,n) ans[i] = max(ans[i-1],ans[i]);
+    
+//    rep(i,1,n) printf("%lld ",ans[i]);
+//    puts("");
+    
+    int idx;
+    while (m --) {
+        sci(a);
+        idx = (int) (lower_bound(ans + 1, ans + 1 + n, a) - ans);
+        if (idx == n + 1) puts("-1");
+        else printf("%d\n",idx);
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 5e5 + 10;
+
+int find_set[MAXN];
+int depth[MAXN];
+
+int find(int a)
+{
+    if (find_set[a] == a) return a;
+    return find_set[a] = find(find_set[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (depth[x] >= depth[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        find_set[y] = x; // 改变b节点的根的根为a的根
+        if (depth[x] == depth[y]) { // 俩根深度一样
+            if (x != y) depth[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else find_set[x] = y;
+}
+
+int vis[500010];
+
+void init(int n)
+{
+    rep(i,0,n) {
+        find_set[i] = i;  // 每个种类初始状态只有自己一个点
+        depth[i] = 1;  // 初始化秩
+    }
+}
+
+struct Node {
+    int u,v;
+    ll w;
+    bool operator<(const Node &o) const {
+        return w > o.w;
+    }
+} e[500010];
+
+int main()
+{
+    int n,m,k;
+    int u,v,w,c;
+    ll ans;
+    int cnt;
+    int ok;
+    int last;
+    int t;
+    __T {
+        scanf("%d %d %d",&n,&m,&k);
+        init(n + 10);
+        cnt = ans = 0;
+        rep(i,1,m) {
+            vis[i] = 0;
+            scii(u,v);
+            scii(w,c);
+            if (c == 0) {
+                ans += w;
+                bind(u,v);
+            } else {
+                e[++ cnt] = {u,v,w};
+            }
+        }
+        sort(e + 1, e + 1 + cnt);
+        rep(i,1,cnt) {
+            if (find(e[i].u) == find(e[i].v)) continue;
+            vis[i] = 1;
+            bind(e[i].u,e[i].v);
+            ans += e[i].w;
+            k --;
+            if (k <= 0) break;
+        }
+        ok = 1;
+        last = find(1);
+        rep(i,2,n) {
+            t = find(i);
+            if (t != last) {
+                ok = 0;
+                break;
+            }
+            last = t;
+        }
+        if (!ok) puts("-1");
+        else {
+            rep(i,1,cnt) {
+                if (vis[i]) continue;
+                ans += e[i].w;
+                k --;
+                if (k <= 0) break;
+            }
+            printf("%lld\n",ans);
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+const int mod = 1e9+7;
+
+int main()
+{
+    string str;
+    ll a[100010];
+    int s[100010];
+    int cnt;
+    ll ans;
+    int k;
+    __T {
+        cin >> str;
+        cnt = 0;
+        for (int i = (int) str.size()-1;i >= 0;i --) {
+            s[++ cnt] = str[i] ^ 48;
+            a[cnt] = 1;
+        }
+        a[0] = 1;
+        ans = 0;
+        
+        rep(i,1,cnt) {
+            if (s[i]) {
+                ans += a[i - 1];
+                ans %= mod;
+                k = 3;
+            } else {
+                k = 2;
+            }
+            a[i] = a[i - 1] * k;
+            a[i] %= mod;
+        }
+        ans ++;
+        ans %= mod;
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+char str[10000010];
+
+int main()
+{
+    const int m1 = 137;
+    const int m2 = 73;
+    int a1,a2;
+    int T = 1;
+    while (~scanf("%s",str)) {
+        a1 = a2 = 0;
+        for (int i = 0;str[i];i ++) {
+            a1 *= 10;
+            a1 %= m1;
+            
+            a2 *= 10;
+            a2 %= m2;
+            
+            a1 += str[i] ^ 48;
+            a2 += str[i] ^ 48;
+            
+            a1 %= m1;
+            a2 %= m2;
+        }
+        printf("Case #%d: ",T++);
+        if (a1 == 0 || a2 == 0) puts("YES");
+        else puts("NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    cio
+    string str;
+    int T;
+    cin >> T;
+    int n;
+    rep(i,1,T) {
+        int c['z' + 1] = {0};
+        cin >> str;
+        for (int i = 0;str[i];i ++) {
+            c[str[i]] ++;
+        }
+        n = 0;
+        rep(i,0,'z') if (c[i]) n ++;
+        printf("Case #%d: %d\n",i,n);
+    }
+    reutrn 0;
+}
+*/
+
+/*
+const int MAXN = 1e5+10;
+
+int p[MAXN];
+int h[MAXN];
+int s[MAXN];
+int n;
+
+void pls(int l,int r,int k)
+{
+    p[l] += k;
+    p[r + 1] -= k;
+}
+
+void init(int n)
+{
+    rep(i,0,n) {
+        p[i]=0;
+    }
+}
+
+
+int main()
+{
+    int n,m,k;
+    
+    int a,b;
+    int last;
+    int idx;
+    int ans;
+    int T = 1;
+    while (~scanf("%d%d%d",&n,&m,&k)) {
+        rep(i,1,n) {
+            scanf("%d",h + i);
+        }
+        init(n + 5);
+        sort(h + 1,h + 1 + n);
+        last = 0;
+        rep(i,1,n) if (h[i] <= 1) last = i;
+        ans = 0;
+        while (m --) {
+            scanf("%d%d",&a,&b);
+            idx = lower_bound(h+1,h+1+n,a) - h;
+            if (idx == n + 1 || h[idx] > a) idx --;
+            pls(last+1,idx,1);
+            idx = lower_bound(h+1,h+1+n,b) - h;
+            if (idx == n + 1 || h[idx] > b) idx --;
+            last = idx;
+        }
+        s[0] = 0;
+        rep(i,1,n) {
+            s[i] = s[i - 1] + p[i];
+            if (s[i] >= k) ans ++;
+        }
+        printf("Case %d: %d\n",T ++,ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,w,s;
+    int vis[100];
+    int cnt;
+    int i,j;
+    while (~scanf("%d%d%d",&n,&w,&s)) {
+        memset(vis,0,sizeof vis);
+        i = (w-2+n) % n;
+        j = 0;
+        cnt = 0;
+        while (cnt < n) {
+            i ++;
+            i %= n;
+            if (vis[i]) continue;
+            j ++;
+
+            if (j == s) {
+                vis[i] = 1;
+                printf("%d\n",i + 1);
+                cnt ++;
+                j = 0;
+            }
+
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    Node(){}
+    Node(const char a[],int b):x(b){
+        strcpy(str, a);
+    }
+    char str[20];
+    int x;
+};
+
+int main()
+{
+    int n;
+    char k[20];
+    int x,y;
+    int m;
+    sci(n);
+    map<int,Node> mp;
+    while (n --) {
+        scanf("%s %d %d",k,&x,&y);
+        mp[x] = Node(k,y);
+    }
+    scanf("%d",&m);
+    while (m --) {
+        sci(x);
+        printf("%s %d\n",mp[x].str,mp[x].x);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int j,k = 0;
+    while (cin >> str)
+    {
+        j = 0;
+        for (int i = 0;str[i];i ++)
+        {
+            if (str[i] != str[j])
+            {
+                j = 0;
+                k = i + 1;
+            } else {
+                if (j < k - 1) j ++;
+                else j = 0;
+            }
+        }
+        if (j != 0) k = (int) str.size();
+        printf("%d\n",k);
+    }
+     
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    int type; // 0 - num,1 - op
+    char c;
+    ll num;
+};
+
+int priority[130];
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans;
+        a = a * a;
+        b >>= 1;
+    }
+    return ans;
+}
+
+void getPost(string &str,vector<Node> &post) {
+    post.clear();
+    stack<char> op_stk;
+    ll num = 0;
+    int has_num = 0;
+    
+    for (int i = 0;str[i];i ++) {
+        if (str[i] >= '0' && str[i] <= '9') {
+            num = num * 10 + (str[i] ^ 48);
+            has_num = 1;
+        } else {
+            if (has_num) post.push_back({0,0,num});
+            has_num = num = 0;
+            if (str[i] != ')') {
+                if (str[i] != '(') while (!op_stk.empty() && priority[op_stk.top()] >= priority[str[i]]) {
+                    post.push_back({1,op_stk.top(),0});
+                    op_stk.pop();
+                }
+                op_stk.push(str[i]);
+            } else {
+                while (op_stk.top() != '(') {
+                    post.push_back({1,op_stk.top(),0});
+                    op_stk.pop();
+                }
+                op_stk.pop();
+            }
+        }
+    }
+    if (has_num) post.push_back({0,0,num});
+    while (!op_stk.empty()) {
+        post.push_back({1,op_stk.top(),0});
+        op_stk.pop();
+    }
+}
+
+ll getAns(vector<Node> &post) {
+    ll ans = 0;
+    stack<ll> num_stk;
+    
+    for (auto i : post) {
+        if (!i.type) num_stk.push(i.num);
+        else {
+            switch (i.c) {
+                case '+':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans += num_stk.top();
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '-':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans = num_stk.top() - ans;
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '*':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans *= num_stk.top();
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '/':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans = num_stk.top() / ans;
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '^':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans = quickpow(num_stk.top(),ans);
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return num_stk.top();
+}
+
+int main() {
+    
+    
+    priority['('] = 1;
+    priority['^'] = 4;
+    priority['*'] = priority['/'] = 3;
+    priority['+'] = priority['-'] = 2;
+    
+    string str;
+    cin >> str;
+    vector<Node> post;
+    
+    getPost(str,post);
+    printf("%lld ",getAns(post));
+    
+    priority['*'] = priority['/'] = 2;
+    priority['+'] = priority['-'] = 3;
+    
+    getPost(str,post);
+    printf("%lld\n",getAns(post));
+}
+*/
+
+
+/*
+int main()
+{
+    ll n;
+    scanf("%lld",&n);
+    ll s = -1;
+    ll l = 0;
+    ll lm = 0,sm =-1;
+    ll nn = n;
+    ll ii;
+    for (ll i = 2;i * i <= n;i ++) {
+        nn = n;
+        if (nn % i == 0) {
+            ii = i;
+            s = i;
+            l = 0;
+            while (nn % ii == 0) {
+                l ++;
+                nn /= ii;
+                ii ++;
+            }
+            if (l > lm) {
+                lm = l;
+                sm = s;
+            }
+        }
+        
+    }
+    
+    if (lm == 0) printf("1\n%lld\n",n);
+    else {
+        printf("%lld\n",lm);
+        rep(i,1,lm) {
+            if (i != 1) printf("*");
+            printf("%lld",sm ++);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string x[10] = {"ling","yi","er","san","si","wu","liu","qi","ba","jiu"};
+    string all[150];
+    all['-'] = "fu";
+    rep(i,0,9) all[i + '0'] = x[i];
+    string str;
+    cin >> str;
+    for (int i = 0;str[i];i ++) {
+        if (i != 0) printf(" ");
+        cout << all[str[i]];
+    }
+    puts("");
+}
+*/
+
+/*
+int main()
+{
+    int a,b;
+    scanf("%d%d",&a,&b);
+    int j = 0;
+    ll ans = 0;
+    rep(i,a,b) {
+        ans += i;
+        if (j == 5) {
+            printf("\n");
+            j = 0;
+        }
+        printf("%5d",i);
+        j ++;
+    }
+    printf("\nSum = %lld\n",ans);
+}
+*/
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    ll son[110],mot[110];
+    ll lcm = 1;
+    rep(i,1,n) {
+        scanf("%lld/%lld",son + i,mot + i);
+        lcm = lcm / gcd(lcm,mot[i]) * mot[i];
+    }
+    ll sum = 0;
+    rep(i,1,n) {
+        sum += son[i] * (lcm / mot[i]);
+    }
+    int f = sum < 0;
+    sum = abs(sum);
+    ll z = sum / lcm;
+    sum -= z * lcm;
+    ll g = gcd(sum,lcm);
+    sum /= g;
+    lcm /= g;
+    int p = 0;
+    int k = 1;
+    if (f) printf("-");
+    if (z != 0) {
+        printf("%lld",z);
+        p = 1;
+        k = 0;
+    }
+    if (sum != 0) {
+        if (!k) printf(" ");
+        printf("%lld/%lld",sum,lcm);
+        p = 1;
+    }
+    if (!p) printf("0");
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    set<char> bb;
+    string a,b;
+    getline(cin, a);
+    getline(cin, b);
+    for (int i = 0;b[i];i ++) bb.insert(b[i]);
+    for (int i = 0;a[i];i ++) {
+        if (bb.find(a[i]) != bb.end()) continue;
+        printf("%c",a[i]);
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll a[20];
+    a[1] = 1;
+    rep(i,2,10) a[i] = a[i - 1] * i;
+    int n;
+    scanf("%d",&n);
+    ll ans = 0;
+    rep(i,1,n) ans += a[i];
+    printf("%lld\n",ans);
+}
+*/
+
+/*
+int mp[20][20];
+int mmp[20][20];
+int op[20];
+int ans[20][20];
+int times = -1;
+
+int n,m;
+
+int dx[] = {1,-1,0,0,0};
+int dy[] = {0,0,-1,1,0};
+
+int tmp[20][20];
+
+void go() {
+    int t = 0;
+    
+    rep(i,1,n) {
+        rep(j,1,m) {
+            mmp[i][j] = mp[i][j];
+        }
+    }
+    
+    int ii,jj;
+    rep(i,1,n) {
+        rep(j,1,m) {
+            tmp[i][j] = op[j];
+            if (op[j]) {
+                t ++;
+                rep(k,0,4) {
+                    ii = i + dx[k];
+                    jj = j + dy[k];
+                    if (ii >= 1 && ii <= n && jj >= 1 && jj <= m) {
+                        mmp[ii][jj] = !mmp[ii][jj];
+                    }
+                }
+            }
+        }
+        rep(j,1,m) op[j] = mmp[i][j];
+    }
+    
+    rep(i,1,m) if (mmp[n][i]) return;
+    
+    if (times == -1 || t < times) {
+        times = t;
+        rep(i,1,n) {
+            rep(j,1,m) {
+                ans[i][j] = tmp[i][j];
+            }
+        }
+    }
+}
+
+
+int main()
+{
+    scanf("%d%d",&n,&m);
+    rep(i,1,n) {
+        rep(j,1,m) {
+            scanf("%d",&mp[i][j]);
+        }
+    }
+    int x = 1 << m;
+    int xx;
+    REP(i,0,x) {
+        xx = i;
+        rep(i,1,m) {
+            op[i] = xx & 1;
+            xx >>= 1;
+        }
+        go();
+    }
+    
+    if (times == -1) puts("IMPOSSIBLE");
+    else {
+        rep(i,1,n) {
+            rep(j,1,m) {
+                if (j != 1) printf(" ");
+                printf("%d",ans[i][j]);
+            }
+            puts("");
+        }
+    }
+    return 0;
+}
+*/
+
+///????????
+/// https://vjudge.net/problem/POJ-1426
+/*
+int mod;
+ull ans;
+void dfs(ull n,int dps) {
+    if (ans != 0) return;
+    if (n % mod == 0) {
+        ans = n;
+        return;
+    }
+    if (dps == 19) reutrn;
+    dfs(n * 10,dps + 1);
+    dfs(n * 10 + 1,dps + 1);
+}
+
+int main() {
+    while (~scanf("%d",&mod) && mod) {
+        ans = 0;
+        dfs(1,0);
+        printf("%llu\n",ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    string a,b,str;
+    getline(cin,str);
+    int ok = 0;
+    for (int i = 0;str[i];i ++) {
+        if (!ok && str[i] == ' ') {
+            ok = 1;
+            continue;
+        }
+        if (!ok) a += str[i];
+        else b += str[i];
+    }
+    int num1 = 0,num2 = 0;
+    int has1 = 1,has2 = 1;
+    for (int i = 0;a[i];i ++) {
+        if (!isdigit(a[i])) {
+            has1 = 0;
+            break;
+        }
+        num1 = num1 * 10 + (a[i] ^ 48);
+    }
+    
+    for (int i = 0;b[i];i ++) {
+        if (!isdigit(b[i])) {
+            has2 = 0;
+            break;
+        }
+        num2 = num2 * 10 + (b[i] ^ 48);
+    }
+    
+    if (num1 < 1 || num1 > 1000) has1 = 0;
+    if (num2 < 1 || num2 > 1000) has2 = 0;
+    
+    if (has1) printf("%d",num1);
+    else printf("?");
+    printf(" + ");
+    if (has2) printf("%d",num2);
+    else printf("?");
+    printf(" = ");
+    if (has1 && has2) printf("%d\n",num1 + num2);
+    else printf("?\n");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int aa,bb;
+    int n;
+    scanf("%d%d%d",&aa,&bb,&n);
+    int a,b,c,d;
+    int a1,a2;
+    int ok = 1;
+    while (n --) {
+        scii(a,b);
+        scii(c,d);
+        a1 = 0;
+        a2 = 0;
+        if (b == a + c) a1 = 1;
+        if (d == a + c) a2 = 1;
+        if (a1 && a2) continue;
+        if (!a1 && !a2) continue;
+        if (a1) aa --;
+        if (a2) bb --;
+        if (aa == 0 || bb == 0) {
+            if (ok) {
+                if (aa == 0) {
+                    puts("A");
+                    printf("%d\n",bb);
+                } else {
+                    puts("B");
+                    printf("%d\n",aa);
+                }
+                ok = 0;
+            }
+        }
+    }
+    
+    
+    return 0;
+}
+*/
+
+/*
+struct Node1 {
+    int cur;
+    int to;
+    int len;
+    int time;
+    bool operator<(const Node1 &o) const {
+        return time > o.time;
+    }
+};
+
+struct Node2 {
+    int cur;
+    int to;
+    int len;
+    int time;
+    bool operator<(const Node2 &o) const {
+        return len > o.len;
+    }
+};
+
+vector<Node1> g1[510];
+vector<Node2> g2[510];
+
+int dis[510];
+int num[510];
+int p[510];
+
+void dij1(int s) {
+    mem(dis,-1);
+    mem(num,-1);
+    priority_queue<Node1> q;
+    q.push({-1,s,0,dis[s] = 0});
+    int cost;
+    Node1 top;
+    int n,to;
+    while (!q.empty()) {
+        top = q.top();
+        q.pop();
+        n = top.to;
+
+        if (dis[n] != -1 && dis[n] < top.time) continue;
+        if (dis[n] == top.time) {
+            if (num[n] == -1 || top.len < num[n]) {
+                num[n] = top.len;
+                p[n] = top.cur;
+            }
+            
+        }
+
+        for (auto i : g1[n]) {
+            to = i.to;
+            cost = dis[n] + i.time;
+            if (dis[to] == -1 || dis[to] >= cost) {
+                q.push({n,i.to,top.len + i.len,dis[to] = cost});
+            }
+        }
+    }
+}
+
+void dij2(int s) {
+    mem(dis,-1);
+    mem(num,-1);
+    priority_queue<Node2> q;
+    q.push({-1,s,dis[s] = 0,0});
+    int cost;
+    Node2 top;
+    int n,to;
+    while (!q.empty()) {
+        top = q.top();
+        q.pop();
+        n = top.to;
+
+        if (dis[n] != -1 && dis[n] < top.len) continue;
+        if (dis[n] == top.len) {
+            if (num[n] == -1 || top.time < num[n]) {
+                num[n] = top.time;
+                p[n] = top.cur;
+            }
+            
+        }
+
+        for (auto i : g1[n]) {
+            to = i.to;
+            cost = dis[n] + i.len;
+            if (dis[to] == -1 || dis[to] >= cost) {
+                q.push({n,i.to,dis[to] = cost,top.time + 1});
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n,m;
+    scii(n,m);
+    int u,v,type,l,t;
+    while (m --) {
+        scii(u,v);
+        sci(type);
+        scii(l,t);
+        g1[u].push_back({0,v,l,t});
+        g2[u].push_back({0,v,l,t});
+        if (!type) {
+            g1[v].push_back({0,u,l,t});
+            g2[v].push_back({0,u,l,t});
+        }
+    }
+
+    int s;
+    scii(s,t);
+    dij1(s);
+    printf("Time = %d",dis[t]);
+    vector<int> a1,a2;
+
+    a1.push_back(t);
+    int x = p[t];
+    while (x != s) {
+        a1.push_back(x);
+        x = p[x];
+    }
+    a1.push_back(s);
+
+    dij2(s);
+    a2.push_back(t);
+    x = p[t];
+    while (x != s) {
+        a2.push_back(x);
+        x = p[x];
+    }
+    a2.push_back(s);
+    int f = 1;
+    if (a1 == a2) {
+        printf("; Distance = %d: ",dis[t]);
+    } else {
+        printf(": ");
+        for (vector<int>::reverse_iterator it = a1.rbegin();it != a1.rend();it ++) {
+            if (f) f = 0;
+            else printf(" => ");
+            printf("%d",*it);
+        }
+        printf("\nDistance = %d: ",dis[t]);
+    }
+    f = 1;
+    for (vector<int>::reverse_iterator it = a2.rbegin();it != a2.rend();it ++) {
+        if (f) f = 0;
+        else printf(" => ");
+        printf("%d",*it);
+    }
+    return 0;
+}
+*/
+
+/*
+vector<int> g[510];
+int vis[510];
+int vv[510];
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    while (m --) {
+        scanf("%d%d",&u,&v);
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+    int k;
+    sci(k);
+    queue<int> q;
+    int top;
+    int ok;
+    int nn = n;
+    int has;
+    while (k --) {
+        scanf("%d",&u);
+        q.push(u);
+        while (!q.empty()) {
+            top = q.front();
+            q.pop();
+            if (vis[top] || vv[top]) continue;
+            vis[top] = 1;
+            for (auto i : g[top]) {
+                q.push(i);
+            }
+        }
+        ok = 0;
+        has = 0;
+        for (auto i : g[u]) {
+            if (!vv[i]) {
+                has = 1;
+                q.push(i);
+                break;
+            }
+        }
+        if (has) {
+            vis[u] = 2;
+            while (!q.empty()) {
+                top = q.front();
+                q.pop();
+                if (vis[top] == 2 || vv[top]) continue;
+                vis[top] = 2;
+                for (auto i : g[top]) q.push(i);
+            }
+            rep(i,0,n-1) if (vis[i] == 1) {
+                ok = 1;
+                break;
+            }
+        }
+        vv[u] = 1;
+        if (ok) printf("Red Alert: ");
+        printf("City %d is lost",u);
+        if (ok) puts("!");
+        else puts(".");
+        nn --;
+        mem(vis,0);
+    }
+    if (!nn) printf("Game Over.\n");
+}
+*/
+
+/*
+int isZhi(int n)
+{
+    if (n == 1) return 0;
+    for (int i = 2;i * i <= n;i ++) if (n % i == 0) return 0;
+    return 1;
+}
+
+int get(int k)
+{
+    int ans = 0;
+    int x = k;
+    map<int,int> mp;
+    int kk;
+    do {
+        mp[k] = 1;
+        kk = 0;
+        while (k) {
+            kk += (k % 10) * (k % 10);
+            k /= 10;
+        }
+        k = kk;
+        ans ++;
+        if (k == 1) {
+            break;
+        }
+    } while (!mp[k]);
+    return ans * (isZhi(x) ? 2 : 1);
+}
+
+int main()
+{
+    int a,b;
+    scii(a,b);
+    map<int,int> mp;
+    map<int,int> vis;
+    int ok;
+    int k,kk;
+    rep(i,a,b) {
+        mp.clear();
+        k = i;
+        ok = 0;
+        if (vis[k] == -1) continue;
+        
+        do {
+            mp[k] = 1;
+            kk = 0;
+            while (k) {
+                kk += (k % 10) * (k % 10);
+                k /= 10;
+            }
+            k = kk;
+            if (k == 1) {
+                ok = 1;
+                break;
+            }
+        } while (!mp[k]);
+        mp.clear();
+        
+        k = i;
+        do {
+            if (ok) vis[k] ++;
+            else vis[k] = -1;
+            mp[k] = 1;
+            kk = 0;
+            while (k) {
+                kk += (k % 10) * (k % 10);
+                k /= 10;
+            }
+            k = kk;
+        } while (!mp[k]);
+        
+    }
+    ok = 0;
+    for (auto i : vis) {
+        if (i.first < a) continue;
+        if (i.first > b) break;
+        if (i.second == 1) {
+            ok = 1;
+            printf("%d %d\n",i.first,get(i.first));
+        }
+    }
+    if (!ok) puts("SAD");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m,k;
+    sciii(n,m,k);
+    stack<int> st;
+    int a[1010];
+    int mnt;
+    while (k --) {
+        rep(i,1,n) sci(a[i]);
+        mnt = 0;
+        rep(i,1,n) {
+            if (a[i] == mnt + 1) {
+                mnt ++;
+                while (!st.empty() && st.top() == mnt + 1) {st.pop();mnt ++;}
+            } else {
+                if (st.size() >= m) {
+                    break;
+                }
+                st.push(a[i]);
+            }
+        }
+        if (st.empty()) puts("YES");
+        else {
+            while (!st.empty()) st.pop();
+            puts("NO");
+        }
+    }
+}
+*/
+
+/*int startWith(string a,string b) {
+    if (a.size() < b.size()) return 0;
+    return a.substr(0,b.size()) == b;
+}
+
+int endsWith(string a,string b) {
+    if (a.size() < b.size()) return 0;
+    return a.substr(a.size() - b.size(),b.size()) == b;
+}
+
+map<string,int> mp;
+
+int g[100010];
+int sex[100010];
+
+map<int,int> s1,s2;
+int ok;
+
+int main()
+{
+    int n;
+    sci(n);
+    string uu[100010],vv[100010];
+    string t;
+    rep(i,1,n) {
+        cin >> uu[i] >> vv[i];
+        mp[uu[i]] = i;
+        if (endsWith(vv[i], "sson") || endsWith(vv[i], "m")) {
+            sex[i] = 1;
+        } else if (endsWith(vv[i], "sdottir") || endsWith(vv[i], "f")) {
+            sex[i] = 0;
+        }
+    }
+    string u,v;
+    rep(i,1,n) {
+        u = uu[i];
+        v = vv[i];
+        t = "";
+        if (endsWith(v, "sson")) t = v.substr(0,v.size()-4);
+//        if (endsWith(v, "m")) t = v.substr(0,v.size()-1);
+        if (endsWith(v, "sdottir")) t = v.substr(0,v.size()-7);
+//        if (endsWith(v, "f")) t = v.substr(0,v.size()-1);
+        g[i] = mp[t];
+    }
+    int q;
+    sci(q);
+    string name;
+    string u1,v1,u2,v2;
+    int k,dps;
+    while (q --) {
+        cin >> u1 >> v1 >> u2 >> v2;
+        if (mp[u1] == 0 || mp[u2] == 0) puts("NA");
+        else if (sex[mp[u1]] == sex[mp[u2]]) puts("Whatever");
+        else {
+            ok = 1;
+            s1.clear();
+            s2.clear();
+            
+            k = mp[u1];
+            dps = 1;
+            while (k != 0) {
+                s1[k] = dps ++;
+                k = g[k];
+            }
+            
+            k = mp[u2];
+            dps = 1;
+            while (k != 0) {
+                s2[k] = dps ++;
+                k = g[k];
+            }
+            
+            for (auto i : s1) {
+                if (s2[i.first]) {
+                    if (i.second < 5 || s2[i.first] < 5) {
+                        ok = 0;
+                        break;
+                    }
+                    
+                }
+            }
+            
+            
+            if (ok) puts("Yes");
+            else puts("No");
+        }
+    }
+    return 0;
+}*/
+
+/*
+int isLetter(char c)
+{
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+int isDot(char c) {
+    return !isLetter(c) && !isdigit(c);
+}
+
+int main()
+{
+    int n;
+    sci(n);
+    scanf(" ");
+    string str;
+    vector<string> tmp,words;
+    vector<char> dots;
+    string x;
+    int f;
+    rep(i,1,n) {
+        getline(cin,str);
+        _C(str);
+        printf("AI: ");
+        stringstream ss(str);
+        tmp.clear();
+        words.clear();
+        dots.clear();
+        while (ss >> x) {
+            tmp.pb(x);
+        }
+        f = 1;
+        for (auto i : tmp) {
+            if (f) f = 0;
+            else if (!isDot(i[0])) dots.pb(' ');
+            str = "";
+            for (int j = 0;i[j];j ++) {
+                if (isDot(i[j])) {
+                    words.pb(str);
+                    str = "";
+                    dots.pb(i[j]);
+                } else str += i[j];
+            }
+            if (str != "") words.pb(str);
+        }
+        _C(words.size());
+        _C(dots.size());
+        _C("")
+    }
+    return 0;
+}
+*/
+
+/*
+ll ans[1000010][12];
+
+int main()
+{
+    int n,b;
+    int ii;
+    rep(i,1,1000000) {
+        rep(j,2,10) {
+            ii = i;
+            while (ii) {
+                ans[i][j] += (ii % j);
+                ii /= j;
+            }
+            ans[i][j] += ans[i - 1][j];
+        }
+    }
+    int T = 1;
+    __T {
+        scii(n,b);
+        printf("Case #%d: %lld\n",T++,ans[n][b]);
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int l,r;
+    map<int,pair<int,int>> num; // 1,-1
+    ll ans,t;
+    int f;
+    int T = 1;
+    __T {
+        scii(n,m);
+        num.clear();
+        ans = 0;
+        while (m --) {
+            scii(l,r);
+            num[l].first ++;
+            num[r+1].second ++;
+        }
+        t = 0;
+        f = -1;
+        for (auto i : num) {
+            if (f != -1 && (t & 1)) ans += i.first - f;
+            t += i.second.first;
+            t -= i.second.second;
+            f = i.first;
+        }
+        printf("Case #%d: %lld\n",T++,ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int a[1010] = {0};
+    rep(i,1,n) sci(a[i]);
+    int u,v;
+    scanf("%d%d",&u,&v);
+    int cur = u;
+    set<int> x;
+    if (!a[u]) {
+        printf("ERROR: T[%d] is NULL\n",u);
+        return 0;
+    }
+    if (!a[v]) {
+        printf("ERROR: T[%d] is NULL\n",v);
+        return 0;
+    }
+    while (a[cur]) {
+        x.insert(cur);
+        cur >>= 1;
+    }
+    cur = v;
+    while (a[cur]) {
+        if (x.find(cur) != x.end()) {
+            printf("%d %d\n",cur,a[cur]);
+            break;
+        }
+        cur >>= 1;
+    }
+    re0;
+}
+*/
+
+/*
+struct Node {
+    Node(){}
+    Node(ll c,Node *l,Node *r):n(c),l(l),r(r){}
+    ll n;
+    Node *l;
+    Node *r;
+};
+
+void build(Node* &node)
+{
+    ll ch;
+    scanf("%lld",&ch);
+    if (ch == 0) return;
+    node = new Node(ch,NULL,NULL);
+    build(node -> l);
+    build(node -> r);
+}
+
+ll tg;
+
+ll a[110];
+
+vector<vector<ll>> ans;
+
+void dfs(Node *node,int num,int dps)
+{
+    num += node -> n;
+    a[dps] = node -> n;
+    if (num == tg && node -> l == NULL && node -> r == NULL) {
+        vector<ll> k;
+        rep(i,1,dps) k.pb(a[i]);
+        ans.pb(k);
+    }
+    if (node -> l != NULL) dfs(node -> l,num,dps + 1);
+    if (node -> r != NULL) dfs(node -> r,num,dps + 1);
+}
+
+int main()
+{
+    Node *root;
+    build(root);
+    scanf("%lld",&tg);
+    dfs(root,0,1);
+    printf("%lu\n",ans.size());
+    for (auto i : ans) {
+        for (auto j : i) {
+            printf("%lld ",j);
+        }
+        puts("");
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        if (n & 1) {
+            pre(i,n,n/2+2) printf("%d ",i);
+            pre(i,n/2,1) printf("%d ",i);
+            printf("%d",n/2+1);
+        } else {
+            pre(i,n,1) {
+                if (i != n) printf(" ");
+                printf("%d",i);
+            }
+        }
+        puts("");
+    }
+}
+*/
+
+/*
+map<int,int> a;
+map<int,int> b;
+
+int main()
+{
+    int n,t;
+    int ans;
+    __T {
+        a.clear();
+        sci(n);
+        rep(i,1,n) {
+            sci(t);
+            a[t] ++;
+            b[t] = i;
+        }
+        ans = -1;
+        for (auto i : a) {
+            if (i.second == 1) {
+                ans = b[i.first];
+                break;
+            }
+        }
+        printf("%d\n",ans);
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int a[200010];
+map<int,int> pos;
+map<int,int> ans;
+
+int main()
+{
+    int n;
+    int t,l=0;
+    int cnt;
+    int m;
+    __T {
+        sci(n);
+        cnt = 0;
+        pos.clear();
+        ans.clear();
+        rep(i,1,n) {
+            sci(t);
+            if (i != 1) {
+                if (l != t) a[++cnt] = t;
+            } else a[++cnt] = t;
+            l = t;
+        }
+//        rep(i,1,cnt) printf("%d ",a[i]);
+//        puts("");
+        rep(i,1,cnt) {
+            if (pos[a[i]] != i) ans[a[i]] ++;
+            pos[a[i]] = i;
+        }
+        ans[a[cnt]] --;
+        ans[a[1]] --;
+//        _C("----");
+        m = INT_INF;
+        for (auto i : ans) {
+            m = min(m,i.second);
+//            printf("%d %d\n",i.first,i.second);
+        }
+        printf("%d\n",m+1);;
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll n;
+    map<ll,int> a;
+    ll nn;
+    int ans;
+    ll all[100];
+    __T {
+        scl(n);
+        a.clear();
+        nn = n;
+        for (ll i = 2;i * i <= n;i ++) {
+            while (nn % i == 0) {
+                a[i] ++;
+                nn /= i;
+            }
+        }
+        if (nn != 1) a[nn] ++;
+        ans = 1;
+        for (auto i : a) {
+            ans = max(ans,i.second);
+        }
+        rep(i,1,ans) all[i] = 1;
+        for (auto i : a) {
+            for (int j = 1,k = ans;j <= i.second;j ++,k --) {
+                all[k] *= i.first;
+            }
+        }
+        printf("%d\n",ans);
+        rep(i,1,ans) {
+            if (i != 1) printf(" ");
+            printf("%lld",all[i]);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+vector<int> g[200010];
+int d[100010];
+int vis[100010];
+int c[100010];
+
+int s;
+int mnt;
+
+void find_cir(int u,int dps,int f)
+{
+    if (vis[u]) {
+        if (!c[u]) {
+            s = u;
+            mnt = dps - vis[u];
+        }
+        return;
+    }
+    vis[u] = dps;
+    for (auto i : g[u]) {
+        if (f == i) continue;
+        find_cir(i,dps + 1,u);
+        if (s != -1) {
+            if (s == u) s = -1;
+            c[u] = 1;
+            break;
+        }
+    }
+}
+
+int get(int u,int f) {
+    int cnt = 0;
+    for (auto i : g[u]) {
+        if (f == i) continue;
+        get(i,u);
+    }
+    return cnt + 1;
+}
+
+int main()
+{
+    int n;
+    int u,v;
+    __T {
+        sci(n);
+        rep(i,1,n) {
+            g[i].clear();
+            vis[i] = c[i] = d[i] = 0;
+        }
+        rep(i,1,n) {
+            scii(u,v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+        rep(i,1,n) d[i] /= 2;
+        s = -1;
+        find_cir(1,1,-1);
+//        rep(i,1,n) printf("%d ",c[i]);
+//        puts("");
+//        printf("%d\n",mnt);
+        
+    }
+    return 0;
+}
+*/
+
+//const int MAXN = 200010;
+//
+//int ST[MAXN][40];
+//int st[MAXN][40];
+//int a[MAXN];
+//
+//int n;
+//
+//void init() {
+//    // 定义 st[i][j] 是从i开始，到i + 2^j这一段，即[i,i + 2^j]这一段中的最大/小值
+//    rep(i,1,n) ST[i][0] = a[i];
+//
+//    for (int j = 1;(1 << j) <= n;j ++) { // 遍历所有的j，j是一个很小的数字，最大值=log2(n)
+//        rep(i,1,n - (1 << j) + 1) { // 在[1,n]区间范围内，确定j的情况下，把所有的i都遍历求值一遍
+//            ST[i][j] = max(ST[i][j - 1], ST[i + (1 << (j - 1))][j - 1]); // 套公式
+//        }
+//    }
+//
+//    rep(i,1,n) st[i][0] = a[i];
+//
+//    for (int j = 1;(1 << j) <= n;j ++) { // 遍历所有的j，j是一个很小的数字，最大值=log2(n)
+//        rep(i,1,n - (1 << j) + 1) { // 在[1,n]区间范围内，确定j的情况下，把所有的i都遍历求值一遍
+//            st[i][j] = min(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]); // 套公式
+//        }
+//    }
+//}
+//
+//inline int qmax(int l, int r)
+//{
+//    int x = log2(r - l + 1);
+//    return max(ST[l][x],ST[r - (1 << x) + 1][x]);
+//}
+//
+//inline int qmin(int l, int r)
+//{
+//    int x = log2(r - l + 1);
+//    return min(st[l][x],st[r - (1 << x) + 1][x]);
+//}
+//
+//int prefix[MAXN];
+//int sufix[MAXN];
+//
+//int main()
+//{
+//    int l,r;
+//    itn aa,bb,cc;
+//    __T
+//    {
+//        sci(n);
+//        rep(i,1,n) sci(a[i]);
+//        init();
+//        prefix[1] = a[1];
+//        rep(i,2,n) prefix[i] = max(a[i],prefix[i - 1]);
+//        sufix[n] = a[n];
+//        pre(i,n-1,1) sufix[i] = max(a[i], sufix[i + 1]);
+////        rep(i,1,n) printf("%d ",prefix[i]);
+////        puts("");
+////        rep(i,1,n) printf("%d ",sufix[i]);
+////        puts("");
+//        rep(i,1,n) {
+//            l = (int) (lower_bound(sufix + 1, sufix + 1 + n, prefix[i], greater<int>()) - sufix);
+//            r = (int) (upper_bound(sufix + 1, sufix + 1 + n, prefix[i], greater<int>()) - sufix);
+////            _C(l << " " << r)
+//            l = max(l,i+1);
+//            pre(j,r-1,l) {
+//                if (i+1>j-1) break;
+////                _C("[1," << i << "] [" << i + 1 << "," << j - 1 << "] [" << j << "," << n << "]")
+////                _C(prefix[i] << " " << qmin(i+1, j-1) << " " << sufix[j])
+//                if (prefix[i] == sufix[j] && qmin(i+1, j-1) == prefix[i]) {
+//                    aa = i;
+//                    bb = j - i - 1;
+//                    cc = n - j + 1;
+//                    goto end;
+//                }
+//            }
+//        }
+//        puts("NO");
+//        continue;
+//        end:
+//        puts("YES");
+//        printf("%d %d %d\n",aa,bb,cc);
+//    }
+//
+//    return 0;
+//}
+
+/*
+int main()
+{
+    int n;
+    int k;
+    int tg;
+    char x;
+    __T {
+        sci(n);
+        x = 'a';
+        while (n > 0) {
+            k = sqrt(n * 2 + 0.25) - 0.5;
+            tg = (1+k)*k/2;
+            rep(i,1,k) printf("%c",x);
+            n = n - tg;
+            x ++;
+        }
+        puts("");
+    }
+}
+*/
+
+/*
+const int MAXN = 50;
+
+struct Node {
+    Node(){}
+    Node(int n,Node *l,Node *r):n(n),l(l),r(r){}
+
+    int n;
+    Node *l;
+    Node *r;
+} *root;
+
+int gin[MAXN];
+int gpost[MAXN];
+
+void build(int *in,int *post,int len,Node **node)
+{
+    if (len <= 0) return;
+    int mid = post[len-1];
+    int x = 0;
+    REP(i,0,len) {
+        if (in[i] == mid) {
+            x = i;
+            break;
+        }
+    }
+    *node = new Node(mid,NULL,NULL);
+    build(in,post,x,&((*node) -> l));
+    build(in + x + 1, post + x, len - x - 1, &((*node) -> r));
+}
+
+void dfs(Node *node) {
+    printf(" %d",node -> n);
+    if (node -> l != NULL) dfs(node -> l);
+    if (node -> r != NULL) dfs(node -> r);
+}
+
+int main()
+{
+    int n;
+    sci(n);
+    REP(i,0,n) sci(gpost[i]);
+    REP(i,0,n) sci(gin[i]);
+    build(gin, gpost, n, &root);
+    printf("Preorder:");
+    dfs(root);
+    puts("");
+}
+*/
+
+/*
+vector<int> g[100010];
+vector<int> c[100010];
+
+int m = 0;
+
+void dfs(int n,int dps)
+{
+    m = max(m,dps);
+    c[dps].pb(n);
+    for (auto i : g[n]) {
+        dfs(i,dps + 1);
+    }
+}
+
+int main()
+{
+    int n;
+    sci(n);
+    int t;
+    rep(i,1,n) {
+        sci(t);
+        if (t == -1) t = 0;
+        g[t].pb(i);
+    }
+    dfs(0,0);
+    printf("%d\n",m);
+    sort(c[m].begin(),c[m].end());
+    int f = 1;
+    for (auto i : c[m]) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    puts("");
+}
+*/
+
+/*
+struct Node {
+    Node(){}
+    Node(int n,Node *l,Node *r):n(n),l(l),r(r){}
+    int n;
+    Node *l;
+    Node *r;
+} *root;
+
+int n,m;
+
+void build()
+{
+    int t;
+    read(t);
+    root = new Node(t,NULL,NULL);
+    Node *node;
+    rep(i,2,n) {
+        read(t);
+        node = root;
+        while (1) {
+            if (t <= node -> n) {
+                if (node -> l == NULL) {
+                    node -> l = new Node(t,NULL,NULL);
+                    break;
+                }
+                else node = node -> l;
+            } else {
+                if (node -> r == NULL) {
+                    node -> r = new Node(t,NULL,NULL);
+                    break;
+                }
+                else node = node -> r;
+            }
+        }
+    }
+}
+
+int find(int n)
+{
+    Node *node = root;
+    while (node != NULL) {
+        if (node -> n == n) return 1;
+        if (n < node -> n) node = node -> l;
+        else node = node -> r;
+    }
+    return 0;
+}
+
+int main()
+{
+    read(m);
+    read(n);
+    build();
+    int u,v;
+    set<int> f;
+    Node *node;
+    int hasU,hasV;
+    rep(i,1,m) {
+        read(u);
+        read(v);
+        hasU = find(u);
+        hasV = find(v);
+        if (!hasU && !hasV) printf("ERROR: %d and %d are not found.\n",u,v);
+        else if (!hasU) printf("ERROR: %d is not found.\n",u);
+        else if (!hasV) printf("ERROR: %d is not found.\n",v);
+        else {
+            node = root;
+            while (node != NULL) {
+                if (u == node -> n) {
+                    printf("%d is an ancestor of %d.\n",u,v);
+                    break;
+                } else if (v == node -> n) {
+                    printf("%d is an ancestor of %d.\n",v,u);
+                    break;
+                } else if ((u < node -> n && v > node -> n) || (v < node -> n && u > node -> n)) {
+                    printf("LCA of %d and %d is %d.\n",u,v,node -> n);
+                    break;
+                } else {
+                    if (u < node -> n) node = node -> l;
+                    if (u > node -> n) node = node -> r;
+                }
+            }
+        }
+    }
+}
+*/
+
+/*
+int main()
+{
+    int ans = 0;
+    rep(a,1,9) {
+        rep(b,1,9) {
+            rep(c,1,9) {
+                rep(d,1,9) {
+                    rep(e,1,9) {
+                        if (a == b || a == c || a == d || a == e ||
+                            b == c || b == d || b == e ||
+                            c == d || c == e ||
+                            d == e) continue;
+                        if ((a * 10 + b) * (c * 100 + d * 10 + e) == (a * 100 + d * 10 + b) * (c * 10 + e)) ans ++;
+                    }
+                }
+            }
+        }
+    }
+    printf("%d\n",ans);
+    return 0;
+}
+*/
+
+/*
+int get(int x) {
+    int ans = 0;
+    while (x) {
+        ans += x /= 5;
+    }
+    return ans;
+}
+
+int main()
+{
+    int n;
+    int l,r;
+    int m,k;
+    int f;
+    int x = 0;
+    __T {
+        sci(n);
+        l = 1;
+        f = 0;
+        r = 1000000000;
+        
+        while (l <= r) {
+            m = (l + r) / 2;
+            k = get(m);
+            if (k < n) l = m + 1;
+            else if (k > n) r = m - 1;
+            else {
+                r = m - 1;
+                x = m;
+                f = 1;
+            }
+        }
+        if (f) printf("%d\n",x);
+        else puts("QAQ");
+    }
+    
+}
+*/
+
+/*
+int dp[3010][5010];
+int main()
+{
+    int n;
+    int a[3010];
+    int sum;
+    int ans;
+    __T {
+        sci(n);
+        sum = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            sum += a[i];
+        }
+        ans = 0;
+        rep(i,1,n) {
+            for (int j = 0;j <= sum;j ++) {
+                if (j >= a[i]) dp[i][j] = max(dp[i-1][j],min(dp[i - 1][j - a[i]] + a[i],sum - dp[i - 1][j - a[i]] - a[i]));
+                else dp[i][j] = dp[i-1][j];
+                ans = max(dp[i][j],ans);
+            }
+        }
+        printf("%d\n",ans);
+        
+    }
+}
+*/
+
+/*
+struct Node {
+    Node *nxt[10];
+    Node() {
+        rep(i,0,9) nxt[i] = NULL;
+    }
+};
+
+Node *root;
+
+void add(ll num) {
+    vector<int> k;
+    Node *node = root;
+    while (num) {
+        k.pb(num % 10);
+        num /= 10;
+    }
+    while (k.size() < 10) k.pb(0);
+    for (vector<int>::reverse_iterator i = k.rbegin();i != k.rend();i ++) {
+        if (node -> nxt[*i] == NULL) {
+            node -> nxt[*i] = new Node();
+        }
+        node = node -> nxt[*i];
+    }
+}
+
+void dfs(Node *node,int num)
+{
+    printf("%d ",num);
+    rep(i,0,9) {
+        if (node -> nxt[i] != NULL) dfs(node -> nxt[i],i);
+    }
+}
+
+int main()
+{
+    int n,r;
+    scii(n,r);
+    root = new Node();
+    ll t;
+    rep(i,1,n) {
+        scl(t);
+        add(t);
+    }
+    
+    int q;
+    sci(q);
+    vector<int> k;
+    Node *node;
+    int mx,mj;
+    Node *pm = NULL;
+    ll num;
+    ll ans;
+    while (q --) {
+        k.clear();
+        scl(t);
+        node = root;
+        ans = 0;
+        while (t) {
+            k.pb(t % 10);
+            t /= 10;
+        }
+        while (k.size() < 10) k.pb(0);
+        num = 0;
+        for (vector<int>::reverse_iterator i = k.rbegin();i != k.rend();i ++) {
+            mx = -1;
+            mj = -1;
+            rep(j,0,9) {
+                if (node -> nxt[j] != NULL) {
+                    if (((j + *i) % r) > mx) {
+                        mx = (j + *i) % r;
+                        pm = node -> nxt[j];
+                        mj = j;
+                    }
+                }
+            }
+            num *= 10;
+            num += mj;
+            node = pm;
+            ans *= 10;
+            ans += mx;
+        }
+        _C(ans)
+    }
+}
+*/
+
+/*
+const int MAXN = 2e5 + 10;
+
+struct Node {
+    int l,r;
+    ll sum;
+    ll lazy;
+} tree[MAXN << 2];
+void push_up(int i)
+{
+    tree[i].sum = tree[i << 1].sum + tree[i << 1 | 1].sum;
+}
+
+void push_down(int i) //下推标记
+{
+    if (tree[i].lazy) {
+        tree[i << 1].sum = tree[i << 1].r - tree[i << 1].l + 1 - tree[i << 1].sum;
+        tree[i << 1 | 1].sum = tree[i << 1 | 1].r - tree[i << 1 | 1].l + 1 - tree[i << 1 | 1].sum;
+
+        tree[i << 1].lazy = !tree[i << 1].lazy;
+        tree[i << 1 | 1].lazy = !tree[i << 1 | 1].lazy;
+
+        tree[i].lazy = 0;
+    }
+}
+
+// i - 二叉树节点编号，调用时取1
+// l，r 区间左右端下标，调用的时候取最大范围即可 build(1,n,1);
+void build(int l,int r,int i)
+{
+    tree[i].l = l;
+    tree[i].r = r;
+    tree[i].lazy = 0;
+    if (l == r) {
+        tree[i].sum = 0;
+        return;
+    }
+    int m = (l + r) >> 1;
+    build(l,m,i << 1);
+    build(m + 1,r,i << 1 | 1);
+    push_up(i);
+}
+
+void add(int l,int r,int i) // 将区间[l,r]整个加上x，调用(l,r,x,1)
+{
+    if (l <= tree[i].l && r >= tree[i].r) {
+        tree[i].sum = tree[i].r - tree[i].l + 1 - tree[i].sum;
+        tree[i].lazy = !tree[i].lazy;
+        return;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    if (l <= m) add(l,r,i << 1);
+    if (r > m) add(l,r,i << 1 | 1);
+    push_up(i);
+}
+
+ll query(int l,int r,int i) //查询
+{
+    if (l <= tree[i].l && r >= tree[i].r){
+        return tree[i].sum;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    ll sum = 0;
+    if (l <= m) {
+         sum += query(l,r,i << 1);
+    }
+    if (r > m) {
+        sum += query(l,r,i << 1 | 1);
+    }
+    return sum;
+}
+
+vector<int> g[MAXN];
+
+int dfn = 0;
+int in[MAXN],out[MAXN];
+
+void dfs(int k,int f)
+{
+    in[k] = ++ dfn;
+    for (vector<int>::iterator i = g[k].begin();i != g[k].end();i ++)
+    {
+        if (*i != f) {
+            dfs(*i,k);
+        }
+    }
+    out[k] = dfn;
+}
+
+int main() {
+    int n,q;
+    scii(n,q);
+    int u,v;
+    rep(i,1,n-1) {
+        scii(u,v);
+        g[u].pb(v);
+    }
+    dfs(1,-1);
+    build(1, n, 1);
+    while (q --) {
+        scii(u,v);
+        if (u == 1) {
+            add(in[v], out[v], 1);
+        } else {
+            printf("%lld\n",query(in[v], out[v], 1));
+        }
+    }
+}
+*/
+
+/*
+int main()
+{
+    const int mod = 1e9 + 7;
+    ll n,m,na,ma,nb,mb,a,b;
+    __T {
+        scll(n,m);
+        na = n + 1;
+        nb = n;
+        ma = m + 1;
+        mb = m;
+        if (na % 2 == 0) na /= 2;
+        if (nb % 2 == 0) nb /= 2;
+        if (ma % 2 == 0) ma /= 2;
+        if (mb % 2 == 0) mb /= 2;
+        na %= mod;
+        nb %= mod;
+        ma %= mod;
+        mb %= mod;
+        a = na * nb % mod;
+        b = ma * mb % mod;
+        printf("%lld\n",a * b % mod);
+    }
+}*/
+
+/*
+struct Node {
+    int n;
+    Node *l;
+    Node *r;
+    Node(){}
+    Node(int n,Node *l,Node *r):n(n),l(l),r(r){}
+} *root;
+
+Node* RR(Node *node)
+{
+    Node *l = node -> l;
+    node -> l = l -> r;
+    l -> r = node;
+    return l;
+}
+
+Node* LL(Node *node)
+{
+    Node *r = node -> r;
+    node -> r = r -> l;
+    r -> l = node;
+    return r;
+}
+
+Node* LR(Node *node)
+{
+    node -> l = LL(node -> l);
+    return RR(node);
+}
+
+Node* RL(Node *node)
+{
+    node -> r = RR(node -> r);
+    return LL(node);
+}
+
+int getHeight(Node *n) {
+    if (n == NULL) return 0;
+    int x = 0;
+    x = max(x,getHeight(n -> l));
+    x = max(x,getHeight(n -> r));
+    return x + 1;
+}
+
+int getF(Node *node)
+{
+    return getHeight(node -> l) - getHeight(node -> r);
+}
+
+Node* insert(Node *node,int n)
+{
+    if (node == NULL) {
+        node = new Node(n,NULL,NULL);
+    } else if (n < node -> n) {
+        node -> l = insert(node -> l, n);
+        if (getF(node) == 2) {
+            if (n < node -> l -> n) node = RR(node);
+            else node = LR(node);
+        }
+    } else if (n > node -> n) {
+        node -> r = insert(node -> r, n);
+        if (getF(node) == -2) {
+            if (n > node -> r -> n) node = LL(node);
+            else node = RL(node);
+        }
+    }
+    return node;
+}
+
+void dfs(Node *node)
+{
+    if (node == NULL) return;
+    printf("%d ",node -> n);
+    dfs(node -> l);
+    dfs(node -> r);
+}
+
+int main()
+{
+    int n;
+    sci(n);
+    int t;
+    rep(i,1,n) {
+        sci(t);
+        root = insert(root,t);
+    }
+    printf("%d\n",root -> n);
+}
+*/
+
+/*
+int a[100010]; // 从1开始
+int n = 0;
+
+void up(int i)
+{
+    int p = i / 2;
+    while (p != 0 && a[i] > a[p])
+    {
+        swap(a[i], a[p]);
+        i = p;
+        p /= 2;
+    }
+}
+
+void down(int i)
+{
+    int k = i * 2;
+    if (k + 1 <= n && a[k + 1] > a[k]) k ++;
+    while (k <= n && a[i] < a[k])
+    {
+        swap(a[i], a[k]);
+        i = k;
+        k *= 2;
+        if (k + 1 <= n && a[k + 1] > a[k]) k ++;
+    }
+}
+
+void push(int num)
+{
+    a[++ n] = num;
+    up(n);
+}
+
+void pop()
+{
+    if (n > 0)
+    {
+        swap(a[1], a[n --]);
+        down(1);
+    }
+}
+
+void heapify()
+{
+    for (int i = n / 2;i >= 1;i --)
+    {
+        down(i);
+    }
+}
+
+int main() {
+    int m;
+    scanf("%d%d",&n,&m);
+    rep(i,1,n) sci(a[i]);
+    heapify();
+    int t,x;
+    while (m --) {
+        sci(t);
+        if (t == 0) {
+            pop();
+        } else if (t == 1) {
+            sci(x);
+            push(x);
+        } else if (t == 2) {
+            sci(x);
+            printf("%d\n",a[x]);
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int find_set[MAXN];
+int depth[MAXN];
+
+int find(int a)
+{
+    if (find_set[a] == a) return a;
+    return find_set[a] = find(find_set[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (depth[x] >= depth[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        find_set[y] = x; // 改变b节点的根的根为a的根
+        if (depth[x] == depth[y]) { // 俩根深度一样
+            if (x != y) depth[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else find_set[x] = y;
+}
+
+void init(int n)
+{
+    rep(i,0,n) {
+        find_set[i] = i;  // 每个种类初始状态只有自己一个点
+        depth[i] = 1;  // 初始化秩
+    }
+}
+
+int main()
+{
+    int n,m;
+    int a[MAXN];
+    scii(n,m);
+    rep(i,1,m) {
+        sci(a[i]);
+    }
+    int k;
+    sci(k);
+    int u,v;
+    init(n + 5);
+    rep(i,1,k) {
+        scii(u,v);
+        bind(u,v);
+    }
+    int ok = 0;
+    int x = find(1);
+    rep(i,1,m) {
+        if (x == find(a[i])) {
+            ok = 1;
+            break;
+        }
+    }
+    puts(ok ? "YES" : "NO");
+    return 0;
+}
+*/
+
+/*
+int a[100010]; // 从1开始
+int n = 0;
+
+void up(int i)
+{
+    int p = i / 2;
+    while (p != 0 && a[i] < a[p])
+    {
+        swap(a[i], a[p]);
+        i = p;
+        p /= 2;
+    }
+}
+
+void down(int i)
+{
+    int k = i * 2;
+    if (k + 1 <= n && a[k + 1] < a[k]) k ++;
+    while (k <= n && a[i] > a[k])
+    {
+        swap(a[i], a[k]);
+        i = k;
+        k *= 2;
+        if (k + 1 <= n && a[k + 1] < a[k]) k ++;
+    }
+}
+
+void push(int num)
+{
+    a[++ n] = num;
+    up(n);
+}
+
+void pop()
+{
+    if (n > 0)
+    {
+        swap(a[1], a[n --]);
+        down(1);
+    }
+}
+
+void heapify()
+{
+    for (int i = n / 2;i >= 1;i --)
+    {
+        down(i);
+    }
+}
+
+int main() {
+    int n,m;
+    scii(n,m);
+    int t;
+    rep(i,1,n) {
+        sci(t);
+        push(t);
+    }
+    int f;
+    rep(i,1,m) {
+        sci(t);
+        f = 1;
+        while (t > 0) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",a[t]);
+            t >>= 1;
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    ll t;
+    priority_queue<ll,vector<ll>,greater<ll>> q;
+    rep(i,1,n) {
+        scl(t);
+        q.push(t);
+    }
+    ll sum;
+    ll ans = 0;
+    while (q.size() >= 2) {
+        sum = q.top();
+        q.pop();
+        sum += q.top();
+        q.pop();
+        q.push(sum);
+        ans += sum;
+    }
+//    ans += q.top();
+    printf("%lld\n",ans);
+}
+*/
+
+//int a[1000010];
+//
+//int main()
+//{
+//    int m,n;
+//    while (~scii(m,n)) {
+//        rep(i,1,n) sci(a[i]);
+//
+//    }
+//
+//    return 0;
+//}
+
+/*
+struct Node {
+    int type; // 0 - num,1 - op
+    char c;
+    ll num;
+};
+
+int priority[130];
+
+void getPost(string &str,vector<Node> &post) {
+    post.clear();
+    stack<char> op_stk;
+    ll num = 0;
+    int has_num = 0;
+    
+    for (int i = 0;str[i];i ++) {
+        if (str[i] >= '0' && str[i] <= '9') {
+            num = num * 10 + (str[i] ^ 48);
+            has_num = 1;
+        } else {
+            if (has_num) post.push_back({0,0,num});
+            has_num = num = 0;
+            if (str[i] != ')') {
+                if (str[i] != '(') while (!op_stk.empty() && priority[op_stk.top()] >= priority[str[i]]) {
+                    post.push_back({1,op_stk.top(),0});
+                    op_stk.pop();
+                }
+                op_stk.push(str[i]);
+            } else {
+                while (op_stk.top() != '(') {
+                    post.push_back({1,op_stk.top(),0});
+                    op_stk.pop();
+                }
+                op_stk.pop();
+            }
+        }
+    }
+    if (has_num) post.push_back({0,0,num});
+    while (!op_stk.empty()) {
+        post.push_back({1,op_stk.top(),0});
+        op_stk.pop();
+    }
+}
+
+ll getAns(vector<Node> &post) {
+    ll ans = 0;
+    stack<ll> num_stk;
+    
+    for (auto i : post) {
+        if (!i.type) num_stk.push(i.num);
+        else {
+            switch (i.c) {
+                case '+':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans += num_stk.top();
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '-':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans = num_stk.top() - ans;
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '*':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans *= num_stk.top();
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return num_stk.top();
+}
+
+vector<Node> post;
+set<ll> ans;
+ll t;
+void dfs(int i,string str)
+{
+    if (i == str.size()) {
+        if (str.size() == 4) return;
+        post.clear();
+        getPost(str,post);
+        t = getAns(post);
+        if (t >= 0) ans.insert(t);
+        return;
+    }
+    dfs(i + 1,str);
+    dfs(i + 2,str.substr(0,i) + '+' + str.substr(i));
+    dfs(i + 2,str.substr(0,i) + '-' + str.substr(i));
+    dfs(i + 2,str.substr(0,i) + '*' + str.substr(i));
+}
+
+inline void getStr(string &str,int a)
+{
+    str += (char)(a + '0');
+}
+
+int main()
+{
+    int a[4];
+    scii(a[0],a[1]);
+    scii(a[2],a[3]);
+    // 4
+    int p[] = {0,1,2,3};
+    
+    priority['('] = 1;
+    priority['*'] = 3;
+    priority['+'] = priority['-'] = 2;
+    string str;
+    do {
+        str = "";
+        getStr(str,a[p[0]]);
+        getStr(str,a[p[1]]);
+        getStr(str,a[p[2]]);
+        getStr(str,a[p[3]]);
+        dfs(1,str);
+    } while (next_permutation(p, p + 4));
+    printf("%lu\n",ans.size());
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int t;
+    __T {
+        scii(n,m);
+        rep(i,1,n) {
+            sci(t);
+        }
+        rep(i,1,m) {
+            sci(t);
+        }
+        if (n == 1 && m == 1) puts("1");
+        else if (n == 1 && m == 2) puts("1");
+        else if (n == 2 && m == 1) puts("1");
+        else puts("7");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e4 + 10;
+
+int find_set[MAXN];
+int depth[MAXN];
+
+int find(int a)
+{
+    if (find_set[a] == a) return a;
+    return find_set[a] = find(find_set[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (depth[x] >= depth[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        find_set[y] = x; // 改变b节点的根的根为a的根
+        if (depth[x] == depth[y]) { // 俩根深度一样
+            if (x != y) depth[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else find_set[x] = y;
+}
+
+void init(int n)
+{
+    rep(i,0,n) {
+        find_set[i] = i;  // 每个种类初始状态只有自己一个点
+        depth[i] = 1;  // 初始化秩
+    }
+}
+
+struct Edge {
+    int u,v;
+    ll w;
+};
+
+bool cmp(const Edge &a,const Edge &b) {
+    return a.w > b.w;
+}
+
+bool cmp1(const Edge &a,const Edge &b) {
+    return a.w < b.w;
+}
+
+Edge ed[500010];
+
+struct Eg {
+    int to;
+    ll w;
+    int nxt;
+} e[500010 * 2];
+int g[MAXN]; // Please call init() to memset it to -1!
+int cnt = 0;
+
+void init_g(int n)
+{
+    cnt = 0;
+    memn(g,-1,int,n);
+}
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+ll ans = 0;
+
+void dfs(int u,int f,ll m)
+{
+    ll k;
+    if (m != -1) ans += m;
+    for (int i = g[u];~i;i = e[i].nxt) {
+        if (e[i].to == f) continue;
+        k = m;
+        if (m == -1 || e[i].w < m) k = e[i].w;
+        dfs(e[i].to,u,k);
+    }
+}
+
+int main()
+{
+    int n,m;
+    scii(n,m);
+    int u,v;
+    ll w;
+    init(n + 5);
+    
+    rep(i,1,m) {
+        scii(u,v);
+        scl(w);
+        ed[i] = {u,v,w};
+    }
+    sort(ed + 1,ed + 1 + m,cmp);
+    ll k = 0;
+    for (auto i : ed) {
+        u = find(i.u);
+        v = find(i.v);
+        if (u != v) {
+            bind(u,v);
+            k = i.w;
+        }
+    }
+    sort(ed + 1,ed + 1 + m,cmp1);
+    init(n + 5);
+    init_g(n + 5);
+    rep(i,1,m) {
+        if (ed[i].w == k) k = -1;
+        if (k != -1) continue;
+        u = find(ed[i].u);
+        v = find(ed[i].v);
+        if (u != v) {
+            bind(ed[i].u,ed[i].v);
+            add_edge(ed[i].u, ed[i].v, ed[i].w);
+            add_edge(ed[i].v, ed[i].u, ed[i].w);
+        }
+    }
+    rep(i,1,n) dfs(i,-1,-1);
+    printf("%lld\n",ans / 2);
+    return 0;
+}
+*/
+
+/*
+int a[10010][10010];
+
+int main()
+{
+    int n,k,x,y;
+    __T {
+        scii(n,k);
+        if (n == 1) {
+            printf("%d\n",0);
+            continue;
+        }
+        a[0][0] = k - 1;
+        REP(i,0,n - 1) {
+            rep(j,0,i) {
+                a[i + 1][j] = 0;
+                a[i + 1][j + 1] = 0;
+            }
+            rep(j,0,i) {
+                a[i + 1][j] += a[i][j] / 2;
+                a[i + 1][j + 1] += a[i][j] / 2;
+                if (a[i][j] & 1) a[i + 1][j] ++;
+            }
+        }
+        x = y = 0;
+        do {
+            if (a[x][y] & 1) y ++;
+            x ++;
+        } while (x < n - 1);
+        printf("%d\n",y);
+    }
+}
+*/
+
+/*
+int main()
+{
+    double n;
+    double ans;
+    int i,j;
+    __T {
+        scd(n);
+        ans = 0;
+        i = 1;
+        j = 1;
+        while (1.0 / i >= n) {
+            ans += pow(-1,j + 1) * 1 / i;
+            i += 2;
+            j ++;
+        }
+        printf("%.6f\n",ans);
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int num,ans;
+    char type;
+    __T {
+        cin >> str;
+        num = 0;
+        ans = 0;
+        type = '+';
+        for (int i = 0;str[i];i ++) {
+            if (isdigit(str[i])) {
+                num *= 10;
+                num += str[i] ^ 48;
+            } else {
+                switch (type) {
+                    case '+':
+                        ans += num;
+                        break;
+                    case '-':
+                        ans -= num;
+                        break;
+                    case '*':
+                        ans *= num;
+                        break;
+                    case '/':
+                        ans /= num;
+                        break;
+                }
+                num = 0;
+                type = str[i];
+            }
+        }
+        printf("%d\n",ans);
+    }
+}
+*/
+
+/*
+int check(int n)
+{
+    int k = 0;
+    int nn = n;
+    while (n) {
+        k += (n % 10) * (n % 10) * (n % 10);
+        n /= 10;
+    }
+    return k == nn;
+}
+
+int main()
+{
+    int u,v;
+    __T {
+        scii(u,v);
+        rep(i,u,v) {
+            if (check(i)) printf("%d\n",i);
+        }
+    }
+    return 0;
+}
+*/
+
+/*int main()
+{
+    int n,m;
+    string str;
+    int k;
+    __T {
+        scii(n,m);
+        cin >> str;
+        k = 0;
+        rep(i,1,n) {
+            rep(j,1,m) {
+                printf("%c",str[k ++]);
+            }
+            puts("");
+        }
+        
+    }
+}
+*/
+
+/*
+int a[35][35];
+int b[35][35];
+
+int main()
+{
+    int n,mx;
+    int cnt;
+    while (~scanf("%d",&n)) {
+        if (n == 0) break;
+        rep(i,1,n) {
+            rep(j,1,n) sci(a[i][j]);
+        }
+        cnt = mx = 0;
+        rep(i,1,n) {
+            rep(j,1,n) {
+                sci(b[i][j]);
+                if (a[i][j] == b[i][j]) cnt ++;
+            }
+        }
+        mx = max(cnt,mx);
+        cnt = 0;
+        rep(i,1,n) {
+            rep(j,1,n) {
+                if (a[i][j] == b[j][n-i+1]) cnt ++;
+            }
+        }
+        mx = max(cnt,mx);
+        cnt = 0;
+        rep(i,1,n) {
+            rep(j,1,n) {
+                if (a[i][j] == b[n-i+1][n-j+1]) cnt ++;
+            }
+        }
+        mx = max(cnt,mx);
+        cnt = 0;
+        rep(i,1,n) {
+            rep(j,1,n) {
+                if (a[i][j] == b[n-j+1][i]) cnt ++;
+            }
+        }
+        mx = max(cnt,mx);
+        printf("%d\n",mx);
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    Node(const string &name,int type):name(name),type(type){}
+    Node(){}
+    string name;
+    map<string,Node*> pNxt;
+    int type;
+};
+
+Node *root;
+
+void insert(string &str,vector<string> &pv,int t)
+{
+    string x;
+    pv.clear();
+    x = "";
+    for (int i = 0;str[i];i ++) {
+        if (str[i] == '/') {
+            pv.pb(x);
+            x = "";
+        } else x += str[i];
+    }
+    pv.pb(x);
+    Node *node = root;
+    Node *p;
+    int tt;
+    for (auto i = pv.begin();i != pv.end();i ++) {
+        p = node -> pNxt[*i];
+        if (p != NULL) {
+            node = p;
+        } else {
+            if (i == pv.end() - 1) tt = t;
+            else tt = 0;
+            p = new Node(*i,tt);
+            node -> pNxt[*i] = p;
+            node = p;
+        }
+    }
+}
+
+int dfs(Node *node)
+{
+    if (node == NULL) return 0;
+    int size = (int) node -> pNxt.size();
+    int sum = 0;
+    for (auto i : node -> pNxt) {
+        sum += dfs(i.second);
+    }
+//    _C(node -> name << "=" << node -> type << " " << sum << "/" << size);
+    if (node -> type == 0 && sum == size && node -> pNxt.size() != 0 && node -> name != "/") {
+        node -> type = 1;
+    }
+    return node -> type;
+}
+
+int ans;
+
+void pre_dfs(Node *node)
+{
+    if (node == NULL) return;
+//    _C(node -> name << " " << node -> type)
+    if (node -> type) {
+        ans ++;
+        return;
+    }
+    for (auto i : node -> pNxt) {
+        pre_dfs(i.second);
+    }
+}
+
+int main()
+{
+    int n,m;
+    string str;
+    vector<string> p;
+    string x;
+    __T {
+        scii(n,m);
+        root = new Node("/",0);
+        rep(i,1,n) {
+            cin >> str;
+            insert(str,p,1);
+        }
+        rep(i,1,m) {
+            cin >> str;
+            insert(str,p,0);
+        }
+        dfs(root);
+//        _C("=========")
+        ans = 0;
+        pre_dfs(root);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll n;
+    scanf("%lld",&n);
+    ll k = n / 3;
+    printf("%lld\n",(k - 1) * k + k * (n % 3) + (1 + k * 3) * k / 2);
+}
+*/
+
+/*
+char a[1010][1010];
+char b[1010][1010];
+
+int main()
+{
+    int n,m;
+    scii(n,m);
+    REP(i,0,n) {
+        scanf("%s",a[i]);
+    }
+    REP(i,0,n) {
+        scanf("%s",b[i]);
+    }
+    int sum = 0;
+    REP(i,0,n) {
+        REP(j,0,m) {
+            if (a[i][j] != b[i][j]) sum ++;
+        }
+    }
+    if (sum <= m * n / 2) REP(i,0,n) puts(a[i]);
+    else REP(i,0,n) {
+        REP(j,0,m) {
+            if (a[i][j] == '.') printf("X");
+            else printf(".");
+        }
+        puts("");
+    }
+
+    return 0;
+}
+*/
+
+
+/*
+ll sum[20];
+
+ll nn[20] = {6,2,5,5,4,5,6,3,7,6,6,5,4,5,5,4};
+
+void init()
+{
+    sum[0] = 6;
+    sum[1] = 8;
+    sum[2] = 13;
+    sum[3] = 18;
+    sum[4] = 22;
+    sum[5] = 27;
+    sum[6] = 33;
+    sum[7] = 36;
+    sum[8] = 43;
+    sum[9] = 49;
+    sum[10] = 55;
+    sum[11] = 60;
+    sum[12] = 64;
+    sum[13] = 69;
+    sum[14] = 74;
+    sum[15] = 78;
+}
+
+void to(char num[])
+{
+    rep(i,0,7) {
+        if (num[i] >= '0' && num[i] <= '9') num[i] ^= 48;
+        else num[i] = num[i] - 'A' + 10;
+    }
+}
+
+uint conv(char num[],int l)
+{
+    uint ans = 0;
+    for (int i = 0;i < l;i ++) {
+        ans += (1ULL << (i * 4ULL)) * num[i];
+    }
+    return ans;
+}
+
+ull get(ull num)
+{
+    ull ans = 0;
+    ull f = num / 16,t = 0;
+    ull x = 1;
+    int k;
+    rep(i,0,7) {
+        k = num % 16;
+        
+        // group
+        ans += f * sum[15] * (1ULL << (4 * i));
+        
+        // middle
+        if (k) ans += sum[k - 1] * (1ULL << (4 * i));
+        
+        
+        // tail
+        ans += (t + 1) * nn[k];
+        
+        t += (num % 16) * x;
+        x <<= 4;
+        f /= 16;
+        num /= 16;
+    }
+    return ans;
+}
+
+ull single_conv(ull a)
+{
+    ull ans = 0;
+    rep(i,0,7) {
+        ans += nn[a % 16];
+        a /= 16;
+    }
+    return ans;
+}
+
+void add(uint a,uint b)
+{
+    ull x = (ull) a + (ull)(b - 1);
+    uint k = 0;
+    uint t = a + (b - 1);
+    if (x > k - 1) {
+        printf("%llu\n",single_conv(a) + get(k - 1) - get(a) + get(t));
+    } else {
+        printf("%llu\n",single_conv(a) + get(x) - get(a));
+    }
+}
+
+int main()
+{
+    init();
+
+    int s;
+    char num[10];
+    char str[10];
+    uint x;
+    __T {
+        scanf("%d",&s);
+        scanf("%s",str);
+        rep(i,0,7) num[7 - i] = str[i];
+        to(num);
+        x = conv(num,8);
+        add(x,s);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll x[100];
+    x[1] = 1;
+    rep(i,2,63) {
+        x[i] = x[i - 1] * 2 + 1;
+//        printf("%lld\n",x[i]);
+    }
+    ll y[100];
+    rep(i,1,31) {
+        y[i] = (1 + x[i]) * x[i]/ 2;
+//        printf("%lld\n",y[i]);
+    }
+    
+    
+    ll n;
+    int i;
+    ll k = 0;
+    __T {
+        scl(n);
+        k = 0;
+        for (i = 1;i <= 31;i ++) {
+            k += y[i];
+            if (k <= 0 || k > n) {
+                printf("%d\n",i - 1);
+                break;
+            }
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    int a[100010];
+    rep(i,1,n) sci(a[i]);
+    sort(a + 1,a + 1 + n);
+    int ans = 0;
+    
+    vector<int> aa;
+    aa.pb(a[(n + 1) / 2]);
+    if (!(n % 2)) aa.pb(a[(n + 1) / 2 + 1]);
+    for (int i = (n + 1) / 2 + 1 + !(n % 2),j = 1;i <= n;i ++,j ++) {
+        if (a[j] < a[i] && a[j] < a[i - 1]) ans ++;
+        aa.pb(a[j]);
+        aa.pb(a[i]);
+    }
+    printf("%d\n",ans);
+    int f = 1;
+    for (auto i : aa) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    puts("");
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int a[1010];
+    int ok;
+    int ok2;
+    ll sum;
+    __T {
+        scii(n,m);
+        ok = 1;
+        ok2 = 0;
+        sum = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            sum += a[i];
+            if (a[i] == m) ok2 = 1;
+            if (i != 1) {
+                if (a[i] != a[i - 1]) ok = 0;
+            }
+        }
+        if (ok && a[1] == m) puts("0");
+        else {
+            if (m * (ll) n == sum || ok2) puts("1");
+            else puts("2");
+        }
+        
+    }
+}
+*/
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int isZhi(int n)
+{
+    if (n == 1) return 0;
+    for (int i = 2;i * i <= n;i ++) if (n % i == 0) return 0;
+    return 1;
+}
+
+int main()
+{
+    int n;
+    priority_queue<ll,vector<ll>,greater<ll>> que;
+    set<ll> vis;
+    ll last;
+    list<ll> ans;
+    list<ll>::iterator j;
+    ll g;
+    int ok;
+    __T {
+        sci(n);
+        vis.clear();
+        ans.clear();
+        while (!que.empty()) que.pop();
+        for (int i = 2;i * i <= n;i ++) {
+            if (n % i == 0) {
+                if (isZhi(i)) ans.pb(i);
+                else que.push(i);
+                if (i != n / i) {
+                    if (isZhi(n / i)) ans.pb(n / i);
+                    else que.push(n / i);
+                }
+            }
+        }
+        
+        if (ans.size() == 1) {
+            printf("%lld",*ans.begin());
+            while (!que.empty()) {
+                printf(" %lld",que.top());
+                que.pop();
+            }
+            printf(" %d\n0\n",n);
+        } else if (ans.size() == 2 && (*ans.begin()) * (*(++ ans.begin())) == n) {
+            printf("%lld %lld %d\n1\n",*ans.begin(),*(++ ans.begin()),n);
+        } else {
+            for (auto i = ++ ans.begin();i != ans.end();i ++) {
+                j = i;
+                j --;
+                ans.insert(i, g = (*i) * (*j) * gcd(*i,*j));
+                vis.insert(g);
+            }
+            while (!que.empty()) {
+                last = que.top();
+                que.pop();
+                
+                if (vis.find(last) != vis.end()) continue;
+                
+                ok = 0;
+                for (auto i = ++ ans.begin();i != ans.end();i ++) {
+                    j = i;
+                    j --;
+                    if (gcd(last,*j) != 1 && gcd(last,*i) != 1) {
+                        ans.insert(i, last);
+                        ok = 1;
+                        break;
+                    }
+                }
+                if (!ok) ans.pb(last);
+            }
+            ans.pb(n);
+            ok = 1;
+            for (auto i : ans) {
+                if (ok) ok = 0;
+                else printf(" ");
+                printf("%lld",i);
+            }
+            printf("\n0\n");
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int n;
+
+const int MAXN = 1e5 + 10;
+
+int a[MAXN];
+ll c[MAXN];
+
+void modify(int i,ll x)
+{
+    // 从叶子结点一路向上更新
+    for (;i <= n;i += lowbit(i)) {
+        c[i] += x;
+    }
+}
+
+ll sum(int i)
+{
+    // 查询： 由于每个c结点相当于一小段前缀和，因此全+起来，最后求得的便是总共的前缀和
+    ll ans = 0;
+    for (;i > 0;i -= lowbit(i))
+    {
+        ans += c[i];
+    }
+    return ans;
+}
+
+int mx[MAXN];
+
+void modify_m(int i,int x)
+{
+    int low;
+    a[i] = x; // 会直接修改数组的值
+    for (;i <= n;i += lowbit(i)) {
+        mx[i] = a[i];
+        low = lowbit(i);
+        for (int j = 1;j < low;j <<= 1) {
+            mx[i] = max(mx[i], mx[i - j]);
+        }
+    }
+}
+
+int query_max(int l,int r)
+{
+    int ans = max(a[l],a[r]);
+    while(true)
+    {
+        ans = max(ans, a[r]);
+        if (l == r) break;
+        r --;
+        for (;r - l > lowbit(r);r -= lowbit(r))
+        {
+            ans = max(ans,mx[r]);
+        }
+    }
+    return ans;
+}
+
+int main()
+{
+    int m;
+    scii(n,m);
+    rep(i,1,n) {
+        sci(a[i]);
+        modify_m(i, a[i]); // 修改最大值
+        modify(i, a[i]);
+    }
+    int t,x,y;
+    while (m --) {
+        sciii(t,x,y);
+        if (t == 1) {
+            modify(x, y - a[x]);
+            modify_m(x, y);
+        } else if (t == 2) {
+            printf("%lld\n",sum(y) - sum(x - 1));
+        } else printf("%d\n",query_max(x, y));
+    }
+    re0;
+}
+*/
+
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        if (n >= 7) {
+            if (n % 2) {
+                printf("%d %d\n",3,n - 3);
+            } else {
+                printf("%d %d\n",2,n - 2);
+            }
+        } else {
+            switch (n) {
+                case 1:
+                    puts("-1");
+                    break;
+                case 2:
+                    puts("-1");
+                    break;
+                case 3:
+                    puts("-1");
+                    break;
+                case 4:
+                    puts("-1");
+                    break;
+                case 5:
+                    puts("-1");
+                    break;
+                case 6:
+                    puts("2 4");
+                    break;
+                default:
+                    break;
+            }
+        }
+        
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    int w[100010];
+    double sum = 0;
+    __T {
+        sum = 0;
+        scii(n,k);
+        rep(i,1,n) {
+            sci(w[i]);
+            sum += w[i];
+        }
+        rep(i,1,n) {
+            if (i != 1) printf(" ");
+            printf("%.8f",w[i] * (sum + k) / sum);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int a[10]['z'];
+    int k[] = {1,2,3,4,5,6};
+    int ok = 0;
+    __T {
+        k[0] = 1;
+        k[1] = 2;
+        k[2] = 3;
+        k[3] = 4;
+        k[4] = 5;
+        k[5] = 6;
+        mem(a,0);
+        rep(ii,1,6) {
+            cin >> str;
+            for (int i = 0;str[i];i ++) {
+                a[ii][str[i]] ++;
+            }
+        }
+        ok = 0;
+        do {
+            if (a[k[0]]['h'] && a[k[1]]['a'] && a[k[2]]['r'] && a[k[3]]['b'] && a[k[4]]['i'] && a[k[5]]['n']) {
+                ok = 1;
+                break;
+            }
+        } while (next_permutation(k, k + 6));
+        puts(ok ? "Yes" : "No");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    vector<int> a(n);
+    rep(i,0,n-1) a[i] = i + 1;
+    vector<int> b(n);
+    int m,M;
+    map<vector<int>,vector<vector<int>>> all;
+    do {
+        m = a[0];
+        M = a[0];
+        rep(i,0,n-1) {
+            m = min(m,a[i]);
+            M = max(M,a[i]);
+            b[i] = M - m;
+        }
+        all[b].pb(a);
+    } while (next_permutation(a.begin(), a.end()));
+    
+    for (auto i : all) {
+        for (auto j : i.first) printf(" %d",j);
+        puts(":");
+        for (auto j : i.second) {
+            for (auto k : j) printf(" %d",k);
+            puts("");
+        }
+        printf("cnt = %lu\n",i.second.size());
+        puts("");
+    }
+    
+    return 0;
+}
+*/
+
+
+
+/*
+const int mod = 1e9 + 7;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+ll AA[100010];
+
+ll A(int a,int b)
+{
+    return (AA[a] * quickpow(AA[a - b], mod - 2)) % mod;
+}
+
+int main()
+{
+    int n;
+    int a[100010];
+    int vis[100010];
+    int cnt = 0;
+    int ok,has;
+    
+    AA[0] = 1;
+    AA[1] = 1;
+    rep(i,2,100005) {
+        AA[i] = i * AA[i - 1];
+        AA[i] %= mod;
+    }
+    
+    int last;
+    int length;
+    int cc;
+    ll ans;
+    
+    __T {
+        cc = cnt = 0;
+        ans = 1;
+        sci(n);
+        vis[0] = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            vis[i] = 0;
+        }
+
+        ok = 1;
+        has = 0;
+        rep(i,2,n) {
+            if (a[i] >= n) {
+                ok = 0;
+                break;
+            }
+            if (a[i] == n - 1) has = 1;
+            if (a[i] < a[i - 1]) {
+                ok = 0;
+                break;
+            }
+            if (has && a[i] < n - 1) {
+                ok = 0;
+                break;
+            }
+        }
+        if (a[1] != 0) ok = 0;
+        
+        
+        if (ok) {
+            length = 0;
+            last = 0;
+            
+            rep(i,2,n) {
+                if (a[i] > last) {
+                    if (cc < length) {
+                        puts("0");
+                        goto nxt;
+                    }
+                    
+                    ans *= A(cc,length);
+                    ans %= mod;
+                    
+                    cc -= length;
+                    cc += a[i] - last - 1;
+                    
+                    length = 0;
+                    cnt ++;
+                    
+                } else length ++;
+                last = a[i];
+            }
+            
+            if (cc < length) {
+                puts("0");
+                goto nxt;
+            }
+            
+            ans *= A(cc,length);
+            ans %= mod;
+            
+            ans *= quickpow(2, cnt);
+            ans %= mod;
+            printf("%lld\n",ans);
+        } else puts("0");
+    nxt:;
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll n;
+    int a[50010];
+    int ok = 1;
+    __T {
+        scl(n);
+        rep(i,1,n) {
+            sci(a[i]);
+            
+        }
+        ok = 1;
+       
+        rep(i,2,n) {
+            if (a[i] >= a[i - 1]) {
+                ok = 0;
+                break;
+            }
+        }
+        
+        puts(ok ? "NO" : "YES");
+        
+    }
+    return 0;
+}
+*/
+
+
+/*
+int main()
+{
+    int n;
+    ll x[50][5];
+    ll k[50];
+    ll t;
+    ll cnt = 0;
+
+    __T {
+        sci(n);
+        mem(x,0);
+        cnt = 0;
+        rep(i,1,n) {
+            scl(t);
+            REP(i,0,32) {
+                k[i] = t & 1;
+                t >>= 1;
+            }
+            pre(i,31,0) {
+                if (k[i]) {
+                    cnt += x[i][1];
+                    x[i][1] ++;
+                    break;
+                }
+            }
+        }
+        printf("%lld\n",cnt);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,q;
+    ll a[300010];
+    ll dp[2];
+    __T {
+        scii(n,q);
+        dp[0] = dp[1] = 0;
+        rep(i,1,n) scl(a[i]);
+        dp[1] = a[1];
+        rep(i,2,n) {
+            dp[0] = max(dp[0],dp[1] - a[i]);
+            dp[1] = max(dp[1],dp[0] + a[i]);
+        }
+        printf("%lld\n",max(dp[0],dp[1]));
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    freopen("data.txt","w",stdout);
+    int a[500];
+    rep(i,1,480) a[i] = i;
+    srand((uint)time(NULL));
+    rep(i,1,480) swap(a[rand() % 480 + 1],a[rand() % 480 + 1]);
+    rep(i,1,160) printf("%d ",a[i]);
+    puts("\r\n");
+    rep(i,161,320) printf("%d ",a[i]);
+    puts("\r\n");
+    rep(i,321,480) printf("%d ",a[i]);
+    puts("\r\n");
+    return 0;
+}
+*/
+
+//
+//int main()
+//{
+//    int n,m;
+//    scii(n,m);
+//    int a[20010];
+//    rep(i,1,n) sci(a[i]);
+//    int u,v,x;
+//    while (m --) {
+//        sciii(u,v,x);
+//
+//    }
+//    re0;
+//}
+
+/*
+int main()
+{
+    int n;
+    char x;
+    sci(n);
+    scanf(" %c",&x);
+    int nn = n - 1;
+    nn /= 2;
+    int v = sqrt(4 * nn + 4) - 1;
+    if (v % 2 == 0) v --;
+    rep(i,1,(v - 1) / 2 + 1) {
+        REP(ii,1,i) printf(" ");
+        rep(ii,1,v - (i - 1) * 2) printf("%c",x);
+        puts("");
+    }
+    
+    pre(i,(v - 1) / 2,1) {
+        REP(ii,1,i) printf(" ");
+        rep(ii,1,v - (i - 1) * 2) printf("%c",x);
+        puts("");
+    }
+    printf("%d\n",n - (v + 3) * (v - 1) / 2 - 1);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    char p[100010];
+    mem(p,1);
+    p[1] = 0;
+    p[2] = 1;
+    int n;
+    sci(n);
+    rep(i,2,n) {
+        for (int j = i + i;j <= n;j += i) {
+            p[j] = 0;
+        }
+    }
+    int cnt = 0;
+    int pp[100010];
+    rep(i,1,n) {
+        if (p[i]) pp[++ cnt] = i;
+    }
+    int ans = 0;
+    rep(i,2,n) {
+        if (pp[i] - pp[i - 1] == 2) ans ++;
+    }
+    printf("%d\n",ans);
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    scii(n,m);
+    int a[110];
+    REP(i,0,n) sci(a[i]);
+    REP(i,0,n) {
+        if (i != 0) printf(" ");
+        printf("%d",a[(i - m + n * m) % n]);
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int x,y,z,k;
+    __T {
+        sciii(x,y,z);
+        k = x + y - z;
+        if (x + y < z) puts("-1");
+        else if (x + y == z) printf("%d\n",z + 1);
+        else if (k <= x || k <= z) puts("-1");
+        else printf("%d\n",x + y - z);
+    }
+    return 0;
+}
+*/
+
+/*ll to(int a) {
+    ll ans = 1;
+    while (a) {
+        
+        ans *= a % 10;
+        
+        if (ans == 0) return ans;
+        a /= 10;
+    }
+    return ans;
+}
+
+int main()
+{
+    int l,r;
+    ll ans;
+    __T {
+        scii(l,r);
+        ans = 1;
+        rep(i,l,r) {
+            ans *= to(i);
+            if (ans == 0) break;
+            ans %= 1000000007;
+        }
+        _C(ans);
+    }
+    re0;
+}
+*/
+
+/*
+string str;
+int n,k;
+
+int chk(int l) {
+    int ans = 0;
+    for (int i = 0;i < n;) {
+        if (str[i] == '1') {
+            ans ++;
+            i += l;
+        } else i ++;
+    }
+    return ans <= k;
+}
+
+int main()
+{
+    int l,r,m;
+    __T {
+        scii(n,k);
+        cin >> str;
+        l = 1;
+        r = n;
+        while (l < r) {
+            m = (l + r) / 2;
+            if (chk(m)) r = m;
+            else l = m + 1;
+        }
+        printf("%d\n",r);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    ll n;
+    ll a6,a9,a0,a8;
+    ll ans = 0;
+    int o;
+    
+    __T {
+        cin >> str;
+        n = str.size();
+        ans = (1 + n) * n / 2;
+        o = 0;
+        a0 = a8 = a6 = a9 = 0;
+        REP(i,0,n) {
+            if (str[i] == '6') a6 ++;
+            else if (str[i] == '9') a9 ++;
+            else if (str[i] == '0') a0 ++;
+            else if (str[i] == '8') a8 ++;
+            if (str[i] == '0' || str[i] == '8') o = 1;
+        }
+        ans -= (a0 + 1) * a0 / 2;
+        ans -= (a8 + 1) * a8 / 2;
+        o = o || (a6 && a9);
+        if (o) ans ++;
+        ans -= a6 * a9;
+        printf("%lld\n",ans);
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int find_set[MAXN];
+int depth[MAXN];
+
+int vis[MAXN];
+
+int find(int a)
+{
+    if (find_set[a] == a) return a;
+    return find_set[a] = find(find_set[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (depth[x] >= depth[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        find_set[y] = x; // 改变b节点的根的根为a的根
+        if (depth[x] == depth[y]) { // 俩根深度一样
+            if (x != y) depth[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else find_set[x] = y;
+}
+
+
+void init(int n)
+{
+    rep(i,0,n) {
+        find_set[i] = i;  // 每个种类初始状态只有自己一个点
+        depth[i] = 1;  // 初始化秩
+        vis[i] = 0;
+    }
+}
+
+int n,m;
+
+int conv(int i,int j) {
+    return i * m + j;
+}
+
+int main()
+{
+    char a[MAXN];
+    
+    int t;
+    int ii,jj;
+    int ok;
+    int last;
+    int times;
+    __T {
+        scii(n,m);
+        init(n * m + 5);
+        REP(i,0,n) {
+            scanf(" ");
+            REP(j,0,m) {
+                scanf("%c",&a[conv(i,j)]);
+            }
+        }
+        REP(i,0,n) {
+            REP(j,0,m) {
+                scanf("%d",&t);
+                ii = i;
+                jj = j;
+                switch (a[conv(i,j)]) {
+                    case 'u':
+                        ii -= t;
+                        break;
+                    case 'd':
+                        ii += t;
+                        break;
+                    case 'l':
+                        jj -= t;
+                        break;
+                    case 'r':
+                        jj += t;
+                        break;
+                    default:
+                        break;
+                }
+                if (ii >= 0 && ii < n && jj >= 0 && jj < m) {
+                    bind(conv(i,j),conv(ii,jj));
+                    vis[conv(ii,jj)] ++;
+                }
+            }
+        }
+        ok = 1;
+        last = find(0);
+        REP(i,1,n * m) {
+            if (last != (t = find(i))) {
+                ok = 0;
+                break;
+            }
+            last = t;
+        }
+        times = 0;
+        REP(i,0,n * m) if (vis[i] == 0) times ++;
+        if (times >= 2) ok = 0;
+        
+        puts(ok ? "Yes" : "No");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int main()
+{
+    int n;
+    char p[MAXN],vis[MAXN];
+    int cnt;
+    int t;
+    vector<pair<int,int>> ans;
+    __T {
+        ans.clear();
+        sci(n);
+        rep(i,0,n) {
+            p[i] = 1;
+            vis[i] = 0;
+        }
+        rep(i,3,n) {
+            if (!p[i] || i % 2 == 0) continue;
+            cnt = 1;
+            for (int j = i + i;j <= n;j += i) {
+                p[j] = 0;
+                if (!vis[j]) cnt ++;
+            }
+            
+            t = i;
+            for (int j = i * (2 + cnt % 2);j <= n;j += i) {
+                if (vis[j]) continue;
+                if (t == -1) {
+                    t = j;
+                } else {
+                    vis[j] = vis[t] = 1;
+                    ans.pb(mpair(t,j));
+                    t = -1;
+                }
+            }
+        }
+        
+        t = -1;
+        rep(i,2,n) {
+            if (!(i & 1) && !vis[i]) {
+                if (t == -1) {
+                    t = i;
+                } else {
+                    ans.pb(mpair(t,i));
+                    t = -1;
+                }
+            }
+        }
+        printf("%lu",ans.size());
+        for (auto i : ans) {
+            printf(" %d %d",i.first,i.second);
+        }
+        puts("");
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,x;
+    __T {
+        scii(n,x);
+        if (n == 1 || n == 2) printf("1\n");
+        else {
+            n -= 2;
+            printf("%.0f\n",ceil(n / (double)x) + 1);
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int main() {
+    int n;
+    sci(n);
+    ll s = 0;
+    ll ans = 0;
+    ll a[200010];
+    set<ll> vis;
+    vis.insert(0);
+    REP(i,0,n) scanf("%lld",&a[i]);
+    REP(i,0,n) {
+        if (vis.find(s + a[i]) != vis.end()){
+            vis.clear();
+            vis.insert(s = 0);
+            ans ++;
+        }
+        s += a[i];
+        vis.insert(s);
+    }
+    printf("%lld\n",ans);
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int a,b,c,d;
+    int ok;
+    __T {
+        scii(n,m);
+        ok = 0;
+        while (n --) {
+            scii(a,b);
+            scii(c,d);
+            if (b == c) ok = 1;
+        }
+        if (m % 2) puts("NO");
+        else {
+            puts(ok ? "YES" : "NO");
+        }
+    }
+    re0;
+}
+*/
+/*
+int main()
+{
+    int n;
+    sci(n);
+    ll a1,a2,a3;
+    ll b1,b2,b3;
+    sclll(a1,a2,a3);
+    sclll(b1,b2,b3);
+    ll w = min(a1,b2) + min(a2,b3) + min(a3,b1);
+    ll l;
+    ll t;
+    
+    ll aa1,aa2,aa3;
+    ll bb1,bb2,bb3;
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    l = min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1);
+    
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    aa1 = a1;aa2 = a2;aa3 = a3;
+    bb1 = b1;bb2 = b2;bb3 = b3;
+    
+    // 3--------------------
+    bb3 -= t = min(aa3,bb3);
+    aa3 -= t;
+    
+    bb3 -= t = min(aa1,bb3);
+    aa1 -= t;
+    
+    // 2--------------------
+    bb2 -= t = min(aa2,bb2);
+    aa2 -= t;
+    
+    bb2 -= t = min(aa3,bb2);
+    aa3 -= t;
+    
+    // 1--------------------
+    bb1 -= t = min(aa1,bb1);
+    aa1 -= t;
+    
+    bb1 -= t = min(aa2,bb1);
+    aa2 -= t;
+    
+    l = min(l,min(aa1,bb2) + min(aa2,bb3) + min(aa3,bb1));
+//    _C(aa1 << " " << aa2 << " " << aa3);
+//    _C(bb1 << " " << bb2 << " " << bb3);
+    
+    
+    printf("%lld %lld\n",l,w);
+    
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 2e4 + 10;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN << 1];
+int g[MAXN];
+
+int cnt;
+
+void init()
+{
+    cnt = 0;
+    mem(g,-1);
+}
+
+void add(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+int bg[MAXN],ed[MAXN];
+int dfn = 0;
+
+void dfs(int n) {
+    bg[n] = ++ dfn;
+    // iterate graph
+    int to;
+    for (int i = g[n];~i;i = e[i].nxt) {
+        to = e[i].to;
+        dfs(to);
+    }
+    ed[n] = dfn;
+}
+
+int n,m;
+
+struct node{
+    int l,r;
+    ll add;
+    ll sum;
+} tree[MAXN << 2];
+void pushup(int index){
+    tree[index].sum = tree[index<<1].sum+tree[index<<1|1].sum;
+}
+void pushdown(int index){    //下推标记
+    if(tree[index].add){
+         tree[index<<1].sum += (tree[index<<1].r-tree[index<<1].l+1)*tree[index].add;
+        tree[index<<1|1].sum +=(tree[index<<1|1].r-tree[index<<1|1].l+1)*tree[index].add;
+        
+        tree[index<<1].add += tree[index].add;
+        tree[index<<1|1].add += tree[index].add;
+        
+        tree[index].add = 0;
+    }
+}
+void build(int l, int r, int index){        //建树    数组a的l,r区间建树
+    tree[index].l = l;
+    tree[index].r = r;
+    tree[index].add = 0;
+    if(l == r){
+//        scanf("%lld",&tree[index].sum);
+        
+         tree[index].sum = 0;
+        return;
+    }
+    int mid = (l+r)>>1;
+    build(l,mid,index<<1);
+    build(mid+1,r,index<<1|1);
+    pushup(index);
+}
+void update(int l,int r,int index, ll w){    //修改a[L]的值 更新sum
+    if(l <= tree[index].l && r >= tree[index].r){
+        tree[index].sum += (tree[index].r-tree[index].l+1)*w;
+        tree[index].add += w;
+        return;
+    }
+    pushdown(index);
+    int mid = (tree[index].l + tree[index].r)>>1;
+    if(l <= mid) update(l,r,index<<1,w);
+    if(r > mid) update(l,r,index<<1|1,w);
+    pushup(index);
+}
+ll query(int l,int r,int index){    //查询
+    if(l <= tree[index].l && r >= tree[index].r){
+        return tree[index].sum;
+    }
+    pushdown(index);
+    int mid = (tree[index].l + tree[index].r)>>1;
+    ll sum = 0;
+     if(l <= mid){
+         sum += query(l,r,index<<1);
+     }
+    if(r > mid){
+        sum += query(l,r,index<<1|1);
+    }
+    return sum;
+}
+
+int main()
+{
+    init();
+    scii(n,m);
+    build(1,n,1);
+    int t;
+    int root = 1;
+    rep(i,1,n) {
+        sci(t);
+        if (t) add(t,i);
+        else root = i;
+    }
+    dfs(root);
+
+    int u,x,v;
+    while (m --) {
+        sciii(u,x,v);
+        printf("%lld\n",query(bg[v],bg[v],1));
+        update(bg[u], ed[u], 1, x);
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 2e4 + 10;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN << 1];
+int g[MAXN];
+
+int cnt;
+
+void init()
+{
+    cnt = 0;
+    mem(g,-1);
+}
+
+void add(int u,int v)
+{
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+int bg[MAXN],ed[MAXN];
+int dfn = 0;
+
+void dfs(int n) {
+    bg[n] = ++ dfn;
+    // iterate graph
+    int to;
+    for (int i = g[n];~i;i = e[i].nxt) {
+        to = e[i].to;
+        dfs(to);
+    }
+    ed[n] = dfn;
+}
+
+int n,m;
+ll c[MAXN] = {0};
+
+void modify(int i,ll x)
+{
+    // 从叶子结点一路向上更新
+    for (;i <= n;i += lowbit(i))
+    {
+        c[i] += x;
+    }
+}
+
+ll sum(int i)
+{
+    // 查询：由于每个c结点相当于一小段前缀和，因此全+起来，最后求得的便是总共的前缀和
+    ll ans = 0;
+    for (;i > 0;i -= lowbit(i))
+    {
+        ans += c[i];
+    }
+    return ans;
+}
+
+void pls(int l,int r,int k)
+{
+    modify(l, k);
+    modify(r + 1, -k);
+}
+
+
+int main()
+{
+    init();
+    
+    scii(n,m);
+    int t;
+    int root = 1;
+    rep(i,1,n) {
+        sci(t);
+        if (t) add(t,i);
+        else root = i;
+    }
+    dfs(root);
+
+    int u,x,v;
+    while (m --) {
+        sciii(u,x,v);
+        printf("%lld\n",sum(bg[v]));
+        pls(bg[u],ed[u],x);
+    }
+    return 0;
+}
+*/
+
+/*
+int n;
+
+const int MAXN = 1e5 + 10;
+
+struct Edge {
+    Edge(){}
+    Edge(int to,int nxt):to(to),nxt(nxt){}
+    int to;
+    int nxt;
+} e[MAXN << 1];
+
+int g[MAXN];
+int cnt;
+
+int dfn = 0;
+
+void init()
+{
+    mem(g,-1);
+    cnt = 0;
+    dfn = 0;
+}
+
+void add(int u,int v) {
+    e[cnt] = Edge(v,g[u]);
+    g[u] = cnt ++;
+}
+
+int in[MAXN],out[MAXN];
+
+void dfs(int k,int f)
+{
+    in[k] = ++ dfn;
+    for (int i = g[k];~i;i = e[i].nxt)
+    {
+        if (e[i].to != f) {
+            dfs(e[i].to,k);
+        }
+    }
+    out[k] = dfn;
+}
+
+int c[MAXN] = {0};
+int a[MAXN];
+
+void modify(int idx,ll x)
+{
+    a[idx] += x;
+    // 从叶子结点一路向上更新
+    for (int i = idx;i <= n;i += lowbit(i))
+    {
+        c[i] += x;
+    }
+}
+
+ll sum(int idx)
+{
+    // 查询：由于每个c结点相当于一小段前缀和，因此全+起来，最后求得的便是总共的前缀和
+    ll ans = 0;
+    for (int i = idx;i > 0;i -= lowbit(i))
+    {
+        ans += c[i];
+    }
+    return ans;
+}
+
+int main()
+{
+    sci(n);
+    init();
+    int u,v;
+    rep(i,1,n - 1) {
+        scii(u,v);
+        add(u,v);
+        add(v,u);
+    }
+    dsci(m);
+    char c;
+    int x;
+    dfs(1,-1);
+    
+    rep(i,1,n) {
+        modify(i, 1);
+    }
+    
+    while (m --) {
+        scanf(" %c",&c);
+        sci(x);
+        if (c == 'C') {
+            if (a[in[x]]) modify(in[x], -1);
+            else modify(in[x], 1);
+        }
+        else if (c == 'Q') printf("%lld\n",sum(out[x]) - sum(in[x] - 1));
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int ans;
+    int cnt;
+    __T {
+        sci(n);
+        ans = n;
+        cnt = n;
+        for (int i = 1;cnt <= ans;i ++,ans = min(ans,cnt)) {
+            cnt = (i - 1) + n / i + min(n % i,1) - 1;
+        }
+        printf("%d\n",ans);
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    ll k;
+    ll n,ans;
+    while (~scl(k)) {
+        k = abs(k);
+        for (ans = 1,n = 1;n < k || n % 2 != k % 2;n += ++ ans);
+        printf("%lld\n",ans);
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    __T {
+        scii(n,k);
+        rep(i,1,k) {
+            n = (n >> 1) + (n & 1);
+            if (n == 1 | n == 0) break;
+        }
+        printf("%d\n",n);
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    ll year1,mon1,day1;
+    ll year,mon,day;
+    string s;
+    string str[] = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"};
+    map<string,int> conv;
+    rep(i,0,4) conv[str[i]] = i;
+    __T {
+        scanf("%lld %lld %lld", &year, &mon, &day);
+        cin >> s;
+        scanf("%lld %lld %lld", &year1, &mon1, &day1);
+        day %= 5;
+        day1 %= 5;
+        
+        _C(str[(conv[s] + day1 + 5 - day) % 5]);
+        
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[100010];
+    ll x = 0,y;
+    ll p;
+    __T {
+        sci(n);
+        p = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            p += a[i];
+        }
+        p /= n;
+        x = y = 0;
+        rep(i,1,n) {
+            x += a[i] - p;
+            y += abs(a[i] - p);
+        }
+        printf("%lld\n",x + (y - x) / 2);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    string str;
+    ll x,y;
+    ll ans;
+    ll ans2;
+    __T {
+        scii(n,k);
+        cin >> str;
+        x = y = 0;
+        ans = ans2 = 0;
+        REP(i,0,n) {
+            switch (str[i]) {
+                case 'U':
+                    y ++;
+                    break;
+                case 'D':
+                    y --;
+                    break;
+                case 'L':
+                    x --;
+                    break;
+                case 'R':
+                    x ++;
+                    break;
+                default:
+                    break;
+            }
+            ans2 = max(abs(x) + abs(y),ans2);
+        }
+        x *= (k - 1);
+        y *= (k - 1);
+        REP(i,0,n) {
+            switch (str[i]) {
+                case 'U':
+                    y ++;
+                    break;
+                case 'D':
+                    y --;
+                    break;
+                case 'L':
+                    x --;
+                    break;
+                case 'R':
+                    x ++;
+                    break;
+                default:
+                    break;
+            }
+            ans = max(abs(x) + abs(y),ans);
+        }
+        printf("%lld\n",max(ans,ans2));
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    ll k;
+    string str;
+    ll n,m;
+    int u,v;
+    ll i;
+    __T {
+        scl(k);
+        cin >> str;
+        scll(n,m);
+        rep(i,1,m) scii(u,v);
+        
+        i = (m - n + 1 + k) % k;
+        if (str[i] == '1') puts("2");
+        else if (str[i] == '2') puts("1");
+    }
+    return 0;
+}
+*/
+
+/*
+int cmp(const pair<int,int> &a,const pair<int,int> &b)
+{
+    if (a.second == b.second) return a.first < b.first;
+    return a.second < b.second;
+}
+
+int main() {
+    int n;
+    int l,r;
+    ll ans;
+    pair<int, int> a[100010];
+    map<int,int> vis;
+    __T {
+        sci(n);
+        vis.clear();
+        rep(i,1,n) {
+            scii(l,r);
+            a[i] = mpair(l,r);
+        }
+        sort(a + 1,a + 1 + n,cmp);
+        ans = 0;
+        rep(i,1,n) {
+            rep(j,a[i].first,a[i].second) {
+                if (!vis[j]) {
+                    vis[j] = 1;
+                    ans ++;
+                    break;
+                }
+            }
+        }
+        printf("%lld\n",ans);
+    }
+}
+*/
+
+/*
+int n,m;
+const int MAXN = 110;
+
+vector<int> g1[MAXN],g2[MAXN];
+
+int in[MAXN],out[MAXN];
+
+int ch[MAXN],fa[MAXN];
+
+int nonvis[MAXN];
+int vis[MAXN];
+
+int tuopu()
+{
+    queue<int> q;
+    rep(i,1,n) {
+        if (nonvis[i]) {
+            if (in[i] == 0) q.push(i);
+        }
+        vis[i] = 0;
+    }
+    int t;
+    while (!q.empty()) {
+        t = q.front();
+        q.pop();
+        
+        if (vis[t]) continue;
+        vis[t] = 1;
+        
+        for (auto i : g1[t]) {
+            ch[i] += 1 + ch[t];
+            in[i] --;
+            if (in[i] == 0) {
+                q.push(i);
+            }
+        }
+        
+    }
+    int ok = 1;
+    rep(i,1,n) {
+        if (!vis[i] && nonvis[i]) {
+            ok = 0;
+            break;
+        }
+    }
+    
+    if (!ok) re0;
+    re1;
+}
+
+
+void bfs()
+{
+    queue<int> q1;
+    queue<int> q2;
+    
+    rep(i,1,n) {
+        ch[i] = fa[i] = vis[i] = 0;
+    }
+    int t;
+    rep(i,1,n) {
+        rep(j,1,n) vis[j] = 0;
+        ch[i] = -1;
+        
+        q1.push(i);
+        while (!q1.empty()) {
+            t = q1.front();
+            q1.pop();
+            
+            if (vis[t]) continue;
+            vis[t] = 1;
+            
+            ch[i] ++;
+            
+            for (auto i : g1[t]) {
+                q1.push(i);
+            }
+        }
+        
+        rep(j,1,n) vis[j] = 0;
+        fa[i] = -1;
+        
+        q2.push(i);
+        while (!q2.empty()) {
+            t = q2.front();
+            q2.pop();
+            
+            if (vis[t]) continue;
+            vis[t] = 1;
+            
+            fa[i] ++;
+            
+            for (auto i : g2[t]) {
+                q2.push(i);
+            }
+        }
+    }
+}
+
+int main()
+{
+    int u,v;
+    
+    __T {
+        scii(n,m);
+        rep(i,1,n) {
+            g1[i].clear();
+            g2[i].clear();
+            in[i] = out[i] = nonvis[i] = 0;
+        }
+        
+        while (m --) {
+            scii(u,v);
+            in[v] ++;
+            out[u] ++;
+            g1[u].pb(v);
+            g2[v].pb(u);
+            nonvis[u] = 1;
+            nonvis[v] = 1;
+        }
+        
+        if (tuopu())
+        {
+            bfs();
+            rep(i,1,n) {
+                if (!nonvis[i] || (ch[i] <= n / 2 && fa[i] <= n / 2)) printf("1");
+                else printf("0");
+            }
+        } else rep(i,1,n) printf("0");
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int a,p,pp;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % pp;
+        a = a * a % pp;
+        b >>= 1;
+    }
+    return ans;
+}
+
+
+int main()
+{
+    vector<int> ans;
+    int d;
+    int e;
+    vector<int>::iterator it;
+    __T {
+        scii(a,p);
+        pp = 1 << p;
+        ans.clear();
+        if (a & 1) {
+            printf("1\n");
+            continue;
+        }
+        rep(x,1,pp) {
+            if (quickpow(a, x) == quickpow(x, a)) {
+                ans.pb(x);
+            }
+            if (ans.size() == 5) break;
+        }
+        
+        it = ans.end();
+        d = (e = *(-- it)) - *(-- it);
+        printf("%lu\n",ans.size() + (pp - e) / d);
+    }
+    return 0;
+}
+*/
+
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    int ans = 0;
+    int u,v;
+    int de[100010] = {0};
+    
+    rep(i,1,n - 1) {
+        scii(u,v);
+        de[u] ++;
+        de[v] ++;
+    }
+    rep(i,1,n) {
+        if (de[i] == 1) ans ++;
+    }
+    printf("%d\n",ans);
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    dsci(n);
+    set<int> s;
+    int a[100010];
+    rep(i,1,n) sci(a[i]);
+    int b[100010];
+    b[1] = 0;
+    s.insert(a[1]);
+    set<int>::iterator it;
+    rep(i,2,n) {
+        it = s.upper_bound(a[i]);
+        if (it != s.end()) b[i] = *it;
+        else b[i] = 0;
+        s.insert(a[i]);
+    }
+    ll sum = 0;
+    rep(i,1,n) sum += b[i];
+    printf("%lld\n",sum);
+    re0;
+}
+*/
+
+/*
+int a[100010];
+int b[100010] = {0};
+
+int max(int a,int b) {
+    return a > b ? a : b;
+}
+
+int main()
+{
+    int n,m,q,maxn = -1;
+    scanf("%d",&n);
+    for (int i = 1;i <= n;i ++) {
+        scanf("%d",a + i);
+        maxn = max(a[i],maxn);
+        b[a[i]] ++;
+    }
+    for (int i = maxn - 1;i >= 1;i --) b[i] += b[i + 1];
+    scanf("%d",&m);
+    while (m --) {
+        scanf("%d",&q);
+        printf("%d\n",b[a[q] + 1]);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int u,v;
+    __T {
+        sci(n);
+        rep(i,1,n - 1) {
+            scii(u,v);
+        }
+        if (!(n & 1)) puts("Bob");
+        else puts("Alice");
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    vector<int> pos;
+    char x[] = {'0','1','2','3','4','5','6','7','8','9'};
+    __T {
+        scii(k,n);
+        pos.clear();
+        while (n) {
+            n --;
+            pos.pb(n % k);
+            n /= k;
+        }
+        
+        for (auto i = pos.rbegin();i != pos.rend();i ++)
+        {
+            printf("%c",x[10 - k + *i]);
+        }
+        puts("");
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int k;
+    sci(k);
+    k --;
+    
+    int l = 1,r = k;
+    int le = k - l * r;
+    int cnt = l + r + le;
+    
+    int low = cnt;
+    
+    for (int i = 1,x;i * i <= k;i ++) {
+        x = k / i;
+        le = k - i * x;
+        cnt = i + x + le;
+        if (cnt <= low) {
+            low = cnt;
+            l = i;
+            r = x;
+        }
+    }
+    le = k - l * r + 1;
+    
+    cnt = low;
+    cnt ++;
+    printf("%d\n",cnt);
+    
+    int i;
+    int f = 1;
+    for (i = 2;i <= le;i ++) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i - 1);
+    }
+    rep(j,1,l) {
+        if (j == 1) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",le);
+        } else {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",i - 1);
+        }
+        i ++;
+    }
+    rep(j,1,r) {
+        if (j == 1) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",le);
+        } else {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",i - 1);
+        }
+        i ++;
+    }
+    puts("");
+    for (i = 1;i <= le;i ++) {
+        if (i != 1) printf(" ");
+        printf("2");
+    }
+    for (i = le + 1;i <= cnt;i ++) {
+        printf(" 1");
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int ucmp(const pair<string,int> &a,const pair<string,int> &b) {
+    return a.first == b.first;
+}
+
+int cmp(const pair<string,int> &a,const pair<string,int> &b) {
+    return a.second < b.second;
+}
+
+int main()
+{
+    int n;
+    scanf("%d ",&n);
+    pair<string,int> str[1010];
+    for (int i = 0;i < n;i ++) {
+        getline(cin,str[i].first);
+        str[i].second = i;
+    }
+    sort(str,str + n);
+    pair<string, int> *end;
+    end = unique(str, str + n, ucmp);
+    int m = (int) (end - str);
+    printf("%d\n",m);
+    sort(str,str + m,cmp);
+    for (int i = 0;i < m;i ++) cout << str[i].first << endl;
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d ",&n);
+    vector<string> ans;
+    string str;
+    map<string,int> vis;
+    for (int i = 0;i < n;i ++) {
+        getline(cin,str);
+        if (vis[str]) continue;
+        vis[str] = 1;
+        ans.push_back(str);
+    }
+    printf("%lu\n",ans.size());
+    for (auto i : ans) cout << i << endl;
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string m;
+    cin >> m;
+    string str;
+    vector<string> ans;
+    int ok;
+    __T {
+        cin >> str;
+        ok = 1;
+        if (m.size() != str.size()) continue;
+        for (int i = 0;str[i];i ++) {
+            if (m[i] == '*') continue;
+            if (m[i] != str[i]) {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok) ans.pb(str);
+    }
+    printf("%lu\n",ans.size());
+    for (auto i : ans) {
+        _C(i);
+    }
+    return 0;
+}
+*/
+
+/*
+int n,m;
+int main()
+{
+    scii(n,m);
+    int a[1010];
+    int b[1010];
+    rep(i,1,n) scii(a[i],b[i]);
+    int x,y,t;
+    int cnt;
+    int mod,k;
+    int idx;
+    rep(j,1,m) {
+        sciii(x,y,t);
+        cnt = 0;
+        rep(i,1,n) {
+            mod = b[i] - a[i];
+            mod *= 2;
+            k = t % mod;
+            if (k < b[i] - a[i] + 1) idx = a[i] + k;
+            else idx = a[i] + (mod - k);
+            if (idx >= x && idx <= y) cnt ++;
+        }
+        printf("%d\n",cnt);
+    }
+    
+    re0;
+}
+*/
+
+/*
+pair<int,int> a[100010];
+
+int cmp(const pair<int,int> &a,const pair<int,int> &b)
+{
+    return a.second < b.second;
+}
+
+int main()
+{
+    int n,k;
+    scii(n,k);
+    int t[100010] = {0};
+    rep(i,1,n) {
+        sci(a[i].first);
+        t[a[i].first] ++;
+    }
+    rep(i,1,n) sci(a[i].second);
+    
+    sort(a + 1,a + 1 + n,cmp);
+    int cnt = 0;
+    rep(i,1,k) if (t[i]) cnt ++;
+    ll ans = 0;
+    rep(i,1,n) {
+        if (cnt >= k) break;
+        if (t[a[i].first] <= 1) continue;
+        t[a[i].first] --;
+        cnt ++;
+        ans += a[i].second;
+    }
+    printf("%lld\n",ans);
+    re0;
+}
+*/
+
+/*
+int a[10];
+int b[10];
+int n;
+ll k,cnt,mod;
+ll nn;
+
+ll get(int i) {
+    ll ans = 0;
+    int x = 0;
+    rep(j,i,7) {
+        ans ++;
+        if (a[j]) x ++;
+        if (x == n) return ans;
+    }
+    nn = n - x;
+    k = nn / cnt;
+    mod = nn % cnt;
+    if (mod) k ++;
+//    _C(">>" << k)
+    ans += k * 7;
+    ans -= 7 - b[mod];
+    return ans;
+}
+
+int main()
+{
+    
+    int s,e;
+    
+    ll ans;
+    ll x;
+    __T {
+        sci(n);
+        cnt = 0;
+        s = 0;
+        e = 0;
+        rep(i,1,7) {
+            sci(a[i]);
+            if (a[i]) {
+                b[++ cnt] = i;
+                if (!s) s = i;
+                e = i;
+            }
+        }
+        b[0] = e;
+        ans = -1;
+        rep(i,1,7) {
+            x = get(i);
+//            _C(x);
+            if (ans == -1 || x < ans) ans = x;
+        }
+        
+        printf("%lld\n",ans);
+        
+    }
+    re0;
+}
+*/
+
+/*
+ll exgcd(ll a, ll b, ll &x, ll &y)
+{
+    if (b == 0)
+    {
+        x = 1;
+        y = 0;
+        return a;
+    }
+    ll r = exgcd(b, a % b, x, y);
+    ll t = y;
+    y = x - (a / b) * y;
+    x = t;
+    return r;
+}
+
+int main()
+{
+    ll n,nn;
+    scl(n);
+    nn = n;
+    vector<ll> y;
+    for (ll i = 2;i * i <= nn;i ++) {
+        if (n % i == 0) {
+            y.pb(i);
+            y.pb(n / i);
+        }
+    }
+    
+    ll a,b;
+    ll p;
+    for (auto i : y) {
+        for (auto j : y) {
+            if (i > 1 && i < nn && j > 1 && j < nn && exgcd(i,j,a,b) == 1) {
+                a *= (nn - 1);
+                b *= (nn - 1);
+                
+                if (a <= 0) {
+                    p = abs(a) / j;
+                    p ++;
+                    a += p * j;
+                    b -= p * i;
+                }
+                if (b <= 0) {
+                    p = abs(b) / i;
+                    p ++;
+                    b += p * i;
+                    a -= p * j;
+                }
+                
+                if (b >= nn) {
+                    p = (b - nn) / i;
+                    p ++;
+                    a += p * j;
+                    b -= p * i;
+                }
+                
+                if (a >= nn) {
+                    p = (a - nn) / j;
+                    p ++;
+                    b += p * i;
+                    a -= p * j;
+                }
+                
+                if (a < 1 || a >= j || b < 1 || b >= i) continue;
+                
+                printf("YES\n2\n");
+                printf("%lld %lld\n",a,j);
+                printf("%lld %lld\n",b,i);
+                re0;
+            }
+        }
+    }
+    puts("NO");
+    
+    re0;
+}
+*/
+
+/*
+int n,m;
+
+int check(int a,int b,int c)
+{
+    int ok = 0;
+    
+    int h = b + c,
+    w = 3 * a + b + c;
+    
+    if (h <= n && w <= m) ok = 1;
+    if (h <= m && w <= n) ok = 1;
+    
+    h = 2 * a + 2 * c;
+    w = b + 2 * c;
+    
+    if (h <= n && w <= m) ok = 1;
+    if (h <= m && w <= n) ok = 1;
+    
+    return ok;
+}
+
+int main()
+{
+    int a,b,c;
+    sciii(a,b,c);
+    scii(n,m);
+    int ok = check(a,b,c) | check(a,c,b) | check(b,a,c) | check(b,c,a) | check(c,a,b) | check(c,b,a);
+    puts(ok ? "Yes" : "No");
+    re0;
+}
+*/
+
+/*
+int a[110],b[110],c[110];
+int p[110];
+int n;
+
+int main()
+{
+    __T {
+        sci(n);
+        rep(i,1,n) sci(a[i]);
+        rep(i,1,n) sci(b[i]);
+        rep(i,1,n) sci(c[i]);
+        p[1] = a[1];
+        rep(i,2,n - 1) {
+            if (a[i] != p[i - 1]) p[i] = a[i];
+            else if (b[i] != p[i - 1]) p[i] = b[i];
+            else p[i] = c[i];
+        }
+        if (a[n] != p[1] && a[n] != p[n - 1]) p[n] = a[n];
+        else if (b[n] != p[1] && b[n] != p[n - 1]) p[n] = b[n];
+        else p[n] = c[n];
+        rep(i,1,n) {
+            if (i != 1) printf(" ");
+            printf("%d",p[i]);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,l;
+    int f[100010];
+    double ta[100010];
+    double tb[100010];
+    double v;
+    int t;
+    double ext;
+    double va,vb;
+    double a,b;
+    __T {
+        scii(n,l);
+        rep(i,1,n) sci(f[i]);
+        f[0] = 0;
+        f[n + 1] = l;
+        v = 1;
+        
+        ta[0] = 0;
+        rep(i,1,n + 1) {
+            ta[i] = (f[i] - f[i - 1]) / v + ta[i - 1];
+            v ++;
+        }
+        
+        v = 1;
+        
+        tb[n + 1] = 0;
+        pre(i,n,0) {
+            tb[i] = (f[i + 1] - f[i]) / v + tb[i + 1];
+            v ++;
+        }
+        
+        
+//        rep(i,0,n + 1) {
+//            printf("%f ",ta[i]);
+//        }
+//        puts("");
+//        rep(i,0,n + 1) {
+//            printf("%f ",tb[i]);
+//        }
+//        puts("");
+        
+        for (t = 0;t <= n + 1;t ++) {
+            if (ta[t] >= tb[t]) break;
+        }
+        
+        va = t;
+        vb = n + 2 - t;
+//        _C(va << " " << vb);
+        
+        ext = max(ta[t - 1],tb[t]);
+        a = f[t - 1];
+        b = f[t];
+        
+//        _C(">>" << t)
+        
+        if (fabs(ta[t - 1] - tb[t]) <= 1e-6){}
+        else if (ta[t - 1] > tb[t]) {
+            b -= vb * fabs(ext - tb[t]);
+        } else if (ta[t - 1] < tb[t]) {
+            a += va * fabs(ext - ta[t - 1]);
+        }
+//        _C("s> " << a << " " << b)
+        printf("%.15f\n",ext + (b - a) / (va + vb));
+        
+        
+        
+    }
+    re0;
+}
+*/
+
+//
+//itn h[1000010];
+//pair<int,int> r[20010];
+//pair<int,int> w[20010];
+//
+//int main()
+//{
+//    itn n,m;
+//    scii(n,m);
+//    mem(h,-1);
+//    rep(i,1,n) {
+//        scii(r[i].first,r[i].second);
+//    }
+//    rep(i,1,m) {
+//        scii(w[i].first,w[i].second);
+//    }
+//
+//
+//
+//    rep(i,1,n) {
+//        rep(j,1,m) {
+//            if (r[i].second <= w[j].second && r[i].first <= w[j].first)
+//            h[w[j].second - r[i].second] = max(h[w[j].second - r[i].second],w[j].first - r[i].first + 1);
+//        }
+//    }
+//    _C(h[0])
+//    ll mx = -INT_INF;
+//    ll ans = INT_INF;
+//    pre(i,1000005,0) {
+//        mx = max((ll)h[i],mx);
+//        ans = min(ans,mx + i);
+//    }
+//    _C(ans);
+//
+////    int mn_x,mn_y,mn;
+////    int ans_x = 0,ans_y = 0,ans = 0;
+////    int t;
+////    rep(i,1,n) {
+////        mn_y = h[r[i].second] - r[i].first + 1;
+////        mn_x = 0;
+////        mn = mn_x + mn_y;
+////
+////        _C(">>" << mn);
+////        rep(j,1,m) {
+////            if (w[j].second < r[i].second) continue;
+////            t = w[j].second - r[i].second + 1 + h[w[j].second + 1] - r[i].first + 1;
+////            if (t < mn) {
+////                mn = t;
+////                mn_x = h[w[j].second + 1] - r[i].first + 1;
+////                mn_y = w[j].second - r[i].second + 1;
+////            }
+////        }
+////        _C(">>" << mn << " " << mn_x << " " << mn_y);
+////        ans_x = max(ans_x,mn_x);
+////        ans_y = max(ans_y,mn_y);
+////    }
+////    printf("%d\n",ans_x + ans_y);
+//    re0;
+//}
+
+/*
+int main()
+{
+    ll n;
+    int q;
+    scl(n);
+    sci(q);
+    char cc;
+    ll k;
+    ll r = (1 + n) * n / 2,c = r;
+    ll tr = n,tc = n;
+    int visr[1000010] = {0};
+    int visc[1000010] = {0};
+    while (q --) {
+        scanf(" %c %lld",&cc,&k);
+        if (cc == 'R') {
+            if (visr[k]) puts("0");
+            else {
+                visr[k] = 1;
+                printf("%lld\n",k * tc + c);
+                r -= k;
+                tr --;
+            }
+        } else if (cc == 'C') {
+            if (visc[k]) puts("0");
+            else {
+                visc[k] = 1;
+                printf("%lld\n",k * tr + r);
+                c -= k;
+                tc --;
+            }
+        }
+    }
+    
+}
+*/
+
+/*
+pair<string,int> st[200010];
+int cnt = 0;
+int s = -1;
+int s_idx;
+string str = "";
+
+int last_index = 0;
+
+string ans = "";
+string word = "";
+
+int ok() {
+    if (word.size() <= 1) re0;
+    int up_num = 0;
+    for (int i = 0;word[i];i ++) {
+        if (isupper(word[i])) up_num ++;
+    }
+    return isupper(word[0]) && up_num == 1;
+}
+
+void ended(int i)
+{
+//    _C(s);
+//    REP(i,0,cnt) {
+//        _C(st[i].first)
+//    }
+    if (s == -1 || cnt - s <= 1) {
+        rep(j,last_index,i) {
+            printf("%c",str[j]);
+        }
+    } else {
+        rep(j,last_index,s_idx - 1) {
+            printf("%c",str[j]);
+        }
+        string x = " (";
+        REP(j,s,cnt) {
+            if (j != s) x += ' ';
+            x += st[j].first;
+            printf("%c",st[j].first[0]);
+        }
+        x += ')';
+        cout << x;
+//        _C(cnt << " " << st[cnt].first << " " << st[cnt].second)
+        rep(j,st[cnt - 1].second,i) {
+            printf("%c",str[j]);
+        }
+    }
+    cnt = 0;
+    s = -1;
+    last_index = i + 1;
+}
+
+void add(int i)
+{
+//    _C(">>" << word)
+    if (ok()) {
+        if (s == -1) {
+            s = cnt;
+            s_idx = i - (int) word.size();
+        }
+    } else {
+        if (s != -1) {
+            ended(i - (int) word.size() - 1);
+            s = -1;
+        }
+    }
+    st[cnt].first = word;
+    st[cnt ++].second = i;
+//    _C(st[cnt - 1].first << " " << st[cnt - 1].second)
+    word = "";
+}
+
+
+
+int main()
+{
+    string line;
+    while (getline(cin,line)) str += line + '\n';
+//    _C(str)
+    for (int i = 0;str[i];i ++) {
+        if (str[i] == ' ') {
+            add(i);
+        } else if (str[i] == ',' || str[i] == '.' || str[i] == '\n') {
+//            _C("\\")
+            add(i);
+//            _C(",")
+            ended(i);
+        } else word += str[i];
+    }
+    ended((int) str.size() - 1);
+    re0;
+}
+*/
+
+/*
+int main() {
+    int n,m;
+    string str;
+    int ans,ans1;
+    __T {
+        scii(n,m);
+        cin >> str;
+        ans = 0; // L
+        ans1 = 0; // R
+        if (str[m - 1] == 'R') ans ++;
+        else ans1 ++;
+        REP(i,m + 1,n) {
+            if (str[i - 1] == 'L') ans1 ++;
+        }
+        pre(i,m - 1,2) {
+            if (str[i - 1] == 'R') ans ++;
+        }
+//        _C(ans << " " << ans1)
+        printf("%d\n",min(ans,ans1));
+    }
+    
+}
+*/
+
+/*
+int n;
+
+int ok(int a,int b,int c)
+{
+    return a >= 0 && b >= 0 && c >= 0 && a < n && b < n && c < n;
+}
+
+int ok(int a,int b,int c,int d)
+{
+    return a >= 0 && b >= 0 && c >= 0 && a < n && b < n && c < n && d >= 0 && d < n;
+}
+
+int ccpc(char a,char b,char c,char d)
+{
+    return a == 'C' && b == 'C' && c == 'P' && d == 'C';
+}
+
+int main()
+{
+    string str;
+    int ans;
+    int a,b,c,d;
+    int k1,k2;
+    int okk = 0;
+    __T {
+        sci(n);
+        cin >> str;
+        ans = 0;
+        REP(i,0,n - 3) {
+            if (ccpc(str[i],str[i + 1],str[i + 2],str[i + 3])) ans ++;
+        }
+//        _C(ans)
+        okk = 0;
+        
+        // C
+        rep(i,0,n) {
+            a = i - 3;
+            b = i - 2;
+            c = i - 1;
+            k1 = 0;
+            k2 = 0;
+            if (ok(a,b,c) && ccpc(str[a],str[b],str[c],'C')) k1 ++;
+            a = i - 2;
+            b = i - 1;
+            c = i;
+            if (ok(a,b,c) && ccpc(str[a],str[b],'C',str[c])) k1 ++;
+            a = i - 1;
+            b = i;
+            c = i + 1;
+            if (ok(a,b,c) && ccpc(str[a],'C',str[b],str[c])) k1 ++;
+            a = i;
+            b = i + 1;
+            c = i + 2;
+            if (ok(a,b,c) && ccpc('C',str[a],str[b],str[c])) k1 ++;
+            
+            
+            a = i - 3;
+            b = i - 2;
+            c = i - 1;
+            d = i;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            a = i - 2;
+            b = i - 1;
+            c = i;
+            d = i + 1;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            a = i - 1;
+            b = i;
+            c = i + 1;
+            d = i + 2;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            
+            if (k1 > k2) {
+                okk = 1;
+                break;
+            }
+        }
+        
+        if (okk) {
+            printf("%d\n",ans + 1);
+            continue;
+        }
+        
+        rep(i,0,n) {
+            a = i - 3;
+            b = i - 2;
+            c = i - 1;
+            k1 = 0;
+            k2 = 0;
+            if (ok(a,b,c) && ccpc(str[a],str[b],str[c],'P')) k1 ++;
+            a = i - 2;
+            b = i - 1;
+            c = i;
+            if (ok(a,b,c) && ccpc(str[a],str[b],'P',str[c])) k1 ++;
+            a = i - 1;
+            b = i;
+            c = i + 1;
+            if (ok(a,b,c) && ccpc(str[a],'P',str[b],str[c])) k1 ++;
+            a = i;
+            b = i + 1;
+            c = i + 2;
+            if (ok(a,b,c) && ccpc('P',str[a],str[b],str[c])) k1 ++;
+            
+            
+            a = i - 3;
+            b = i - 2;
+            c = i - 1;
+            d = i;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            a = i - 2;
+            b = i - 1;
+            c = i;
+            d = i + 1;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            a = i - 1;
+            b = i;
+            c = i + 1;
+            d = i + 2;
+            if (ok(a,b,c,d) && ccpc(str[a],str[b],str[c],str[d])) k2 ++;
+            
+            if (k1 > k2) {
+                okk = 1;
+                break;
+            }
+        }
+        
+        printf("%d\n",ans + okk);
+        
+    }
+    return 0;
+}
+*/
+
+/*
+ll dis(ll x,ll y) {return x * x + y * y;}
+
+int main()
+{
+    int n;
+    ll R;
+    ll r;
+    pair<ll,int> a[110];
+    ll x,y;
+    int cnt;
+    ll k;
+    ll m;
+    int f;
+    vector<int> ans;
+    __T {
+        sci(n);
+        scll(R,r);
+        rep(i,1,n) {
+            scll(x,y);
+            a[i] = mpair(dis(x,y),i);
+        }
+        ans.clear();
+        sort(a + 1,a + 1 + n);
+        if (r == R) {
+            rep(i,1,n) {
+                ans.pb(i);
+            }
+        } else if (r * 2 >= R) {
+            cnt = 0;
+            k = 2 * r - R;
+            k *= k;
+            rep(i,1,n) {
+                if (a[i].first <= k) cnt ++;
+                else break;
+            }
+            if (cnt != 0) {
+                rep(i,1,cnt) {
+                    ans.pb(a[i].second);
+                }
+            } else {
+                m = a[1].first;
+                cnt = 0;
+                rep(i,1,n) {
+                    if (m == a[i].first) cnt ++;
+                    else break;
+                }
+                rep(i,1,cnt) {
+                    ans.pb(a[i].second);
+                }
+            }
+        } else {
+            cnt = 0;
+            k = R - 2 * r;
+            k *= k;
+            rep(i,1,n) {
+                if (a[i].first <= k) cnt ++;
+                else break;
+            }
+            if (cnt != 0) {
+                rep(i,1,cnt) {
+                    ans.pb(a[i].second);
+                }
+            } else {
+                m = a[1].first;
+                cnt = 0;
+                rep(i,1,n) {
+                    if (m == a[i].first) cnt ++;
+                    else break;
+                }
+                rep(i,1,cnt) {
+                    ans.pb(a[i].second);
+                }
+            }
+        }
+        printf("%lu\n",ans.size());
+        sort(ans.begin(), ans.end());
+        f = 1;
+        for (auto i : ans) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",i);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e7 + 10;
+
+ll p[MAXN];
+int n;
+
+int num[MAXN], prim[MAXN];
+int pn = 0;
+void table(){
+    memset(num, -1, sizeof(num));
+    for(int i = 2;i <= n;i++){
+        if(num[i]) prim[pn++] = i;
+        for(int j = 0;j < pn && 1LL*i*prim[j] <= n;j++){
+            num[i*prim[j]] = 0;
+            if(i % prim[j] == 0) break;
+        }
+    }
+}
+
+void pls(int l,int r,ll k)
+{
+    p[l] += k;
+    p[r + 1] -= k;
+}
+
+ll s[10000010];
+
+int main()
+{
+    sci(n);
+    ll ans;
+    table();
+    REP(i,0,pn) {
+        pls(1,n / prim[i],1);
+    }
+    s[0] = p[0];
+    rep(i,1,n) s[i] = s[i - 1] + p[i];
+    
+    ans = 0;
+    rep(i,1,n) {
+        ans += (s[i] - 1) * s[i];
+    }
+    
+    printf("%lld\n",ans);
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int a[15][20];
+    mem(a,-1);
+    
+    dscii(n,k);
+    
+    ll ans = 0;
+    int x;
+    rep(i,1,n) {
+        sci(x);
+        rep(j,1,x) sci(a[i][j]);
+    }
+    x = 0;
+    rep(j,1,19) {
+        rep(i,1,n) {
+            if (a[i][j] == -1) a[i][j] = 50;
+            if (a[i][j] >= ans) {
+                ans += a[i][j];
+                x ++;
+            }
+            if (x == k) goto end;
+        }
+    }
+    end:
+    ans += (k - x) * 50LL;
+    printf("%lld\n",ans);
+    re0;
+}
+*/
+
+/*
+int aa,bb,cc,dd;
+int n;
+
+struct Node {
+    int a,b,c,d;
+    int cnt;
+    int i;
+    
+} node[40],nn[40];
+
+int mx = 0;
+vector<int> ans;
+vector<int> k;
+
+ll sub[40];
+
+void dfs(int i,int a,int b,int c,int d,int x)
+{
+    if (i == n) {
+        if (x > mx) {
+            mx = x;
+            ans = k;
+        }
+        return;
+    }
+    if (x + sub[i] <= mx) return; // 剪枝
+    if (a >= node[i].a && b >= node[i].b && c >= node[i].c && d >= node[i].d) {
+        k.pb(node[i].i);
+        dfs(i + 1,a - node[i].a,b - node[i].b,c - node[i].c,d - node[i].d,x + node[i].cnt);
+        k.erase(k.end() - 1);
+    }
+    dfs(i + 1,a,b,c,d,x);
+}
+
+int main()
+{
+    sci(n);
+    int a,b,c,d,cnt;
+    REP(i,0,n) {
+        scii(a,b);
+        sciii(c,d,cnt);
+        nn[i] = {a,b,c,d,cnt,i};
+    }
+
+    sub[n - 1] = nn[n - 1].cnt;
+    pre(i,n - 2,0) sub[i] = sub[i + 1] + nn[i].cnt;
+
+    scii(aa,bb);
+    scii(cc,dd);
+    int ct = 0;
+    REP(i,0,n) {
+        if (nn[i].a <= aa && nn[i].b <= bb && nn[i].c <= cc && nn[i].d <= dd) node[ct ++] = nn[i];
+    }
+    n = ct;
+    
+    dfs(0,aa,bb,cc,dd,0);
+
+    printf("%lu\n",ans.size());
+    sort(ans.begin(), ans.end());
+    int f = 1;
+    for (auto i : ans) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    if (ans.size() != 0) puts("");
+    re0;
+}
+*/
+
+//
+//const int maxw = 100010;
+//ll hight[maxw],l[maxw],r[maxw];
+//ll w;
+//ll n;
+//
+//ll num(int pos,ll h){
+//    ll sum = 0;
+//    if(h<=hight[pos]||pos==w-1||pos==0)return -1;
+//    else sum+=h-hight[pos];
+//    ll temp = h;
+//    for(int i=pos+1;i<w;i++){
+//        temp--;
+//        if(temp<=hight[i])break;
+//        else{
+//            if(i==w-1)return -1;
+//            sum+=temp-hight[i];
+//        }
+//    }
+//    temp = h;
+//    for(int i=pos-1;i>=0;i--){
+//        temp--;
+//        if(temp<=hight[i])break;
+//        else{
+//            if(i==0)return -1;
+//            sum+=temp-hight[i];
+//        }
+//    }
+//    return sum;
+//}
+//ll mx = -1;
+//
+//int check(ll m)
+//{
+//    if (m <= mx) return 1;
+//    int ok = 0;
+//    ll k;
+//    REP(i,1,w - 1) {
+//        if ((k = num(i, m)) != -1 && k <= n) {
+//            ok = 1;
+//            break;
+//        }
+//    }
+//    return ok;
+//}
+//
+//int main(){
+//    scanf("%lld%lld",&w,&n);
+//    for(int i=0;i<w;i++){
+//        scanf("%lld",&hight[i]);
+//        mx = max(mx,hight[i]);
+//    }
+//
+//    ll r = 1e9;
+//    ll l = 1;
+//    ll m;
+//    while (l < r) {
+//        m = (l + r) >> 1;
+////        _C(l << " " << r)
+//        if (check(m)) l = m + 1;
+//        else r = m;
+//    }
+//    printf("%lld\n",l - 1);
+//
+//    return 0;
+//}
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        while (1) {
+            if (n % 7 == 0 && n % 4 != 0) {
+                printf("%d\n",n);
+                break;
+            }
+            n ++;
+        }
+    }
+}
+*/
+
+
+/*
+int main()
+{
+    string str;
+    string ans;
+    __T {
+        cin >> str;
+        ans = "";
+        for (int i = 0;str[i];i ++) {
+            if (i == 0) ans += str[i];
+            else if (str[i] != 'a' && str[i] != 'e' && str[i] != 'i' && str[i] != 'o' && str[i] != 'u' && str[i] != 'y') ans += str[i];
+        }
+        _C(ans);
+    }
+    return 0;
+}
+*/
+
+
+/*
+int n;
+int a[100010];
+
+int ok(int i) {
+    if (i - 1 < 1 || i + 1 > n) return 0;
+    return a[i - 1] < a[i] && a[i] > a[i + 1];
+}
+
+int main()
+{
+    int m;
+    int cnt,cnt2;
+    int s;
+    __T {
+        sci(n);
+        rep(i,1,n) sci(a[i]);
+        m = 0;
+        
+        rep(i,1,n) {
+            if (ok(i)) m ++;
+        }
+//        _C(m)
+        s = 0;
+        rep(i,1,n) {
+            cnt = 0;
+            cnt2 = 0;
+            if (ok(i - 1)) cnt ++;
+            if (ok(i)) cnt ++;
+            if (ok(i + 1)) cnt ++;
+            if (i - 2 >= 1 && i + 1 <= n && a[i - 1] > a[i - 2] && a[i - 1] > a[i + 1]) cnt2 ++;
+            if (i - 1 >= 1 && i + 2 <= n && a[i + 1] > a[i - 1] && a[i + 1] > a[i + 2]) cnt2 ++;
+            s = max(s,cnt - cnt2);
+        }
+        printf("%d\n",m - s);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[100010];
+    int b[100010];
+    int m;
+    int ans = 0;
+    __T {
+        sci(n);
+        ans = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            b[i] = a[i];
+        }
+        sort(b + 1,b + 1 + n);
+        m = n;
+        pre(i,n,1) {
+            if (a[i] == b[m]) {
+                m --;
+                ans ++;
+            }
+        }
+        printf("%d\n",n - ans);
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 1e6 + 10; ///////////
+int n,m;
+vector<int> g[MAXN];
+int vis[MAXN];
+int dis[MAXN];
+
+int cc = 0;
+vector<int> a[MAXN];
+
+priority_queue<int,vector<int>,greater<int>> q;
+
+void dij(int s)
+{
+    a[cc].clear();
+    q.push(s);
+    int top;
+    while (!q.empty()) {
+        top = q.top();
+        q.pop();
+        if (vis[top]) continue;
+        vis[top] = 1;
+        a[cc].pb(top);
+        for (auto i : g[top]) {
+            q.push(i);
+        }
+    }
+    cc ++;
+}
+
+struct Node {
+    int n;
+    int which;
+    int i;
+    int operator <(const Node &o) const {
+        return n > o.n;
+    }
+};
+
+int main()
+{
+    int u,v;
+    priority_queue<Node> k;
+    int f,x,ff,ii;
+    int cnt;
+    __T {
+        scii(n,m);
+        cc = 0;
+        rep(i,1,n) {
+            g[i].clear();
+            vis[i] = 0;
+            dis[i] = -1;
+        }
+        while (m --) {
+            scii(u,v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+        cnt = 0;
+        rep(i,1,n) {
+            if (vis[i]) continue;
+            dij(i);
+            cnt ++;
+        }
+        
+        REP(i,0,cc) {
+            k.push({a[i][0],i,0});
+        }
+        
+        printf("%d\n",cnt);
+        
+        ff = 1;
+        while (!k.empty()) {
+            f = k.top().n;
+            x = k.top().which;
+            ii = k.top().i;
+            k.pop();
+//            _C(f << " " << x)
+            if (ff) ff = 0;
+            else printf(" ");
+            printf("%d",f);
+            if (ii + 1 < a[x].size()) {
+//                _C(">>" << a[x].front());
+                k.push({a[x][ii + 1],x,ii + 1});
+            }
+        }
+        puts("");
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    ll x,y;
+    ll a[100010];
+    ll xx,yy;
+    ll sub;
+    ll ans;
+    map<ll,ll> mp;
+    ll a1;
+    ll k;
+    __T {
+        sci(n);
+        scll(x,y);
+        ans = 0;
+        xx = 0;
+        yy = 0;
+        rep(i,1,n) {
+            scl(a[i]);
+            xx += i * a[i];
+            yy += i * (a[i] * a[i]);
+        }
+        
+//        _C(xx)
+//        _C(yy)
+        if (xx == x && yy == y) {
+            mp.clear();
+            rep(i,1,n) {
+                mp[a[i]] ++;
+            }
+            for (auto i : mp) {
+                ans += i.second * (i.second - 1) / 2;
+            }
+            printf("%lld\n",ans);
+        } else if (xx == x || yy == y) {
+            printf("0\n");
+        }else {
+            sub = (yy - y) / (xx - x);
+            if ((yy - y) % (xx - x)) {
+                puts("0");
+                continue;
+            }
+            rep(i,1,n) {
+                a1 = sub - a[i];
+                if (a[i] != a1) {
+                    k = (xx - x) / (a1 - a[i]) + i;
+                    if (k > i && k <= n && a1 == a[k]) ans ++;
+                }
+            }
+            
+            printf("%lld\n",ans);
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    string a,b;
+    int x['z' + 1];
+    int y['z' + 1];
+    int ok;
+    while (cin >> a >> b) {
+        mem(x,0);
+        mem(y,0);
+        if (a == b) printf("Equal\n");
+        else if (a[0] == b[0] && a[a.size() - 1] == b[b.size() - 1]) {
+            ok = 1;
+            for (int i = 0;a[i];i ++) {
+                x[a[i]] ++;
+            }
+            for (int i = 0;b[i];i ++) {
+                y[b[i]] ++;
+            }
+            rep(i,0,'z') {
+                if (x[i] != y[i]) {
+                    ok = 0;
+                    break;
+                }
+            }
+            puts(ok ? "Yes" : "No");
+        } else {
+            puts("No");
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    
+    string str;
+    int t['z' + 1] = {0};
+    int ans = 0;
+    char c;
+    while (~sci(n))
+    {
+        cin >> str;
+        mem(t,0);
+        ans = 0;
+        for (int i = 0;str[i];i ++) {
+            c = str[i];
+            if (c == 'x') t[c] ++;
+            else if (c == 't') {
+                if (t['x'] > 0) {
+                    t['x'] --;
+                    t[c] ++;
+                }
+            } else if (c == 'C') {
+                if (t['t'] > 0) {
+                    t['t'] --;
+                    t[c] ++;
+                }
+            } else if (c == 'p') {
+                if (t['C'] > 0) {
+                    t['C'] --;
+                    t[c] ++;
+                }
+            } else if (c == 'c') {
+                if (t['p'] > 0) {
+                    t['p'] --;
+                    ans ++;
+                }
+            }
+        }
+        printf("%d\n",ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    string str[14];
+    int s['z'][10] = {0};
+    map<string,int> k;
+    REP(i,0,14) cin >> str[i];
+    REP(i,0,14) {
+        if (isdigit(str[i][0])) {
+            s[str[i][1]][str[i][0] - '0'] ++;
+        } else {
+            k[str[i]] ++;
+        }
+    }
+    set<char> n1;
+    set<char> n9;
+    if (s['s'][1]) n9.insert('s');
+    if (s['s'][9]) n9.insert('s');
+    if (s['p'][1]) n9.insert('p');
+    if (s['p'][9]) n9.insert('p');
+    if (s['w'][1]) n9.insert('w');
+    if (s['w'][9]) n9.insert('w');
+    
+    
+    re0;
+}
+*/
+
+/*
+string Manacher(string &s)
+{
+    //改造字符串
+    int n = (int) s.size();
+    string res = "$#";
+    for (int i = 0;i < n;i ++)
+    {
+        res += s[i];
+        res += "#";
+    }
+
+    //数组
+    n = (int) res.size();
+    vector<int> P(n,0);
+    int mi = 0,right = 0; //mi为最大回文串对应的中心点，right为该回文串能达到的最右端的值
+    int maxLen = 0,maxPoint = 0; //maxLen为最大回文串的长度，maxPoint为记录中心点
+    for (int i = 1;i < n;i ++)
+    {
+        P[i] = right > i ? min(P[2 * mi - i],right - i) : 1; //关键句，文中对这句以详细讲解
+        while (res[i + P[i]] == res[i - P[i]]) {
+            P[i] ++;
+        }
+        if (right < i + P[i]) //超过之前的最右端，则改变中心点和对应的最右端
+        {
+            right = i + P[i];
+            mi = i;
+        }
+        if (maxLen < P[i]) //更新最大回文串的长度，并记下此时的点
+        {
+            maxLen = P[i];
+            maxPoint = i;
+        }
+    }
+    return s.substr((maxPoint - maxLen) / 2,maxLen - 1);
+}
+
+ll Manacher_n(string &s)
+{
+    //改造字符串
+    int n = (int) s.size();
+    string res = "$#";
+    for (int i = 0;i < n;i ++)
+    {
+        res += s[i];
+        res += "#";
+    }
+
+    //数组
+    n = (int) res.size();
+    vector<ll> P(n,0);
+    ll mi = 0,right = 0; //mi为最大回文串对应的中心点，right为该回文串能达到的最右端的值
+    ll maxLen = 0,maxPoint = 0; //maxLen为最大回文串的长度，maxPoint为记录中心点
+    
+    ll ans = 0;
+    for (ll i = 1;i < n;i ++)
+    {
+        P[i] = right > i ? min(P[2 * mi - i],right - i) : 1; //关键句，文中对这句以详细讲解
+        while (res[i + P[i]] == res[i - P[i]]) {
+            P[i] ++;
+        }
+        if (right < i + P[i]) //超过之前的最右端，则改变中心点和对应的最右端
+        {
+            right = i + P[i];
+            mi = i;
+        }
+        if (maxLen < P[i]) //更新最大回文串的长度，并记下此时的点
+        {
+            maxLen = P[i];
+            maxPoint = i;
+        }
+        ans += P[i] / 2;
+    }
+    return ans;
+}
+
+
+
+int main()
+{
+    string mod,str;
+    cio
+    int n;
+    int l,r;
+    int ok;
+    int T;
+    cin >> T;
+    while (T --) {
+        cin >> mod >> str;
+        n = (int) mod.size();
+        if (mod == str) {
+            _C(Manacher_n(str));
+        } else {
+            for (l = 0;l < n;l ++) {
+                if (str[l] != mod[l]) break;
+            }
+            for (r = n - 1;r >= 0;r --) {
+                if (str[r] != mod[r]) break;
+            }
+            ok = 1;
+            rep(i,l,r) {
+                if (mod[i] != str[r - i + l]) {
+                    ok = 0;
+                    break;
+                }
+            }
+            if (!ok) _C(0)
+            else {
+                for (int i = l - 1,j = r + 1;i >= 0 && j < n;j ++,i --,ok ++) {
+                    if (mod[i] != mod[j]) break;
+                }
+                _C(ok);
+            }
+        }
+    }
+
+}
+*/
+
+/*
+const int MAXN = 1e6 + 10;
+unordered_map<int,ll> mp;
+vector<int> vec[MAXN];
+vector<int> g[MAXN];
+ll cnt[MAXN];
+int vis[MAXN];
+int in[MAXN];
+int vv[MAXN];
+
+void bfs(int n) {
+    queue<int> q;
+    q.push(n);
+    int t;
+    while (!q.empty()) {
+        t = q.front();
+        q.pop();
+        for (auto i : g[t]) {
+            in[i] --;
+            cnt[i] += cnt[t];
+            if (!in[i]) q.push(i);
+        }
+    }
+}
+
+void dfs(int n)
+{
+    if (vv[n]) return;
+    vv[n] = 1;
+    for (auto i : g[n]) {
+        in[i] ++;
+        dfs(i);
+    }
+}
+
+int main()
+{
+    int n;
+    int t,k,tt;
+    int x,y;
+    ll v;
+    ll mx;
+    ll sum;
+    __T {
+        read(n);
+        rep(i,1,n) {
+            g[i].clear();
+            vv[i] = vis[i] = in[i] = cnt[i] = 0;
+            vec[i].clear();
+        }
+        mp.clear();
+        rep(i,1,n) {
+            read(t);
+            if (t == 1) {
+                if (i == n) {
+                    sci(k);
+                    rep(ii,1,k) {
+                        read(tt);
+                        mp[tt] ++;
+                    }
+                    vis[i] = 1;
+                } else {
+                    sci(k);
+                    rep(ii,1,k) {
+                        read(tt);
+                        vec[i].push_back(tt);
+                    }
+                    vis[i] = 1;
+                }
+            } else {
+                read(x);
+                read(y);
+                g[i].push_back(x);
+                g[i].push_back(y);
+            }
+        }
+
+        mx = 0;
+        sum = 0;
+        if (mp.size()) {
+            for (auto j : mp) {
+                mx = max(mx,j.second);
+                sum += j.second;
+            }
+        } else {
+            cnt[n] = 1;
+            dfs(n);
+            bfs(n);
+            rep(i,1,n-1) {
+                if (!cnt[i] || !vis[i]) continue;
+
+                for (auto j : vec[i]) {
+                    v = mp[j] += cnt[i];
+                    mx = max(mx,v);
+                    sum += cnt[i];
+                }
+            }
+        }
+        printf("%lld\n", mx * 2 <= sum ? sum : (sum - mx) * 2);
+
+    }
+    return 0;
+}
+*/
+
+/*
+8
+1 1 1
+1 2 2 2
+2 1 2
+1 3 3 3 3
+2 3 4
+1 4 4 4 4 4
+2 3 6
+2 5 7
+*/
+
+/*
+// 线段树 - 二叉树，节点存的是一个 l，r，区间的内容n
+const int MAXN = 1e5 + 10;
+
+struct Node {
+    int l,r;
+    ll mx;
+    ll mn;
+    ll sum;
+    int lazy;
+    ll lzn;
+} tree[MAXN << 2];
+ll a[MAXN];
+
+void push_up(int i)
+{
+    tree[i].sum = tree[i << 1].sum + tree[i << 1 | 1].sum;
+    tree[i].mn = min(tree[i << 1].mn,tree[i << 1 | 1].mn);
+    tree[i].mx = max(tree[i << 1].mx,tree[i << 1 | 1].mx);
+}
+
+void push_down(int i) //下推标记
+{
+    if (tree[i].lazy == 1) {
+        tree[i << 1].sum += (tree[i << 1].r - tree[i << 1].l + 1) * tree[i].lzn;
+        tree[i << 1 | 1].sum += (tree[i << 1 | 1].r - tree[i << 1 | 1].l + 1) * tree[i].lzn;
+        
+        tree[i << 1].mx += tree[i].lzn;
+        tree[i << 1 | 1].mx += tree[i].lzn;
+        
+        tree[i << 1].mn += tree[i].lzn;
+        tree[i << 1 | 1].mn += tree[i].lzn;
+        
+        tree[i << 1].lzn += tree[i].lzn;
+        tree[i << 1 | 1].lzn += tree[i].lzn;
+        
+        tree[i << 1].lazy = tree[i].lazy;
+        tree[i << 1 | 1].lazy = tree[i].lazy;
+        
+        tree[i].lazy = 0;
+        tree[i].lzn = 0;
+    } else if (tree[i].lazy == 2) {
+        tree[i << 1].sum = (tree[i << 1].r - tree[i << 1].l + 1) * tree[i].lzn;
+        tree[i << 1 | 1].sum = (tree[i << 1 | 1].r - tree[i << 1 | 1].l + 1) * tree[i].lzn;
+        
+        tree[i << 1].mx = tree[i].lzn;
+        tree[i << 1 | 1].mx = tree[i].lzn;
+        
+        tree[i << 1].mn = tree[i].lzn;
+        tree[i << 1 | 1].mn = tree[i].lzn;
+        
+        tree[i << 1].lzn = tree[i].lzn;
+        tree[i << 1 | 1].lzn = tree[i].lzn;
+        
+        tree[i << 1].lazy = tree[i].lazy;
+        tree[i << 1 | 1].lazy = tree[i].lazy;
+        
+        tree[i].lazy = 0;
+        tree[i].lzn = 0;
+    }
+}
+
+// i - 二叉树节点编号，调用时取1
+// l，r 区间左右端下标，调用的时候取最大范围即可 build(1,n,1);
+void build(int l,int r,int i)
+{
+    tree[i].l = l;
+    tree[i].r = r;
+    tree[i].lazy = 0;
+    tree[i].lzn = 0;
+    if (l == r) {
+        tree[i].sum = a[l]; // a原数组，把原来的数值给叶子结点
+        tree[i].mx = a[l];
+        tree[i].mn = a[l];
+        return;
+    }
+    int m = (l + r) >> 1;
+    build(l,m,i << 1);
+    build(m + 1,r,i << 1 | 1);
+    push_up(i);
+}
+
+void add(int l,int r,ll x,int i) // 将区间[l,r]整个加上x，调用(l,r,x,1)
+{
+    if (l <= tree[i].l && r >= tree[i].r) {
+        tree[i].sum += (tree[i].r - tree[i].l + 1) * x;
+        tree[i].mx += x;
+        tree[i].mn += x;
+        tree[i].lzn += x;
+        
+        tree[i].lazy = 1;
+        return;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    if (l <= m) add(l,r,x,i << 1);
+    if (r > m) add(l,r,x,i << 1 | 1);
+    push_up(i);
+}
+
+void modify(int l,int r,ll x,int i) // 将区间[l,r]直接变成x，调用(l,r,x,1)
+{
+    if (l <= tree[i].l && r >= tree[i].r) {
+        tree[i].sum = (tree[i].r - tree[i].l + 1) * x;
+        tree[i].mx = x;
+        tree[i].mn = x;
+        tree[i].lzn = x;
+        
+        tree[i].lazy = 2;
+        return;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    if (l <= m) modify(l,r,x,i << 1);
+    if (r > m) modify(l,r,x,i << 1 | 1);
+    push_up(i);
+}
+
+ll query(int l,int r,int i) //查询
+{
+    if (l <= tree[i].l && r >= tree[i].r){
+        return tree[i].sum;
+//        return tree[i].mx;
+//        return tree[i].mn;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    ll sum = 0;
+//    ll mx = 0;
+//    ll mn = INT_INF;
+    if (l <= m) {
+         sum += query(l,r,i << 1);
+//         mx = max(mx,query(l,r,i << 1));
+//         mn = min(mn,query(l,r,i << 1));
+    }
+    if (r > m) {
+        sum += query(l,r,i << 1 | 1);
+//        mx = max(mx,query(l,r,i << 1 | 1));
+//        mn = min(mn,query(l,r,i << 1 | 1));
+    }
+    return sum;
+//    return mx;
+//    return mn;
+}
+
+int main()
+{
+    dscii(n,m);
+    rep(i,1,n) scl(a[i]);
+    build(1, n, 1);
+    int k,a,b;
+    ll c;
+    while (m --) {
+        sciii(k,a,b);
+        if (k == 1) {
+            printf("%lld\n",query(a, b, 1));
+        } else if (k == 2) {
+            scl(c);
+            modify(a, b, c, 1);
+            rep(i,1,n) printf("a[%d]=%lld\n",i,query(i, i, 1));
+        }
+    }
+    re0;
+}
+*/
+
+/*
+int n,m;
+char mp[110][110];
+
+struct AZ
+{
+    int x,y;
+    char c;
+};
+
+AZ A['z'][3];
+
+struct Node {
+    int x,y;
+    int dis;
+    int t;
+    bool operator<(const Node &o) const {
+        return dis > o.dis;
+    }
+};
+
+int dis[110][110][3];
+int vis[110][110][3];
+int dx[] = {0,-1,0,1};
+int dy[] = {1,0,-1,0};
+
+void dij(int x,int y)
+{
+    priority_queue<Node> q;
+    mem(dis,-1);
+    mem(vis,0);
+
+    int k = 1;
+    if (mp[x][y] >= 'A' && mp[x][y] <= 'Z') k = 2;
+
+
+    Node t;
+    int xx,yy;
+    q.push({x,y,dis[x][y][1] = dis[x][y][2] = 0,k}); // t=1跑周围，t=2跳跃
+
+
+    AZ a1,a2;
+    while (!q.empty()) {
+        t = q.top();
+        q.pop();
+        if (vis[t.x][t.y][t.t]) continue;
+        vis[t.x][t.y][t.t] = 1;
+
+        if (t.t == 2) {
+            a1 = A[mp[t.x][t.y]][1];
+            a2 = A[mp[t.x][t.y]][2];
+            if (t.x == a1.x && t.y == a1.y) {
+                // goto 2
+                xx = a2.x;
+                yy = a2.y;
+                if (dis[xx][yy][1] == -1 || dis[t.x][t.y][2] <= dis[xx][yy][1]) {
+                    q.push({xx,yy,dis[xx][yy][1] = dis[t.x][t.y][2],1});
+                }
+            } else {
+                // goto 1
+                xx = a1.x;
+                yy = a1.y;
+                if (dis[xx][yy][1] == -1 || dis[t.x][t.y][2] <= dis[xx][yy][1]) {
+                    q.push({xx,yy,dis[xx][yy][1] = dis[t.x][t.y][2],1});
+                }
+            }
+        } else {
+            rep(i,0,3) {
+                xx = t.x + dx[i];
+                yy = t.y + dy[i];
+                if (xx >= 1 && yy >= 1 && xx <= n && yy <= m) {
+                    if (mp[xx][yy] != '1') {
+                        k = 1;
+                        if (mp[xx][yy] >= 'A' && mp[xx][yy] <= 'Z') k = 2;
+                        
+                        if (dis[xx][yy][k] == -1 || dis[t.x][t.y][1] + 1 < dis[xx][yy][k]) {
+                            q.push({xx,yy,dis[xx][yy][k] = dis[t.x][t.y][1] + 1,k});
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+}
+
+int main()
+{
+    int v['z'] = {0};
+    int k;
+    scii(n,m);
+    rep(i,1,n) {
+        scanf(" ");
+        rep(j,1,m) {
+            scanf("%c",&mp[i][j]);
+            if (mp[i][j] >= 'A' && mp[i][j] <= 'Z') {
+                k = 1;
+                if (v[mp[i][j]]) k ++;
+                v[mp[i][j]] = 1;
+                A[mp[i][j]][k] = {i,j,mp[i][j]};
+            }
+        }
+    }
+    dij(1,1);
+
+    // rep(i,1,n) {
+    //     rep(j,1,m) printf("%d ",dis[i][j]);
+    //     puts("");
+    // }
+
+    int ans = -1;
+    if (dis[n][m][1] != -1) ans = dis[n][m][1];
+    if (dis[n][m][2] != -1) {
+        if (ans == -1) ans = dis[n][m][2];
+        else ans = min(ans,dis[n][m][2]);
+    }
+
+    if (ans == -1) puts("No Solution.");
+    else printf("%d\n",ans);
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int s;
+    while (~sci(n)) {
+        s = 1;
+        while (n > 1) {
+            if (s) n = n / 9 + (n % 9 ? 1 : 0);
+            else n = n / 2 + n % 2;
+            s = 1 - s;
+        }
+        puts(!s ? "Stan wins." : "Ollie wins.");
+    }
+    
+    return 0;
+}
+*/
+/*
+int main()
+{
+    int n;
+    int a[1010];
+    int t;
+    int mx = -1;
+    int ans;
+    __T {
+        sci(n);
+        mem(a,0);
+        rep(i,1,n) {
+            sci(t);
+            a[t] ++;
+        }
+        mx = -1;
+        ans = -1;
+        rep(i,1,1000) {
+            if (mx == -1) {
+                mx = a[i];
+                ans = i;
+            } else if (mx == a[i]) {
+                ans = -1;
+            } else if (a[i] > mx) {
+                mx = a[i];
+                ans = i;
+            }
+        }
+        if (ans != -1) printf("%d\n",ans);
+        else puts("Nobody");
+        
+    }
+    
+}
+*/
+
+/*
+int main()
+{
+    int s,m,d;
+    pair<int,string> k1[110];
+    pair<int,string> k2[110];
+    pair<int,string> k3[110];
+    int m1,m2,m3;
+    int ans;
+    __T {
+        sciii(s,m,d);
+        rep(i,1,s) {
+            cin >> k1[i].second >> k1[i].first;
+        }
+        sort(k1 + 1, k1 + 1 + s);
+        
+        rep(i,1,m) {
+            cin >> k2[i].second >> k2[i].first;
+        }
+        sort(k2 + 1, k2 + 1 + m);
+        
+        rep(i,1,d) {
+            cin >> k3[i].second >> k3[i].first;
+        }
+        sort(k3 + 1, k3 + 1 + d);
+        
+        m1 = s / 2 + 1;
+        m2 = m / 2 + 1;
+        m3 = d / 2 + 1;
+        
+        ans = k1[m1].first + k2[m2].first + k3[m3].first;
+        printf("%d ",ans);
+        cout << k1[m1].second << " " << k2[m2].second << " " << k3[m3].second << endl;
+    }
+    re0;
+}
+*/
+
+/*
+ll a[100000];
+ll t[100000];
+ll p[1000010];
+
+int main()
+{
+    int n;
+    ll k;
+    ll m;
+    ll ans = 0;
+    __T {
+        sci(n);
+        rep(i,1,n) {
+            scl(a[i]);
+            p[a[i]] = 0;
+            t[i] = 0;
+        }
+        
+        for (ll i = 1;i <= n;i ++) {
+            if (p[a[i]] != 0) {
+                t[i] -= p[a[i]] * (n - i + 1);
+            }
+            p[a[i]] = i;
+//            printf("%lld ",t[i]);
+        }
+        
+//        puts("");
+        
+        ans = 0;
+        k = n - 2;
+        m = n;
+        rep(i,1,n) {
+//            _C(m)
+            t[i] += m;
+            ans += a[i] * t[i];
+            m += k;
+            k -= 2;
+        }
+        printf("%lld\n",ans);
+    }
+}
+*/
+
+/*
+struct Node {
+    double s;
+    int id,pid;
+};
+
+int cmp1(const Node &a,const Node &b) {
+    return a.s > b.s;
+}
+
+int cmp2(const Node &a,const Node &b) {
+    return a.id < b.id;
+}
+
+
+int main()
+{
+    int n,q,s,c;
+    // n 队伍
+    // q 服务器
+    // s score
+    // c chk points
+    int a;
+    Node rs[110];
+    
+    
+    int ss[110][15];
+    set<pair<int,int>> ato[110];
+    int atk,dfd,svs;
+    
+    
+    int rp[110][15];
+    
+    
+    int u,tt,cnt;
+    double all;
+    
+    
+    
+    __T {
+        scii(n,q);
+        scii(s,c);
+        rep(i,1,n) {
+            rs[i].s = s;
+            rs[i].id = i;
+        }
+        
+        rep(ii,1,c) {
+            mem(ss,0);
+            rep(i,1,n) ato[i].clear();
+            
+            // attack
+            
+            sci(a);
+            rep(i,1,a) {
+                sciii(atk,dfd,svs);
+                if (ato[atk].find(mpair(dfd,svs)) == ato[atk].end()) ss[dfd][svs] ++;
+                ato[atk].insert(mpair(dfd,svs));
+            }
+            
+            rep(i,1,n) {
+                rep(j,1,q) {
+                    if (ss[i][j]) rs[i].s -= n - 1;
+                }
+                for (auto j : ato[i]) {
+                    rs[i].s += (n - 1) / (double) ss[j.first][j.second];
+                }
+            }
+            
+            // repair
+            rep(i,1,q) {
+                all = 0;
+                cnt = 0;
+                rep(j,1,n) {
+                    sci(rp[i][j]);
+                    if (!rp[i][j]) {
+                        rs[j].s -= n - 1;
+                        all += n - 1;
+                    } else cnt ++;
+                }
+                rep(j,1,n) {
+                    if (rp[i][j]) {
+                        rs[j].s += all / (double) cnt;
+                    }
+                }
+            }
+//
+//            rep(i,1,n) {
+//                ok = 1;
+//                rep(j,1,q) {
+//                    if (!rp[j][i]) ok = 0;
+//                }
+//                if (ok) cnt ++;
+//            }
+//
+//            rep(i,1,n) {
+//                ok = 1;
+//                rep(j,1,q) {
+//                    if (!rp[j][i]) ok = 0;
+//                }
+//                if (ok) rs[i].s += all / (double) cnt;
+//            }
+            
+            
+            
+            // query
+            sort(rs + 1, rs + 1 + n, cmp1);
+            rs[1].pid = 1;
+            rep(i,2,n) {
+                if (abs(rs[i].s - rs[i - 1].s) <= 1e-6) rs[i].pid = rs[i - 1].pid;
+                else rs[i].pid = i;
+            }
+            
+            sort(rs + 1, rs + 1 + n, cmp2);
+            
+            sci(u);
+            rep(i,1,u) {
+                sci(tt);
+                printf("%.8f %d\n",rs[tt].s,rs[tt].pid);
+            }
+        }
+        
+        
+    }
+    re0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int main() {
+    int n,m;
+    int a[MAXN];
+    int cnt;
+    int mn = -1;
+    ll ans;
+    __T {
+        scii(n,m);
+        cnt = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            if (!a[i]) cnt ++;
+        }
+        if (n == m) {
+            puts("Richman");
+            continue;
+        }
+        if (cnt > m) {
+            puts("Impossible");
+            continue;
+        }
+        m -= cnt;
+        mn = -1;
+        ans = 0;
+        rep(i,1,n) {
+            if (!a[i]) continue;
+            if (m > 0) {
+                ans += a[i];
+                m --;
+            } else {
+                if (mn == -1) mn = a[i];
+                else mn = min(mn,a[i]);
+            }
+        }
+        printf("%lld\n",ans + mn - 1);
+        
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    string a,b;
+    int aa[1000010];
+    int cnt = 0;
+    int c1;
+    int idx;
+    __T {
+        sci(n);
+        cin >> a >> b;
+        c1 = cnt = 0;
+        idx = -1;
+        rep(i,0,n-1) {
+            aa[i + 1] = (a[i] != b[i]);
+//            printf("%d",aa[i + 1]);
+            if (aa[i + 1]) {
+                c1 ++;
+                if (idx == -1) idx = i + 1;
+            }
+        }
+//        puts("");
+        if (aa[n]) cnt ++;
+        rep(i,1,n) {
+            if (aa[i] != aa[i - 1] && aa[i - 1]) cnt ++;
+        }
+//        _C(cnt)
+        if (cnt == 2) printf("6\n");
+        else if (cnt == 0) {
+            printf("%lld\n",(n + 1LL) * n / 2);
+        } else if (cnt == 1) {
+            printf("%d\n",(n - 1) * 2);
+        } else printf("0\n");
+    }
+    re0;
+}
+*/
+
+/*
+inline double func(double x) {
+    return 1 - x - sin(x);
+}
+
+int main()
+{
+    double l = 0,r = 1;
+    const double exp = 5e-5;
+    double m;
+    int cnt = 0;
+    while (r - l > exp) {
+        m = (l + r) / 2;
+        if (func(m) * func(l) < 0) r = m;
+        else l = m;
+        cnt ++;
+    }
+    printf("%d %f\n",cnt,l);
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+ll t[55];
+ll a[MAXN];
+
+int main()
+{
+    int n;
+    ll x;
+    ll ans;
+    __T {
+        sci(n);
+        mem(t,0);
+        rep(i,1,n) {
+            scl(a[i]);
+            for (ll j = 1,k = 1;j <= 1e9;j <<= 1,k ++) {
+                if (a[i] >= (j << 1) && a[i] % (j << 1) < j) t[k] ++;
+            }
+        }
+        ans = 0;
+        rep(i,1,n) {
+            x = log2(a[i]);
+            x ++;
+            ans += t[x];
+        }
+        printf("%lld\n",ans);
+    }
+    
+    re0;
+}
+*/
+
+/*
+int main()
+{
+    map<double,ll> ka;
+    ll kb;
+    
+    ll x1,x2,y1,y2;
+    int n;
+    ull cnt;
+    map<pair<double,double>,ll> sameA;
+    map<ll,ll> sameB;
+    pair<double,double> l;
+    double k;
+    ll ans;
+    __T {
+        kb = cnt = 0;
+        sci(n);
+        ka.clear();
+        sameB.clear();
+        sameA.clear();
+        rep(ii,1,n) {
+            scll(x1,y1);
+            scll(x2,y2);
+            if (x1 - x2 == 0) {
+                kb ++;
+                cnt += sameB[x1] ++;
+            }
+            else {
+                ka[k = (y1 - y2) / (double) (x1 - x2)] ++;
+                
+                l = make_pair(k, (x1 * y2 - x2 * y1) / (double) (x1 - x2));
+                cnt += sameA[l] ++;
+            }
+        }
+
+        ans = 0;
+        ans += (n - kb) * kb;
+        for (auto i : ka) {
+            ans += (n - i.second) * i.second;
+        }
+        printf("%lld\n",ans / 2 + cnt);
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    ll l,r;
+};
+
+int cmp(const Node &a,const Node &b) {
+    return a.r < b.r;
+}
+
+int cmp1(const Node &a,const Node &b) {
+    return a.l < b.l;
+}
+
+int n;
+
+ll get(Node *lx,Node *rx)
+{
+    ll sumx,subx[100010];
+    ll ok;
+    ll m1,m2;
+    
+    sort(rx + 1,rx + 1 + n,cmp);
+    sort(lx + 1,lx + 1 + n,cmp1);
+    
+    subx[n] = lx[n].l;
+    pre(i,n - 1,1) subx[i] = subx[i + 1] + lx[i].l;
+    
+    sumx = 0;
+    m1 = -1;
+    for (int i = 1,j = 1;i <= n ;i ++) {
+        ok = 0;
+        while (j <= n) {
+            if (lx[j].l > rx[i].r) {
+                ok = subx[j];
+                break;
+            }
+            j ++;
+        }
+        ok -= (n - j + 1) * rx[i].r;
+        
+        ok += rx[i].r * (i - 1);
+        ok -= sumx;
+        
+        if (m1 == -1) m1 = ok;
+        else m1 = min(m1,ok);
+        
+        sumx += rx[i].r;
+    }
+            
+            
+    subx[1] = rx[1].r;
+    rep(i,2,n) subx[i] = subx[i - 1] + rx[i].r;
+    
+    sumx = 0;
+    m2 = -1;
+    for (int i = n,j = n;i >= 1;i --) {
+        ok = 0;
+        while (j >= 1) {
+            if (rx[j].r < lx[i].l) {
+                ok = subx[j];
+                break;
+            }
+            j --;
+        }
+        ok = j * lx[i].l - ok;
+        
+        ok -= lx[i].l * (n - i);
+        ok += sumx;
+        
+        if (m2 == -1) m2 = ok;
+        else m2 = min(m2,ok);
+                
+        sumx += lx[i].l;
+    }
+    return min(m1,m2);
+}
+
+int main()
+{
+    Node lx[100010];
+    Node rx[100010];
+    
+    Node ly[100010];
+    Node ry[100010];
+    int x1,x2,y1,y2;
+    
+    __T {
+        sci(n);
+        rep(i,1,n) {
+            scii(x1,y1);
+            scii(x2,y2);
+            lx[i] = {x1,x2};
+            rx[i] = {x1,x2};
+            ly[i] = {y1,y2};
+            ry[i] = {y1,y2};
+        }
+        printf("%lld\n",get(lx,rx) + get(ly,ry));
+    }
+    return 0;
+}
+*/
+
+/*
+ll quickpow(ll a, ll b, ll n)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) {
+            if (a == -1) return -1;
+            ans = a * ans;
+            if (ans >= n) return -1;
+        }
+        if (a != -1) a = a * a;
+        if (a >= n) a = -1;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    int n,k;
+    ll m,l;
+    ll ans;
+    int i;
+    int T = 1;
+    __T  {
+        scii(n,k);
+        if (k == 1) {
+            printf("Case #%d: %d\n",T ++,n);
+            continue;
+        }
+        l = 1;
+        ans = 0;
+        for (i = 2;i <= n;i ++) {
+            m = quickpow(i, k, n);
+            if (m == -1) break;
+            ans += ((m - 1) - l) / (i - 1) + 1;
+            l = m;
+        }
+        ans += (n - l) / (i - 1) + 1;
+        printf("Case #%d: %lld\n",T ++,ans);
+    }
+}
+*/
+
+/*
+struct Node {
+    int n;
+    int i;
+};
+
+int cmp(const Node &a,const Node &b) {
+    return a.n < b.n;
+}
+
+int main()
+{
+    int n,max1;
+    ll p;
+    Node a[400010];
+    int vis[200010];
+    Node l,r;
+    int li,ri;
+    int start;
+    int ans;
+    int m;
+    int T = 1;
+    __T {
+        max1 = 0;
+        sci(n);
+        scl(p);
+        for (int i = 1,j = 1;i <= n;i ++) {
+            sci(a[j ++].n);
+            a[j - 1].i = i;
+            sci(a[j ++].n);
+            a[j - 1].i = i;
+            max1 = max(max1,a[j-1].n);
+            vis[i] = 0;
+        }
+        
+        
+        sort(a + 1,a + 1 + n * 2,cmp);
+        
+        
+        m = ans = 0;
+        start = n * 2;
+        pre(i,n*2,1) {
+            if (a[i].n >= max1) {
+                l = {(int) ceil(a[i].n * p / 100.0)};
+                r = {a[i].n};
+//                _C(">>" << a[i].n)
+//                _C(l.n << " " << r.n)
+                li = (int) (lower_bound(a + 1, a + 1 + n * 2, l, cmp) - a);
+                ri = i;
+//                _C("lr> " << li << " " << ri)
+                
+                pre(j,start,li) {
+                    if (!vis[a[j].i]) m ++;
+                    vis[a[j].i] ++;
+                }
+                start = li - 1;
+//                _C("m1=" << m)
+                if (i + 1 <= n * 2) {
+                    vis[a[i + 1].i] --;
+//                    _C(vis[a[i + 1].i])
+                    if (!vis[a[i + 1].i]) m --;
+                }
+//                _C("m2=" << m)
+                ans = max(ans,m);
+            } else break;
+        }
+        printf("Case #%d: %d\n",T ++, ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int s;
+    int ans;
+    __T {
+        cin >> str;
+        s = str[0] ^ 48;
+        ans = 10 * (s - 1);
+        for (int i = 0;str[i];i ++) ans += (i + 1);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int a[5010];
+    int vis[5010];
+    int ok;
+    __T {
+        sci(n);
+        ok = 1;
+        rep(i,1,n) {
+            sci(a[i]);
+            vis[i] = 0;
+            if (i != 1) {
+                if (a[i] != a[i - 1]) ok = 0;
+            }
+        }
+        if (ok) {
+            puts("NO");
+            continue;
+        }
+        puts("YES");
+        rep(i,2,n) {
+            if (a[i] != a[1]) {
+                printf("1 %d\n",i);
+                vis[i] = 1;
+            }
+        }
+        rep(i,2,n) {
+            if (vis[i]) {
+                rep(j,2,n) {
+                    if (!vis[j]) {
+                        printf("%d %d\n",i,j);
+                    }
+                }
+                break;
+            }
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+int cmp(const pair<int,int> &a,const pair<int,int> &b) {
+    if (a.second == b.second) return a.first < b.first;
+    return a.second < b.second;
+}
+
+int main()
+{
+    
+    int n,q;
+    scii(n,q);
+    pair<int,int> px[2010];
+    pair<int,int> py[2010];
+    rep(i,1,n) {
+        scii(px[i].first,px[i].second);
+        py[i] = px[i];
+    }
+    sort(px + 1,px + 1 + n);
+    sort(py + 1,py + 1 + n,cmp);
+    int u,v;
+    int cnt;
+    while (q --) {
+        scii(u,v);
+        cnt = 0;
+        rep(i,1,n) {
+            
+        }
+    }
+    return 0;
+}
+*/
+
+
+/*
+int n,m;
+
+const int MAXN = 500010;
+
+struct Edge {
+    Edge(){}
+    Edge(int to,int nxt,int v):to(to),nxt(nxt),v(v){}
+    int to;
+    int nxt;
+    int v;
+} e[MAXN * 2];
+int g[MAXN];
+
+int cnt = 0;
+
+void init()
+{
+    cnt = 0;
+    mem(g,-1);
+}
+
+void add(int u,int v)
+{
+    e[cnt] = Edge(v,g[u],-1);
+    g[u] = cnt ++;
+}
+
+int vis[MAXN];
+int dps[MAXN];
+vector<ll> cc;
+
+void dfs(int k,int f,int d)
+{
+    if (vis[k]) {
+        cc.pb(d - dps[k]);
+        return;
+    }
+    vis[k] = 1;
+    dps[k] = d;
+    for (int i = g[k];~i;i = e[i].nxt) {
+        if (e[i].to == f || dps[e[i].to] > d) continue;
+        dfs(e[i].to,k,d + 1);
+    }
+}
+
+const int mod = 998244353;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    scii(n,m);
+    init();
+    int u,v;
+    rep(i,1,m) {
+        scii(u,v);
+        add(u,v);
+        add(v,u);
+    }
+    rep(i,1,n) {
+        if (vis[i]) continue;
+        dfs(i,-1,0);
+    }
+    ll ans = 1;
+    ll s = 0;
+    for (auto i : cc) {
+        s += i;
+        ans *= (quickpow(2, i) + mod - 1) % mod;
+        ans %= mod;
+    }
+    
+    ans *= quickpow(2, m - s);
+    printf("%lld\n",ans % mod);
+    re0;
+}
+*/
+
+/*
+char str[100010];
+
+int get(char a[],char b[]) {
+    if (a[0] == b[0] && a[1] == b[1] && a[2] == b[2]) return 0;
+    if(a[1] == b[0] && a[2] == b[1]) return 1;
+    if(a[2] == b[0]) return 2;
+    return 3;
+}
+
+ll dp[100010][7];
+
+struct Node {
+    int n;
+    char str[7][3];
+} x['Z' + 1];
+
+int main()
+{
+    x['Y'] = {1,{
+        {'Q','Q','Q'}
+    }};
+    x['V'] = {3,{
+        {'Q','Q','W'},
+        {'Q','W','Q'},
+        {'W','Q','Q'},
+    }};
+    x['G'] = {3,{
+        {'Q','Q','E'},
+        {'Q','E','Q'},
+        {'E','Q','Q'},
+    }};
+    x['C'] = {1,{
+        {'W','W','W'},
+    }};
+    x['X'] = {3,{
+        {'Q','W','W'},
+        {'W','W','Q'},
+        {'W','Q','W'},
+    }};
+    x['Z'] = {3,{
+        {'W','E','W'},
+        {'W','W','E'},
+        {'E','W','W'},
+    }};
+    x['T'] = {1,{
+        {'E','E','E'},
+    }};
+    x['F'] = {3,{
+        {'Q','E','E'},
+        {'E','E','Q'},
+        {'E','Q','E'},
+    }};
+    x['D'] = {3,{
+        {'W','E','E'},
+        {'E','W','E'},
+        {'E','E','W'},
+    }};
+    x['B'] = {6,{
+        {'Q','E','W'},
+        {'Q','W','E'},
+        {'W','Q','E'},
+        {'W','E','Q'},
+        {'E','Q','W'},
+        {'E','W','Q'},
+    }};
+    char ch;
+    int n = 0;
+    while ((ch = getchar()) != '\n') {
+        str[n ++] = ch;
+    }
+    str[n] = '\0';
+//    puts(str);
+    mem(dp,-1);
+    REP(i,0,6) {
+        dp[0][i] = 3;
+    }
+//    REP(j,0,6) {
+//        printf("%lld ",dp[0][j]);
+//    }
+//    puts("");
+    
+//    _C(n)
+    
+    REP(i,1,n) {
+        REP(j,0,x[str[i - 1]].n) {
+            REP(k,0,x[str[i]].n) {
+                if (dp[i][k] == -1) dp[i][k] = dp[i - 1][j] + get(x[str[i - 1]].str[j],x[str[i]].str[k]);
+                else dp[i][k] = min(dp[i - 1][j] + get(x[str[i - 1]].str[j],x[str[i]].str[k]),dp[i][k]);
+            }
+        }
+//        REP(j,0,6) {
+//            printf("%lld ",dp[i][j]);
+//        }
+//        puts("");
+    }
+    ll ans = -1;
+    REP(i,0,6) {
+        if (dp[n - 1][i] != -1) {
+            if (ans == -1) ans = dp[n - 1][i];
+            else ans = min(ans,dp[n - 1][i]);
+        }
+    }
+    printf("%lld\n",ans + n);
+}
+*/
+
+/////kmp
+/*
+const int MAXN = 1e6 + 10;
+string str;
+string p;
+int n;
+int m;
+
+int nxt[MAXN];
+
+void make()
+{
+    // nxt(标号从[1,m]，m是匹配串长度)数组意义：nxt[i]是取出从1到i的前缀，对于这个前缀s，存在一个它的子串t，并且t != s，同时t既是s的前缀又是s的后缀，nxt[i] = max(|t|)。
+    nxt[0] = -1;
+    nxt[1] = 0;
+    for (int i = 0,k = -1;i < m;)
+    {
+        if (k == -1 || p[i] == p[k]) nxt[++ i] = ++ k;
+        else k = nxt[k];
+    }
+}
+
+int kmp()
+{
+    int ok = 0;
+    make();
+    
+    //int f = 0;
+    for (int i = 0,j = 0;i < n;)
+    {
+        if (str[i] == p[j]) {
+            j ++;
+            i ++;
+            if (j == m) {
+                //printf("Found: %lu\n",i - m); // 找到一个p串在str串中的下标
+                ok ++;
+                //f = 1;
+                j = nxt[j];
+            }
+        }
+        else {
+            if (j == 0) i ++;
+            j = nxt[j];
+        }
+        
+    }
+    //if (!f) printf("Not Found!\n");
+    return ok;
+}
+
+int main()
+{
+    cin >> str >> p;
+    n = (int) str.size();
+    m = (int) p.size();
+    printf("%d\n",kmp());
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int main()
+{
+    int f,n;
+    scii(f,n);
+    int nxt[MAXN];
+    int a[MAXN];
+    
+    int addr,num,next;
+    
+    mem(nxt,-1);
+    rep(i,1,n) {
+        sciii(addr,num,next);
+        a[addr] = num;
+        nxt[addr] = next;
+    }
+    
+    int vis[10010] = {0};
+    int ff = -1;
+    int cc = ff;
+    
+    int c = f;
+    int l = -1;
+    while (c != -1) {
+        if (vis[abs(a[c])]) {
+            nxt[l] = nxt[c];
+            if (ff == -1) {
+                ff = c;
+                cc = c;
+            } else {
+                nxt[cc] = c;
+                cc = c;
+            }
+        } else l = c;
+        vis[abs(a[c])] = 1;
+        c = nxt[c];
+        nxt[cc] = -1;
+    }
+    c = f;
+    while (c != -1) {
+        printf("%05d %d ",c,a[c]);
+        if (nxt[c] == -1) printf("-1");
+        else printf("%05d",nxt[c]);
+        puts("");
+        c = nxt[c];
+    }
+    c = ff;
+    while (c != -1) {
+        printf("%05d %d ",c,a[c]);
+        if (nxt[c] == -1) printf("-1");
+        else printf("%05d",nxt[c]);
+        puts("");
+        c = nxt[c];
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int na,nb;
+    
+    vector<pair<int,int>> a;
+    vector<pair<int,int>> b;
+    int x,y;
+    
+    sci(na);
+    rep(i,1,na) {
+        scii(x,y);
+        a.pb(mpair(x,y));
+    }
+    
+    sci(nb);
+    rep(i,1,nb) {
+        scii(x,y);
+        b.pb(mpair(x,y));
+    }
+    
+    int multy[10010];
+    int add[10010];
+    
+    mem(multy,0);
+    for (auto i : a) {
+        for (auto j : b) {
+            multy[i.second + j.second + 3000] += i.first * j.first;
+        }
+    }
+    int f = 1;
+    pre(i,10000,0) {
+        if (multy[i]) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d %d",multy[i],i - 3000);
+        }
+    }
+    if (f) printf("0 0");
+    puts("");
+    
+    mem(add,0);
+    for (auto i : a) {
+        add[i.second + 3000] += i.first;
+    }
+    for (auto i : b) {
+        add[i.second + 3000] += i.first;
+    }
+    
+    f = 1;
+    pre(i,10000,0) {
+        if (add[i]) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d %d",add[i],i - 3000);
+        }
+    }
+    if (f) printf("0 0");
+    puts("");
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 100010;
+
+int main()
+{
+    int f,n,k;
+    sciii(f,n,k);
+    int num[MAXN];
+    int nxt[MAXN];
+    int pre[MAXN];
+    
+    int addr,nn,nt;
+    
+    int last = -1;
+    rep(i,1,n) {
+        sciii(addr,nn,nt);
+        num[addr] = nn;
+        nxt[addr] = nt;
+    }
+    
+    int c = f;
+    int cc = 0;
+    while (c != -1) {
+        pre[c] = last;
+        last = c;
+        c = nxt[c];
+        cc ++;
+    }
+    n = cc;
+    
+    int cnt = 0;
+    int ff = f;
+    int sf = 0;
+    c = f;
+//    int cc;
+    
+    int x = 0;
+    int mx = n / k;
+    last = -1;
+    while (c != -1) {
+        cnt ++;
+        nt = nxt[c];
+        
+        if (x < mx) swap(nxt[c],pre[c]);
+        
+        if (cnt == k) {
+            swap(pre[c],nxt[f]);
+            if (nt != -1) pre[nt] = c;
+            if (last != -1) nxt[last] = c;
+            last = f;
+            f = nt;
+            if (!sf) {
+                sf = 1;
+                ff = c;
+            }
+            cnt = 0;
+            x ++;
+            
+        }
+        c = nt;
+    }
+    
+    c = ff;
+    while (c != -1) {
+        printf("%05d %d ",c,num[c]);
+        if (nxt[c] == -1) printf("-1");
+        else printf("%05d",nxt[c]);
+        puts("");
+        c = nxt[c];
+    }
+    
+    re0;
+}
+*/
+
+
+// AC自动机
+// 给定n个模式串s_i和一个文本串t，求有多少个不同的模式串在文本串里出现过。两个模式串不同当且仅当他们编号不同。
+
+/*
+const int MAXN = 5e5 + 10;
+
+struct AC_Auto {
+    int next[MAXN][26],fail[MAXN],end[MAXN];
+    int root,cnt;
+
+    inline int newNode() {
+        for (int i = 0;i < 26;i ++) next[cnt][i] = -1;
+        end[cnt ++] = 0;
+        return cnt - 1;
+    }
+    void init() {
+        cnt = 0;
+        root = newNode();
+    }
+
+    void insert(char str[]) {
+        int len = (int) strlen(str);
+        int now = root;
+        for (int i = 0;i < len;i++) {
+            if (next[now][str[i] - 'a'] == -1) next[now][str[i] - 'a'] = newNode();
+            now = next[now][str[i] - 'a'];
+        }
+        end[now] ++;
+    }
+
+    void build() {
+        queue<int> q;
+        fail[root] = root;
+        for(int i = 0;i < 26;i++)
+        {
+            if (next[root][i] == -1) next[root][i] = root;
+            else
+            {
+                fail[next[root][i]] = root;
+                q.push(next[root][i]);
+            }
+        }
+        while (!q.empty()) {
+            int now = q.front();
+            q.pop();
+            for (int i = 0;i < 26;i++)
+            {
+                if (next[now][i] == -1) next[now][i] = next[fail[now]][i];
+                else
+                {
+                    fail[next[now][i]] = next[fail[now]][i];
+                    q.push(next[now][i]);
+                }
+            }
+        }
+    }
+
+    int query(char *s) {
+        int len = (int) strlen(s);
+        int now = 0,ans = 0;
+        for (int i = 0;i < len;i ++){
+            now = next[now][s[i] - 'a'];
+            for (int t = now;t && ~end[t];t = fail[t]) {
+                ans += end[t];
+                end[t] = -1;
+            }
+        }
+        return ans;
+    }
+
+    void debug() {
+        for (int i = 0;i < cnt;i ++) {
+            printf("id = %3d,fail = %3d,end = %3d,chi = [",i,fail[i],end[i]);
+            for (int j = 0;j < 26;j ++) printf("%2d",next[i][j]);
+            printf("]\n");
+        }
+    }
+};
+
+AC_Auto ac;
+char str[MAXN << 1];
+
+int main()
+{
+    int n;
+    __T {
+        scanf("%d",&n);
+        ac.init();
+        rep(i,1,n) {
+            scanf("%s",str);
+            ac.insert(str);
+        }
+        ac.build();
+        scanf("%s",str);
+        printf("%d\n",ac.query(str));
+    }
+    return 0;
+}
+*/
+
+//
+//int n = 2,m = 2;
+//
+//// 0 u
+//// 1 d
+//// 2 l
+//// 3 r
+//
+//int vis[110][110] = {0};
+//int ans = 0;
+//
+//void dfs(int i,int j,int dir,int cnt)
+//{
+//    _C(i << " " << j)
+//    if (vis[i][j]) return;
+//    vis[i][j] = 1;
+//    if (cnt == n * m) {
+//        ans ++;
+//        return;
+//    }
+//    int ii,jj;
+//    switch (dir) {
+//        case 0:
+//            ii = i;
+//            jj = j + 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,3,cnt + 1);
+//            ii = i - 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,0,cnt + 1);
+//            break;
+//        case 1:
+//            ii = i;
+//            jj = j - 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,2,cnt + 1);
+//            ii = i + 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,1,cnt + 1);
+//            break;
+//        case 2:
+//            ii = i - 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,0,cnt + 1);
+//            ii = i;
+//            jj = j - 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,2,cnt + 1);
+//            break;
+//        case 3:
+//            ii = i + 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,1,cnt + 1);
+//            ii = i + 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,3,cnt + 1);
+//            break;
+//        default:
+//            break;
+//    }
+//    vis[i][j] = 0;
+//}
+//
+//int main()
+//{
+//    int ii,jj;
+//    rep(i,1,n) {
+//        rep(j,1,m) {
+//            vis[i][j] = 1;
+//
+//            ii = i - 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,0,2);
+//            puts("");
+//            ii = i + 1;
+//            jj = j;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,1,2);
+//            puts("");
+//            ii = i;
+//            jj = j - 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,2,2);
+//            puts("");
+//            ii = i;
+//            jj = j + 1;
+//            if (ii >= 1 && jj >= 1 && ii <= n && jj <= m) dfs(ii,jj,3,2);
+//            puts("");
+//            puts("");
+//
+//            vis[i][j] = 0;
+//        }
+//    }
+//    _C(ans)
+//    return 0;
+//}
+//
+//
+
+/*
+int main()
+{
+    int n,m;
+    int ans;
+    int T = 1;
+    __T {
+        scii(n,m);
+        if (m < n) swap(m, n);
+        
+        if (n == 1) {
+            if (m == 1) ans = 1;
+            else ans = 2;
+        }
+        else if (n == 2) {
+            ans = 2 * m;
+        } else {
+            ans = (n - 2) * 2 + (m - 2) * 2 + 4;
+        }
+        printf("Case #%d: %d\n",T++,ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int T = 1;
+    __T {
+        sci(n);
+        printf("Case #%d:\n",T ++);
+        puts("YES");
+        rep(i,1,n) {
+            rep(j,i,n) {
+                printf("%d %d %d %d %d %d %d %d\n",i,j, 0,j,i , 1,j,i);
+            }
+        }
+    }
+    re0;
+}
+*/
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int main()
+{
+    int n;
+    int a[100010];
+    int x;
+    ll pre[100010],sub[100010];
+    ll ans = 1;
+    __T {
+        sci(n);
+        rep(i,1,n) sci(a[i]);
+        pre[1] = a[1];
+        sub[n] = a[n];
+        rep(i,2,n) pre[i] = gcd(a[i],pre[i - 1]);
+        pre(i,n - 1,1) sub[i] = gcd(a[i],sub[i + 1]);
+        ans = 1;
+        rep(i,1,n) {
+            if (i == 1) ans = max(ans,sub[i+1]);
+            else if (i == n) ans = max(ans,pre[i-1]);
+            else ans = max(ans,gcd(pre[i-1],sub[i+1]));
+        }
+        printf("%d\n",ans);
+    }
+}*/
+
+/*
+struct Node {
+    ll pos,c;
+    bool operator<(const Node &o) const {
+        return pos < o.pos;
+    }
+};
+
+ll dp[3010][3010];
+ll m[3010];
+ll jj[3010];
+
+int main()
+{
+    int n;
+    Node a[3010];
+    ll pos,c;
+    ll ans;
+    int t1,t2;
+    int last;
+    while (~sci(n)) {
+        rep(i,1,n) {
+            scll(pos,c);
+            a[i].pos = pos;
+            a[i].c = c;
+        }
+        sort(a + 1,a + 1 + n);
+        jj[1] = m[1] = dp[1][1] = a[1].c;
+        
+
+        rep(i,2,n) {
+            m[i] = (dp[i][i-1] = jj[i-1] + a[i].pos - a[i-1].pos);
+            rep(j,1,i-2) {
+                dp[i][j] = dp[i-1][j] + a[i].pos - a[j].pos;
+                m[i] = min(m[i],dp[i][j]);
+            }
+            jj[i] = m[i - 1] + a[i].c;
+            m[i] = min(m[i],jj[i]);
+        }
+        printf("%lld\n",m[n]);
+    }
+    re0;
+}
+*/
+
+
+//
+//int main() {
+//    string c[10];
+//    int a[10];
+//    int b[10];
+//    const int x = 1 << 5;
+//    int niu,niu_cnt,no;
+//    int ok1 = 0;
+//    int t;
+//    __T {
+//        rep(i,1,5) cin >> c[i];
+//        rep(i,1,5) {
+//            if (c[i] == "A") a[i] = 1;
+//            else if (c[i] == "10" || c[i] == "J" || c[i] == "K" || c[i] == "Q") a[i] = 10;
+//            else a[i] = c[i][0] ^ 48;
+//            _C(a[i])
+//        }
+//
+//        rep(i,1,5) cin >> c[i];
+//        rep(i,1,5) {
+//            if (c[i] == "A") b[i] = 1;
+//            else if (c[i] == "10" || c[i] == "J" || c[i] == "K" || c[i] == "Q") b[i] = 10;
+//            else b[i] = c[i][0] ^ 48;
+//            _C(b[i])
+//        }
+//
+//        ok1 = -1;
+//
+//        REP(i,0,x) {
+//            niu = 0;
+//            niu_cnt = 0;
+//            no = 0;
+//            for (int j = i,k = 1;k <= 5;k ++,j >>= 1) {
+//                if (j & 1) {
+//                    niu_cnt ++;
+//                    niu += a[k];
+//                } else no += a[k];
+//            }
+//            if (niu_cnt == 3) {
+//                if (niu % 10 == 0) {
+//                    t = no % 10;
+//                    if (ok1 == -1 || t == 0) ok1 = t;
+//                    else if (ok1 != 0) ok1 = max(ok1,t);
+//                }
+//            }
+//        }
+//    }
+//    re0;
+//}
+
+/*
+const double esp = 5e-5;
+
+inline double f(double x) {
+    return x * x * x - 2 * x - 5;
+}
+
+int main()
+{
+    double l = 2,r = 3;
+    double m;
+    while (r - l > esp) {
+        m = (l + r) / 2;
+        if (f(m) * f(l) < 0) r = m;
+        else l = m;
+    }
+    printf("%f\n",l);
+    return 0;
+}
+*/
+
+/*
+const double esp = 1e-4;
+
+inline double f(double x) {
+    return x * x * x + 10 * x - 20;
+}
+
+int main()
+{
+    double l = 1,r = 2;
+    double m;
+    while (r - l > esp) {
+        m = (l + r) / 2;
+        if (f(m) * f(l) < 0) r = m;
+        else l = m;
+    }
+    printf("%f\n",l);
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e7 + 10;
+
+int is_prime[MAXN];
+int is_prime_small[MAXN];
+
+void segment_sieve(ll a,ll b)
+{
+    for (ll i = 0;i * i <= b;i ++) is_prime_small[i] = 1;
+    for (ll i = 0;i <= b - a;i ++) is_prime[i] = 1;
+    for (ll i = 2;i * i <= b;i ++)
+    {
+        if (is_prime_small[i])
+        {
+            for (ll j = 2 * i;j * j <= b;j += i) is_prime_small[j] = 0;
+            for (ll j = max(2LL,(a + i - 1) / i) * i; j <= b;j += i) is_prime[j - a] = 0;
+        }
+    }
+}
+
+ll primes[MAXN];
+
+int main()
+{
+    ll l,r;
+    int cnt;
+    ll ln,lx,lnl,lnr,lxl,lxr;
+    ll t;
+    int cc;
+    while (~scll(l,r)) {
+        cnt = 0;
+        segment_sieve(l, r);
+        for (ll i = 0;i <= r - l;i ++) {
+            if (is_prime[i]) {
+                primes[cnt ++] = i + l;
+            }
+        }
+        ln = -1;
+        lx = -1;
+        
+        cc = 0;
+        if (primes[0] != 1) cc ++;
+        
+        REP(i,1,cnt) {
+            if (primes[i] != 1) cc ++;
+            if (primes[i] == 1 || primes[i - 1] == 1) continue;
+            
+            t = primes[i] - primes[i - 1];
+            if (ln == -1 || t < ln) {
+                ln = t;
+                lnl = primes[i-1];
+                lnr = primes[i];
+            }
+            if (t > lx) {
+                lx = t;
+                lxl = primes[i-1];
+                lxr = primes[i];
+            }
+        }
+        if (cc < 2) {
+            printf("There are no adjacent primes.\n");
+            continue;
+        }
+        printf("%lld,%lld are closest, %lld,%lld are most distant.\n",lnl,lnr,lxl,lxr);
+    }
+}
+*/
+
+/*
+const int S = 9; //随机算法判定次数，一般8~10就够了
+
+// 计算ret = (a*b)%c a,b,c < 2^63
+long long mult_mod(ll a,ll b,ll c)
+{
+    a %= c;
+    b %= c;
+    ll ret = 0;
+    ll tmp = a;
+    while (b) {
+        if (b & 1) {
+            ret += tmp;
+            if (ret > c)ret -= c;//直接取模慢很多
+        }
+        tmp <<= 1;
+        if (tmp > c) tmp -= c;
+        b >>= 1;
+    }
+    return ret;
+}
+
+// 计算 ret = (a^n)%mod
+long long pow_mod(ll a,ll n,ll mod)
+{
+    ll ret = 1;
+    ll temp = a % mod;
+    
+    while (n)
+    {
+        if (n & 1) ret = mult_mod(ret,temp,mod);
+        temp = mult_mod(temp,temp,mod);
+        n >>= 1;
+    }
+    return ret;
+}
+    
+// 通过 a^(n-1)=1(mod n)来判断n是不是素数
+// n-1 = x*2^t 中间使用二次判断
+// 是合数返回true, 不一定是合数返回false
+bool check(ll a,ll n,ll x,ll t)
+{
+    ll ret = pow_mod(a,x,n);
+    ll last = ret;
+    for (int i = 1;i <= t;i ++)
+    {
+        ret = mult_mod(ret,ret,n);
+        if (ret == 1 && last != 1 && last != n-1) return true; //合数
+        last = ret;
+    }
+    if (ret != 1) return true;
+    else return false;
+}
+
+bool Miller_Rabin(ll n)
+{
+    if (n < 2) return false;
+    if (n == 2) return true;
+    if ((n & 1) == 0) return false; //偶数
+    ll x = n - 1;
+    ll t = 0;
+    while ((x & 1) ==0) {
+        x >>= 1;
+        t ++;
+    }
+    srand((uint) time(NULL));
+    ll a;
+    for (int i = 0;i < S;i ++)
+    {
+        a = rand() % (n - 1) + 1;
+        if (check(a,n,x,t)) return false;
+    }
+    return true;
+}
+
+ll factor[100]; //质因素分解结果(刚返回时时无序的)
+int tol; //质因素的个数，编号0~tol-1
+
+ll gcd(ll a,ll b) {
+    ll t;
+    while (b)
+    {
+        t = a;
+        a = b;
+        b = t % b;
+    }
+    if (a >= 0) return a;
+    else return -a;
+}
+
+// 找出一个因子
+ll pollard_rho(ll x,ll c) {
+    ll i = 1, k = 2;
+    srand((uint) time(NULL));
+    ll x0 = rand() % (x - 1) + 1;
+    ll y = x0;
+    ll d;
+    while (1)
+    {
+        i ++;
+        x0 = (mult_mod(x0,x0,x) + c) % x;
+        d = gcd(y - x0,x);
+        if (d != 1 && d != x) return d;
+        if (y == x0) return x;
+        if (i == k) {
+            y = x0;
+            k += k;
+        }
+    }
+}
+
+// 对n进行素因子分解，存入factor. k设置为107左右即可
+void findfac(ll n,int k)
+{
+    if (n == 1) return;
+    if (Miller_Rabin(n)) {
+        factor[tol ++] = n;
+        return;
+    }
+    ll p = n;
+    int c = k;
+    while (p >= n) p = pollard_rho(p,c --); // 值变化，防止死循环k
+    findfac(p,k);
+    findfac(n / p,k);
+}
+
+
+
+// 找出一个数字所有的质因子，若有重复的质因子，则输出yes CCPC2020威海
+int main()
+{
+    ll n;
+    int ok = 0;
+    __T {
+        scl(n); // 读取一个ll数
+        tol = 0; // 质数的个数=0
+        findfac(n, 107); // 找出所有的因子
+        sort(factor, factor + tol); // 排序
+        
+        ok = 0;
+        REP(i,1,tol) {
+            if (factor[i - 1] == factor[i]) { // 找出了一样的了
+                ok = 1;
+                break;
+            }
+        }
+        puts(ok ? "yes" : "no");
+    }
+}
+*/
+
+/*
+int main()
+{
+    int m,n,k;
+    sciii(m,n,k);
+    stack<int> s;
+    int a[1010];
+    int ok;
+    int j;
+    while (k --) {
+        rep(i,1,n) sci(a[i]);
+        ok = 0;
+        j = 1;
+        rep(i,1,n+1) {
+            while (s.size() != 0 && s.top() == a[j]) {
+                j ++;
+                s.pop();
+                ok ++;
+            }
+            if (i <= n && s.size() < m) s.push(i);
+        }
+        while (!s.empty()) s.pop();
+        puts(ok == n ? "YES" : "NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    int a[1010];
+    int b[1010];
+    int an = 0,bn = 0;
+    int t;
+    rep(i,1,n) {
+        sci(t);
+        if (t & 1) a[++ an] = t;
+        else b[++ bn] = t;
+    }
+    int i = 1,j = 1;
+    int cnt = 0;
+    int f = 1;
+    while (i <= an || j <= bn) {
+        cnt ++;
+        if (i <= an) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",a[i]);
+            i ++;
+        }
+        if (!(cnt & 1)) {
+            if (j <= bn) {
+                if (f) f = 0;
+                else printf(" ");
+                printf("%d",b[j]);
+                j ++;
+            }
+        }
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int mp[1010][1010];
+int mm[1010][1010];
+int dx[] = {0,1,-1,0};
+int dy[] = {1,0,0,-1};
+
+const int MAXN = 1e6 + 10;
+const int mod = 1e9 + 7;
+
+struct Edge {
+    int to;
+    int nxt;
+} e[MAXN << 3];
+int g[MAXN];
+
+int cnt;
+
+void add(int u,int v) {
+    e[cnt] = {v,g[u]};
+    g[u] = cnt ++;
+}
+
+int in[MAXN];
+int out[MAXN];
+int id;
+
+ll step[MAXN][5];
+
+
+
+ll Tuopu()
+{
+    queue<int> q;
+    rep(i,1,id) {
+//        _C(i << " " << in[i])
+        if (in[i] == 0) {
+            q.push(i);
+            step[i][1] = 1;
+        }
+    }
+    int top;
+    int to;
+    int cnt;
+    while (!q.empty()) {
+        top = q.front();
+        q.pop();
+        for (int i = g[top];~i;i = e[i].nxt) {
+            to = e[i].to;
+            
+            rep(i,1,4) {
+                cnt = i + 1;
+                if (cnt > 4) cnt = 4;
+                step[to][cnt] += step[top][i];
+                step[to][cnt] %= mod;
+            }
+            
+            in[to] --;
+            if (in[to] == 0) q.push(to);
+        }
+    }
+    
+    ll ans = 0;
+    
+    rep(i,1,id) {
+        if (out[i] == 0) {
+            ans += step[i][4];
+            ans %= mod;
+        }
+    }
+    return ans;
+}
+
+int main()
+{
+    mem(g,-1);
+    cnt = 0;
+    id = 0;
+    int n,m;
+    scii(n,m);
+    rep(i,1,n) {
+        rep(j,1,m) {
+            sci(mp[i][j]);
+            mm[i][j] = ++ id;
+        }
+    }
+    int ii,jj;
+    rep(i,1,n) {
+        rep(j,1,m) {
+            REP(k,0,4) {
+                ii = i + dy[k];
+                jj = j + dx[k];
+                if (ii >= 1 && ii <= n && jj <= m && jj >= 1) {
+                    if (mp[i][j] + 1 == mp[ii][jj]) {
+                        add(mm[i][j],mm[ii][jj]);
+                        in[mm[ii][jj]] ++;
+                        out[mm[i][j]] ++;
+                    }
+                }
+            }
+        }
+    }
+    printf("%lld\n",Tuopu());
+    re0;
+}
+*/
+
+
+/*
+const int MAXN = 100010;
+
+vector<int> g[MAXN];
+
+int n;
+int color[MAXN];
+
+int weight[MAXN];
+
+int getMaxSon(int x,int f)
+{
+    int mx = -1;
+    int nmx = -1;
+    int t;
+    int ch = 1;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        t = getMaxSon(i,x);
+        if (t > mx) {
+            mx = t;
+            nmx = i;
+        }
+        ch += t;
+    }
+    weight[x] = nmx;
+    return ch;
+}
+
+int vis[MAXN];
+int ans[MAXN];
+int heavy;
+
+int count(int x,int f,int type) // type = 1统计，type = -1清空
+{
+//    _C(x << " " << type)
+    int t = 0;
+    if (!vis[color[x]]) t ++;
+    vis[color[x]] += type;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        if (i != heavy)
+            t += count(i,x,type);
+    }
+    return t;
+}
+
+int dfs(int x,int f,int keep) // keep 是否保留
+{
+    
+    int t = 0;
+    for (auto i : g[x]) {
+        if (f == i) continue;
+        if (weight[x] != i) {
+            dfs(i,x,0); // 遍历轻儿子
+        }
+    }
+    if (weight[x] != -1) {
+        t += dfs(weight[x],x,1); // 遍历重儿子
+        heavy = weight[x];
+    }
+    
+//    _C(">>" << x << " " << keep)
+    t += count(x, f, 1);
+    heavy = 0;
+    ans[x] = t;
+
+    if (!keep) count(x, f, -1);
+    return t;
+}
+
+int main()
+{
+    sci(n);
+
+    int u,v;
+    rep(i,1,n-1) {
+        scii(u,v);
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+    rep(i,1,n) sci(color[i]);
+
+    getMaxSon(1, -1);
+    dfs(1, -1, 1);
+
+    int t;
+    __T {
+        sci(t);
+        printf("%d\n",ans[t]);
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 200010;
+
+vector<int> g[MAXN];
+
+int n;
+
+// -----统计重儿子（节点数最多的儿子）-----
+int weight[MAXN];
+
+int getMaxSon(int x,int f)
+{
+    int mx = -1;
+    int nmx = -1;
+    int t;
+    int ch = 1;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        t = getMaxSon(i,x);
+        if (t > mx) {
+            mx = t;
+            nmx = i;
+        }
+        ch += t;
+    }
+    weight[x] = nmx;
+    return ch;
+}
+// ----------------------------------
+
+
+int vis[MAXN];
+int ans[MAXN];
+int heavy;
+
+int count(int x,int f,int type) // type = 1统计，type = -1清空
+{
+    int t = 0;
+    
+    // ---------------在此修改计数方式---------------
+    if (vis[x - 1] && vis[x + 1]) t --;
+    else if (!vis[x - 1] && !vis[x + 1]) t ++;
+    // -------------------------------------------
+    
+    vis[x] += type;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        if (i != heavy) // 跳过重儿子
+            t += count(i,x,type);
+    }
+    return t;
+}
+
+int dfs(int x,int f,int keep) // keep 是否保留，调用直接(root,-1,1)
+{
+    
+    int t = 0;
+    for (auto i : g[x]) {
+        if (f == i) continue;
+        if (weight[x] != i) {
+            dfs(i,x,0); // 遍历轻儿子，不保留
+        }
+    }
+    if (weight[x] != -1) {
+        t += dfs(weight[x],x,1); // 遍历重儿子，保留
+        heavy = weight[x]; // 记录当前重儿子
+    }
+    
+    t += count(x, f, 1); // 计算答案
+    heavy = -1; // 清空重儿子记录
+    ans[x] = t; // 记录答案
+
+    if (!keep) count(x, f, -1); // 不保留直接清除vis
+    return t;
+}
+
+int main()
+{
+    int u,v;
+    int T = 1;
+    __T {
+        sci(n);
+        rep(i,1,n + 5) {
+            g[i].clear();
+            ans[i] = vis[i] = 0; // 注意清空
+        }
+        heavy = -1; // 注意清空
+        rep(i,1,n - 1) {
+            scii(u,v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+        getMaxSon(1, -1);
+        dfs(1, -1, 1);
+        printf("Case #%d:",T ++);
+        rep(i,1,n) printf(" %d",ans[i]);
+        puts("");
+    }
+    return 0;
+}
+*/
+
+
+/*
+// ***************************************************
+// *                                                 *
+// *     启发式树上合并：用于统计树上子树中特定节点的个数     *
+// *                                                 *
+// ***************************************************
+const int MAXN = 200010;
+
+vector<int> g[MAXN];
+
+int n;
+
+// -----统计重儿子（节点数最多的儿子）-----
+int weight[MAXN];
+
+int getMaxSon(int x,int f)
+{
+    int mx = -1;
+    int nmx = -1;
+    int t;
+    int ch = 1;
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        t = getMaxSon(i,x);
+        if (t > mx) {
+            mx = t;
+            nmx = i;
+        }
+        ch += t;
+    }
+    weight[x] = nmx;
+    return ch;
+}
+// ----------------------------------
+
+
+int vis[MAXN];
+int ans[MAXN];
+int heavy;
+
+int count(int x,int f,int type) // type = 1统计，type = -1清空
+{
+    int t = 0;
+    
+    // ---------------在此修改计数方式---------------
+    if (vis[x - 1] && vis[x + 1]) t --;
+    else if (!vis[x - 1] && !vis[x + 1]) t ++;
+    // -------------------------------------------
+    
+    // -----根据题意改变vis什么，若是统计颜色的则vis[color[x]] += type-----
+    vis[x] += type;
+    // -------------------------------------------------------------
+    
+    for (auto i : g[x]) {
+        if (i == f) continue;
+        if (i != heavy) // 跳过重儿子
+            t += count(i,x,type);
+    }
+    return t;
+}
+
+int dfs(int x,int f,int keep) // keep 是否保留，调用直接(root,-1,1)
+{
+    int t = 0;
+    for (auto i : g[x]) {
+        if (f == i) continue;
+        if (weight[x] != i) {
+            dfs(i,x,0); // 遍历轻儿子，不保留
+        }
+    }
+    if (weight[x] != -1) {
+        t += dfs(weight[x],x,1); // 遍历重儿子，保留
+        heavy = weight[x]; // 记录当前重儿子
+    }
+    
+    t += count(x, f, 1); // 计算答案
+    heavy = -1; // 清空重儿子记录
+    ans[x] = t; // 记录答案
+
+    if (!keep) count(x, f, -1); // 不保留直接清除vis
+    return t;
+}
+
+int main()
+{
+    int u,v;
+    int T = 1;
+    __T {
+        sci(n);
+        rep(i,1,n + 5) {
+            g[i].clear();
+            ans[i] = vis[i] = 0; // 注意清空
+        }
+        heavy = -1; // 注意清空
+        rep(i,1,n - 1) {
+            scii(u,v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+        getMaxSon(1, -1);
+        dfs(1, -1, 1);
+        printf("Case #%d:",T ++);
+        rep(i,1,n) printf(" %d",ans[i]);
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 500010;
+
+struct Edge {
+    int to;
+    ll w;
+    int nxt;
+} e[MAXN << 2];
+int g[MAXN]; // Please call init() to memset it to -1!
+int cnt = 0;
+
+void init(int n)
+{
+    cnt = 0;
+    memset(g, -1, sizeof(int) * n);
+}
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+int s,t,n,m;
+int dis[MAXN];
+int cur[MAXN]; // 替代g数组，记住上次dfs最后跑到的地方，优化，减少dfs的跑的次数
+
+int bfs()
+{
+    memset(dis, -1, sizeof(int) * (n + 5));
+
+    queue<int> q;
+    q.push(s);
+    dis[s] = 0;
+
+    int to,current,k;
+
+    while (!q.empty()) {
+        current = q.front();
+        q.pop();
+
+        for (int i = g[current];~i;i = e[i].nxt) {
+            to = e[i].to;
+            k = dis[current] + 1;
+            if (dis[to] == -1 && e[i].w > 0) { // 只有没有访问过的，且该通路可以走(w > 0)
+                dis[to] = k;
+                if (to == t) return 1;
+                q.push(to);
+            }
+        }
+    }
+
+    return 0;
+}
+
+ll dfs(int node,ll flow)
+{
+    if (node == t) return flow;
+    int to;
+    ll d;
+    for (int &i = cur[node];~i;i = e[i].nxt) { // 改变i的同时，cur[node]的值也会被改变
+        to = e[i].to;
+        if (dis[node] + 1 == dis[to] && e[i].w > 0) {
+            d = dfs(to,min(e[i].w,flow));
+            if (d > 0) {
+                e[i].w -= d;
+                e[i ^ 1].w += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+ll dinic()
+{
+    ll ans = 0;
+    ll d;
+    while (bfs()) {
+        rep(i,1,n) cur[i] = g[i];
+        while ((d = dfs(s,INT_INF)))
+            ans += d;
+    }
+    return ans;
+}
+
+// ***********************************************
+// *             二分图匹配 - 网络流算法             *
+// *   思路：建立超级源点到各个左部点的联系（权重为1），  *
+// * 建立右部点到超级汇点的联系，以及左右部分点之间的联系，*
+// *               最后直接最大流板子。              *
+// ***********************************************
+
+int main()
+{
+    // **注意：MAXN尽量开大点，不然很容易RE**
+    int nn,mm,e;
+    scanf("%d%d%d",&nn,&mm,&e);
+    init(nn + mm + 10);
+    int u,v;
+    // nn + mm + 1 源点
+    // nn + mm + 2 汇点
+    while (e --) {
+        scanf("%d%d",&u,&v);
+        add_edge(u, v + nn, 1); // 建立 左部点 到 右部点 的联系
+        add_edge(v + nn, u, 0);
+    }
+    rep(i,1,nn) {
+        add_edge(nn + mm + 1, i, 1); // 建立超级源点到各个左部点的联系
+        add_edge(i, nn + mm + 1, 0);
+    }
+    
+    rep(i,nn + 1,nn + mm) {
+        add_edge(i, nn + mm + 2, 1); // 建立 右部点 到超级汇点的联系
+        add_edge(nn + mm + 2, i, 0);
+    }
+    
+    n = nn + mm + 2; // 设置总点量
+    s = nn + mm + 1; // 设置起点
+    t = nn + mm + 2; // 设置终点
+    printf("%lld\n",dinic());
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 500010;
+
+struct Edge {
+    int to;
+    ll w;
+    int nxt;
+} e[MAXN << 1];
+int g[MAXN]; // Please call init() to memset it to -1!
+int cnt = 0;
+
+void init(int n)
+{
+    cnt = 0;
+    memset(g, -1, sizeof(int) * n);
+}
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+int s,t,n,m;
+int dis[MAXN];
+int cur[MAXN]; // 替代g数组，记住上次dfs最后跑到的地方，优化，减少dfs的跑的次数
+
+int bfs()
+{
+    memset(dis, -1, sizeof(int) * (n + 5));
+
+    queue<int> q;
+    q.push(s);
+    dis[s] = 0;
+
+    int to,current,k;
+
+    while (!q.empty()) {
+        current = q.front();
+        q.pop();
+
+        for (int i = g[current];~i;i = e[i].nxt) {
+            to = e[i].to;
+            k = dis[current] + 1;
+            if (dis[to] == -1 && e[i].w > 0) { // 只有没有访问过的，且该通路可以走(w > 0)
+                dis[to] = k;
+                if (to == t) return 1;
+                q.push(to);
+            }
+        }
+    }
+
+    return 0;
+}
+
+ll dfs(int node,ll flow)
+{
+    if (node == t) return flow;
+    int to;
+    ll d;
+    for (int &i = cur[node];~i;i = e[i].nxt) { // 改变i的同时，cur[node]的值也会被改变
+        to = e[i].to;
+        if (dis[node] + 1 == dis[to] && e[i].w > 0) {
+            d = dfs(to,min(e[i].w,flow));
+            if (d > 0) {
+                e[i].w -= d;
+                e[i ^ 1].w += d;
+                return d;
+            }
+        }
+    }
+    return 0;
+}
+
+ll dinic()
+{
+    ll ans = 0;
+    ll d;
+    while (bfs()) {
+        rep(i,1,n) cur[i] = g[i];
+        while ((d = dfs(s,INT_INF)))
+            ans += d;
+    }
+    return ans;
+}
+
+int main()
+{
+    int nn,m,k;
+    sciii(nn,m,k);
+    int tmp;
+    
+    s = 1;
+    t = 3;
+    int v;
+    init(nn + m + 10);
+    n = nn + m + 3;
+    rep(i,1,nn) {
+        sci(tmp);
+        while (tmp --) {
+            sci(v);
+            add_edge(i + 3, v + nn + 3, 1);
+            add_edge(v + nn + 3, i + 3, 0);
+        }
+        add_edge(1, i + 3, 1);
+        add_edge(i + 3, 1, 0);
+        
+        add_edge(2, i + 3, 1);
+        add_edge(i + 3, 2, 0);
+    }
+    
+    rep(i,1,m) {
+        add_edge(nn + i + 3, 3, 1);
+        add_edge(3, nn + i + 3, 0);
+    }
+    
+    add_edge(1, 2, k);
+    add_edge(2, 1, 0);
+    
+    
+    printf("%lld\n",dinic());
+    
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e6 + 10;
+
+int a[MAXN];
+
+int isP[MAXN];
+vector<int> p[MAXN];
+
+void sheive()
+{
+    isP[1] = 1;
+    rep(i,2,1000000) {
+        if (isP[i]) continue;
+        p[i].pb(i);
+        for (int j = i + i;j <= 1000000;j += i) {
+            p[j].pb(i);
+            isP[j] = 1;
+        }
+    }
+}
+
+ll last[MAXN];
+
+int main()
+{
+    sheive();
+    int n;
+    scanf("%d",&n);
+    rep(i,1,n) scanf("%d",a + i);
+    ll ans = 0;
+    rep(i,1,n) {
+        for (auto j : p[a[i]]) {
+            ans += (i - last[j]) * (n - i + 1);
+            last[j] = i;
+        }
+    }
+    printf("%lld\n",ans);
+    
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    ll i,j,k;
+} ans[500];
+
+int main()
+{
+    ll k,m,n,s;
+    int ok;
+    int a[500] = {0};
+    printf("%lu\n",time(NULL));
+    rep(x,0,200) {
+        ok = 0;
+        for (ll i = -5000;i <= 5000;i ++) {
+            for (ll j = -5000;j <= 5000;j ++) {
+                k = i*i*i + j*j*j;
+                m = x - k;
+                n = pow(m,1/3.0);
+                s = 0;
+                if (n * n * n == m) {
+                    s = n;
+                    ok = 1;
+                } else if ((n+1) * (n+1) * (n+1) == m) {
+                    s = n + 1;
+                    ok = 1;
+                } else if ((n-1) * (n-1) * (n-1) == m) {
+                    s = n - 1;
+                    ok = 1;
+                }
+                if (abs(s) > 5000) ok = 0;
+                if (ok) {
+                    ans[x] = {i,j,s};
+                    goto end;
+                }
+            }
+        }
+        end:
+        a[x] = ok;
+        printf("%d\n",x);
+    }
+    printf("int ok[] = {");
+    rep(i,0,200) printf("%d,",a[i]);
+    printf("};\n");
+    printf("int ans[][3]={");
+    rep(i,0,200) printf("{%lld,%lld,%lld},",ans[i].i,ans[i].j,ans[i].k);
+    printf("};\n");
+    printf("%lu\n",time(NULL));
+    return 0;
+}
+*/
+
+/*
+int ok[] = {1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,1,0,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,0,1,0,0,0,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,1,1,1,1,1,0,0,1,1,0,1,1,1,1,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,1,1,0,0,0,1,1,1,1,0,0,1,0,0,1,1,1,0,1,1,1,0,0,1,1,1,1,1,1,1,0,0,0,1,1,1,1,1,};
+int ans[][3]={{-5000,0,5000},{-5000,1,5000},{-4373,-486,4375},{-5,4,4},{0,0,0},{0,0,0},{-637,-205,644},{-169,44,168},{-5000,2,5000},{-216,-52,217},{-650,-353,683},{-695,-641,843},{-11,7,10},{0,0,0},{0,0,0},{-265,-262,332},{-4114,-588,4118},{-3331,2195,2977},{-1373,-1276,1671},{-95,47,91},{-2816,-741,2833},{-401,-287,445},{0,0,0},{0,0,0},{-10,8,8},{-2683,1839,2357},{-2107,237,2106},{-5000,3,5000},{-2268,-249,2269},{-233,-69,235},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{-1555,-244,1557},{-1120,-509,1154},{-3223,2358,2731},{-444,-84,445},{-27,16,25},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{-823,-307,837},{-7,-5,8},{-2369,1709,2025},{-758,-473,815},{-141,49,139},{-3950,-1247,3991},{0,0,0},{0,0,0},{-796,602,659},{0,0,0},{-2370,1518,2141},{-3885,-648,3891},{-3329,1837,3131},{-672,505,559},{-998,361,982},{0,0,0},{0,0,0},{-1201,-163,1202},{-966,668,845},{-2744,-1561,2903},{-161,102,146},{-5000,4,5000},{-929,403,903},{1,1,4},{0,0,0},{0,0,0},{-403,134,398},{-2359,824,2325},{-533,401,443},{-432,-104,434},{-335,-146,344},{0,0,0},{0,0,0},{0,0,0},{0,0,0},{-2080,-829,2123},{-706,-196,711},{-1300,-706,1366},{-2368,-1719,2638},{-1317,847,1188},{-3707,1315,3651},{0,0,0},{0,0,0},{0,0,0},{-4126,-1972,4271},{-1390,-1282,1686},{-2514,1953,2036},{-1803,365,1798},{-3389,-2912,3992},{-4052,861,4039},{-248,-98,253},{0,0,0},{0,0,0},{-22,14,20},{-3168,-991,3200},{-2101,-1638,2391},{-893,-622,984},{-1797,-903,1870},{-2327,319,2325},{-239,118,229},{0,0,0},{0,0,0},{-7,-4,8},{-2689,-1165,2760},{-1309,947,1117},{-1165,-948,1345},{-2948,853,2924},{0,0,0},{-4793,-2312,4966},{0,0,0},{0,0,0},{0,0,0},{-12,8,11},{-1906,-757,1945},{-896,-555,962},{-4328,383,4327},{-3677,-1673,3789},{-2804,1219,2725},{0,0,0},{0,0,0},{-37,-16,38},{-1,0,5},{-5000,5,5000},{-2212,-419,2217},{-4034,-3881,4988},{-3989,-726,3997},{-1580,-1238,1801},{0,0,0},{0,0,0},{-1,2,5},{-399,167,389},{-3013,-1766,3203},{-1351,-629,1395},{-1116,816,946},{-758,-428,801},{-86,-77,103},{0,0,0},{0,0,0},{-139,104,116},{-7,-3,8},{0,0,0},{-2746,-2552,3342},{-8,-7,10},{-327,-263,376},{-2366,1528,2131},{0,0,0},{0,0,0},{-367,260,317},{-463,215,447},{-805,486,741},{-3736,-695,3744},{-2135,-516,2145},{-3693,-1049,3721},{0,0,0},{0,0,0},{0,0,0},{-1534,383,1526},{-3874,-1654,3972},{-4767,-2476,4980},{-4125,-1417,4180},{-3423,-2943,4033},{-66,-59,79},{0,0,0},{0,0,0},{0,0,0},{-802,-574,890},{-1354,-1012,1521},{-3834,-2149,4047},{-1328,891,1178},{0,0,0},{0,0,0},{-335,-170,349},{0,0,0},{0,0,0},{-1168,-160,1169},{-13,-10,15},{-2839,1503,2691},{0,0,0},{-4874,974,4861},{-90,-29,91},{-4889,976,4876},{0,0,0},{0,0,0},{-4,5,5},{-1885,-1092,2000},{-1639,318,1635},{-1702,-1403,1974},{-4812,-593,4815},{-377,-215,399},{-20,16,16},{0,0,0},{0,0,0},{0,0,0},{-1057,-579,1112},{-2867,-1606,3026},{-3752,-1347,3809},{-2208,508,2199},{-2318,-638,2334},};
+
+int main()
+{
+    int x;
+    __T {
+        scanf("%d",&x);
+        if (ok[x]) printf("%d %d %d\n",ans[x][0],ans[x][1],ans[x][2]);
+        else puts("impossible");
+    }
+}
+*/
+
+/*
+int dp[1010][1010];
+
+int main()
+{
+    int n,v;
+    int val[1010];
+    int vol[1010];
+    __T {
+        scanf("%d%d",&n,&v);
+        rep(i,1,n) scanf("%d",val + i);
+        rep(i,1,n) scanf("%d",vol + i);
+        rep(j,0,v) dp[0][j] = 0;
+        rep(i,1,n) {
+            rep(j,0,v) {
+                if (vol[i] <= j) dp[i][j] = max(dp[i - 1][j - vol[i]] + val[i],dp[i - 1][j]);
+                else dp[i][j] = dp[i - 1][j];
+            }
+        }
+        printf("%d\n",dp[n][v]);
+    }
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+ll a[MAXN];
+
+int n;
+
+int check(ll t) {
+    ll x = 0;
+    t --;
+    rep(i,1,n) {
+        if (a[i] < t) x += t - a[i];
+    }
+    return x <= t;
+}
+
+
+int main()
+{
+    
+    ll l,r,m;
+    int T = 1;
+    __T {
+        scanf("%d",&n);
+        rep(i,1,n) {
+            scanf("%lld",a + i);
+        }
+        l = 1;
+        r = 1e10;
+        while (l < r) {
+            m = (l + r) >> 1;
+            if (check(m)) l = m + 1;
+            else r = m;
+        }
+        printf("Case #%d: %lld\n",T ++,l - 1);
+    }
+    return 0;
+}
+*/
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int main()
+{
+    ll x;
+    int T = 1;
+    ll n;
+    ll ans;
+    __T {
+        scanf("%lld",&x);
+        printf("Case #%d: ",T ++);
+        if (x == 6 || x < 5) printf("-1\n");
+        else {
+            if (x & 1) puts("1");
+            else {
+                if (x % 4 == 0) printf("2\n");
+                else {
+                    n = x / 3;
+                    ans = 4;
+                    repl(i,n-2,n+2) {
+                        repl(j,n-2,n+2) {
+                            repl(k,n-2,n+2) {
+                                if (i + j + k == x && i > 1 && j > 1 && k > 1 && gcd(i,j) == 1 && gcd(i,k) == 1 && gcd(j,k) == 1) {
+                                    ans = min(ans,max(i,max(j,k)) - min(i,min(j,k)));
+                                }
+                            }
+                        }
+                    }
+                    printf("%lld\n",ans);
+                }
+            }
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+struct Node {
+    int l,r;
+    ll mx;
+    int lazy;
+    ll lzn;
+} tree[MAXN << 2];
+ll a[MAXN];
+
+void push_up(int i)
+{
+    tree[i].mx = max(tree[i << 1].mx,tree[i << 1 | 1].mx);
+}
+
+void push_down(int i) //下推标记
+{
+    if (tree[i].lazy) {
+        tree[i << 1].mx = max(tree[i].lzn,tree[i << 1].mx);
+        tree[i << 1 | 1].mx = max(tree[i].lzn,tree[i << 1 | 1].mx);
+
+        tree[i << 1].lzn = max(tree[i].lzn,tree[i << 1].lzn);
+        tree[i << 1 | 1].lzn = max(tree[i].lzn,tree[i << 1 | 1].lzn);
+
+        tree[i << 1].lazy = tree[i].lazy;
+        tree[i << 1 | 1].lazy = tree[i].lazy;
+
+        tree[i].lazy = 0;
+        tree[i].lzn = 0;
+    }
+}
+
+// i - 二叉树节点编号，调用时取1
+// l，r 区间左右端下标，调用的时候取最大范围即可 build(1,n,1);
+void build(int l,int r,int i)
+{
+    tree[i].l = l;
+    tree[i].r = r;
+    tree[i].lazy = 0;
+    tree[i].lzn = 0;
+    if (l == r) {
+        tree[i].mx = a[l];
+        return;
+    }
+    int m = (l + r) >> 1;
+    build(l,m,i << 1);
+    build(m + 1,r,i << 1 | 1);
+    push_up(i);
+}
+
+
+void modify(int l,int r,ll x,int i) // 将区间[l,r]直接变成x，调用(l,r,x,1)
+{
+    if (l <= tree[i].l && r >= tree[i].r) {
+        tree[i].mx = max(x,tree[i].mx);
+        
+        tree[i].lzn = max(tree[i].lzn,x);
+        tree[i].lazy = 1;
+        return;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    if (l <= m) modify(l,r,x,i << 1);
+    if (r > m) modify(l,r,x,i << 1 | 1);
+    push_up(i);
+}
+
+ll query(int l,int r,int i) //查询
+{
+    if (l <= tree[i].l && r >= tree[i].r){
+        return tree[i].mx;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    ll mx = 0;
+    if (l <= m) {
+         mx = max(mx,query(l,r,i << 1));
+    }
+    if (r > m) {
+        mx = max(mx,query(l,r,i << 1 | 1));
+    }
+    return mx;
+}
+
+struct pr {
+    pr(int x,int t):x(x),t(t){}
+    pr(){}
+    int x,t;
+    bool operator<(const pr &o) const {
+        if (t == o.t) return x > o.x;
+        return t < o.t;
+    }
+    bool operator!=(const pr &o) const {
+        return t != o.t;
+    }
+} p[MAXN],pp[MAXN];
+
+int main()
+{
+    int n,m;
+    int u,v;
+    int T = 1;
+    int cnt;
+    __T {
+        read(n);
+        read(m);
+        build(1, m, 1);
+        rep(i,1,n) {
+            read(v);
+            read(u);
+            p[i] = pr(u,v);
+        }
+        cnt = 0;
+        sort(p + 1,p + 1 + n);
+        pp[++ cnt] = p[1];
+        rep(i,2,n) {
+            if (p[i] != p[i - 1]) pp[++ cnt] = p[i];
+        }
+        
+        rep(i,1,cnt) {
+            u = pp[i].x;
+            v = pp[i].t;
+            for (int j = 1;j <= m;j += 2 * v) {
+                modify(j, min(m,j + v - 1), u, 1);
+            }
+        }
+        
+        
+        printf("Case #%d:",T ++);
+        rep(i,1,m) {
+            printf(" %lld",query(i, i, 1));
+        }
+        printf("\n");
+    }
+    
+    re0;
+}
+*/
+
+
+/*
+const int MAXN = 1e6 + 10;
+
+int is_prime[MAXN];
+int is_prime_small[MAXN];
+
+void segment_sieve(ll a,ll b)
+{
+    for (ll i = 0;i * i <= b;i ++) is_prime_small[i] = 1;
+    for (ll i = 0;i <= b - a;i ++) is_prime[i] = 1;
+    for (ll i = 2;i * i <= b;i ++)
+    {
+        if (is_prime_small[i])
+        {
+            for (ll j = 2 * i;j * j <= b;j += i) is_prime_small[j] = 0;
+            for (ll j = max(2LL,(a + i - 1) / i) * i; j <= b;j += i) is_prime[j - a] = 0;
+        }
+    }
+}
+
+
+int main()
+{
+    int l,r;
+    int cnt;
+    __T {
+        scanf("%d%d",&l,&r);
+        if (r - l >= 100) puts("Yes");
+        else {
+            segment_sieve(l, r);
+            cnt = 0;
+            rep(i,0,r - l) if (is_prime[i]) cnt ++;
+            if (cnt * 3 < r - l + 1) puts("Yes");
+            else puts("No");
+        }
+    }
+}
+*/
+
+/*
+int main()
+{
+    ll l,r;
+    ll s;
+    ll kl,kr;
+    ll ans;
+    ll m;
+    ll sub[100],pre[100];
+    ll sub_cnt,pre_cnt;
+    __T {
+        scanf("%lld%lld%lld",&l,&r,&s);
+        kl = l;
+        kr = r;
+        for (ll i = l;;i ++) {
+            kl = i;
+            if ((i & 1) == 0 && ((i >> 1) & 1) == 0) break;
+        }
+        for (ll i = r;;i --) {
+            kr = i;
+            if ((i & 1) == 1 && ((i >> 1) & 1) == 1) break;
+        }
+//        _C(kl << " " << kr)
+        if (kr > kl) {
+            ans = 0;
+            pre_cnt = sub_cnt = 0;
+            pre[0] = sub[0] = 0;
+            prel(i,kl-1,l) {
+                sub[sub_cnt + 1] = i ^ sub[sub_cnt];
+                sub_cnt ++;
+            }
+            
+            repl(i,kr+1,r) {
+                pre[pre_cnt + 1] = i ^ pre[pre_cnt];
+                pre_cnt ++;
+            }
+            
+            rep(i,0,sub_cnt) {
+                rep(j,0,pre_cnt) {
+                    if ((sub[i] ^ pre[j]) <= s) {
+                        ans = max(ans,(ll)j + i);
+                    }
+                }
+            }
+            
+//            _C(">>" << ans)
+            
+            ans += kr - kl + 1;
+        } else {
+            ans = -1;
+            repl(i,l,r) {
+                repl(j,i,r) {
+                    m = 0;
+                    repl(k,i,j) {
+                        m ^= k;
+                    }
+                    if (m <= s) ans = max(ans,j-i+1);
+                }
+            }
+        }
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    ll first;
+    ll second;
+    int num;
+} x[110];
+
+int cmp(const Node &a,const Node &b)
+{
+    if (a.first == b.first) return a.second > b.second;
+    return a.first > b.first;
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    ll s[110][110];
+    rep(i,1,n) {
+        rep(j,1,n) scanf("%lld",&s[i][j]);
+        x[i] = {0ll,0ll,i};
+    }
+    
+    rep(i,1,n) {
+        rep(j,1,n) {
+            if (i == j) continue;
+            if (s[i][j] > s[j][i]) x[i].first += 3;
+            else if (s[i][j] == s[j][i]) x[i].first += 1;
+            x[i].second += s[i][j] - s[j][i];
+        }
+    }
+    sort(x+1,x+1+n,cmp);
+    
+//    rep(i,1,n) {
+//        printf("%d ",x[i].num);
+//    }
+//    puts("");
+//    rep(i,1,n) {
+//        printf("%lld ",x[i].first);
+//    }
+//    puts("");
+//    rep(i,1,n) {
+//        printf("%lld ",x[i].second);
+//    }
+    
+    if (n == 1) printf("1\n");
+    else {
+        if (x[1].first != x[2].first) printf("%d\n",x[1].num);
+        else {
+            if (x[1].second != x[2].second) printf("%d\n",x[1].num);
+            else puts("play-offs");
+        }
+    }
+    
+    return 0;
+}
+*/
+
+/*
+const ll t = 998857459;
+ll kk[100010];
+ll x[100010];
+ll num[100010];
+
+ll ans[100010];
+
+int main()
+{
+    kk[1] = 1;
+    int n,m;
+    scanf("%d%d",&n,&m);
+    rep(i,2,2802) {
+        kk[i] = kk[i-1] * i;
+        kk[i] %= t;
+    }
+    
+    int a;
+    int cnt = 0;
+    x[0] = num[0] = 0;
+    int k = -1;
+    rep(i,1,n) {
+        scanf("%d",&a);
+        if (a >= 2803) {
+            if (k != -1) k ++;
+        } else {
+            if (k == -1) k = 1;
+            cnt ++;
+            x[cnt] = kk[a] + x[cnt - 1];
+            num[cnt] = k + num[cnt - 1];
+            k = 1;
+        }
+    }
+//    rep(i,1,cnt) {
+//        printf("%lld ",x[i]);
+//    }
+//    puts("");
+//
+//    rep(i,1,cnt) {
+//        printf("%lld ",num[i]);
+//    }
+//    puts("");
+    
+    rep(i,1,cnt) {
+        rep(j,i,cnt) {
+            ans[num[j]-num[i]+1] = max(ans[num[j]-num[i]+1],(x[j] - x[i-1])%t);
+        }
+    }
+    rep(i,2,n) ans[i] = max(ans[i-1],ans[i]);
+    
+//    rep(i,1,n) printf("%lld ",ans[i]);
+//    puts("");
+    
+    int idx;
+    while (m --) {
+        sci(a);
+        idx = (int) (lower_bound(ans + 1, ans + 1 + n, a) - ans);
+        if (idx == n + 1) puts("-1");
+        else printf("%d\n",idx);
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 5e5 + 10;
+
+int find_set[MAXN];
+int depth[MAXN];
+
+int find(int a)
+{
+    if (find_set[a] == a) return a;
+    return find_set[a] = find(find_set[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (depth[x] >= depth[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        find_set[y] = x; // 改变b节点的根的根为a的根
+        if (depth[x] == depth[y]) { // 俩根深度一样
+            if (x != y) depth[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else find_set[x] = y;
+}
+
+int vis[500010];
+
+void init(int n)
+{
+    rep(i,0,n) {
+        find_set[i] = i;  // 每个种类初始状态只有自己一个点
+        depth[i] = 1;  // 初始化秩
+    }
+}
+
+struct Node {
+    int u,v;
+    ll w;
+    bool operator<(const Node &o) const {
+        return w > o.w;
+    }
+} e[500010];
+
+int main()
+{
+    int n,m,k;
+    int u,v,w,c;
+    ll ans;
+    int cnt;
+    int ok;
+    int last;
+    int t;
+    __T {
+        scanf("%d %d %d",&n,&m,&k);
+        init(n + 10);
+        cnt = ans = 0;
+        rep(i,1,m) {
+            vis[i] = 0;
+            scii(u,v);
+            scii(w,c);
+            if (c == 0) {
+                ans += w;
+                bind(u,v);
+            } else {
+                e[++ cnt] = {u,v,w};
+            }
+        }
+        sort(e + 1, e + 1 + cnt);
+        rep(i,1,cnt) {
+            if (find(e[i].u) == find(e[i].v)) continue;
+            vis[i] = 1;
+            bind(e[i].u,e[i].v);
+            ans += e[i].w;
+            k --;
+            if (k <= 0) break;
+        }
+        ok = 1;
+        last = find(1);
+        rep(i,2,n) {
+            t = find(i);
+            if (t != last) {
+                ok = 0;
+                break;
+            }
+            last = t;
+        }
+        if (!ok) puts("-1");
+        else {
+            rep(i,1,cnt) {
+                if (vis[i]) continue;
+                ans += e[i].w;
+                k --;
+                if (k <= 0) break;
+            }
+            printf("%lld\n",ans);
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+const int mod = 1e9+7;
+
+int main()
+{
+    string str;
+    ll a[100010];
+    int s[100010];
+    int cnt;
+    ll ans;
+    int k;
+    __T {
+        cin >> str;
+        cnt = 0;
+        for (int i = (int) str.size()-1;i >= 0;i --) {
+            s[++ cnt] = str[i] ^ 48;
+            a[cnt] = 1;
+        }
+        a[0] = 1;
+        ans = 0;
+        
+        rep(i,1,cnt) {
+            if (s[i]) {
+                ans += a[i - 1];
+                ans %= mod;
+                k = 3;
+            } else {
+                k = 2;
+            }
+            a[i] = a[i - 1] * k;
+            a[i] %= mod;
+        }
+        ans ++;
+        ans %= mod;
+        printf("%lld\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+char str[10000010];
+
+int main()
+{
+    const int m1 = 137;
+    const int m2 = 73;
+    int a1,a2;
+    int T = 1;
+    while (~scanf("%s",str)) {
+        a1 = a2 = 0;
+        for (int i = 0;str[i];i ++) {
+            a1 *= 10;
+            a1 %= m1;
+            
+            a2 *= 10;
+            a2 %= m2;
+            
+            a1 += str[i] ^ 48;
+            a2 += str[i] ^ 48;
+            
+            a1 %= m1;
+            a2 %= m2;
+        }
+        printf("Case #%d: ",T++);
+        if (a1 == 0 || a2 == 0) puts("YES");
+        else puts("NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    cio
+    string str;
+    int T;
+    cin >> T;
+    int n;
+    rep(i,1,T) {
+        int c['z' + 1] = {0};
+        cin >> str;
+        for (int i = 0;str[i];i ++) {
+            c[str[i]] ++;
+        }
+        n = 0;
+        rep(i,0,'z') if (c[i]) n ++;
+        printf("Case #%d: %d\n",i,n);
+    }
+    reutrn 0;
+}
+*/
+
+/*
+const int MAXN = 1e5+10;
+
+int p[MAXN];
+int h[MAXN];
+int s[MAXN];
+int n;
+
+void pls(int l,int r,int k)
+{
+    p[l] += k;
+    p[r + 1] -= k;
+}
+
+void init(int n)
+{
+    rep(i,0,n) {
+        p[i]=0;
+    }
+}
+
+
+int main()
+{
+    int n,m,k;
+    
+    int a,b;
+    int last;
+    int idx;
+    int ans;
+    int T = 1;
+    while (~scanf("%d%d%d",&n,&m,&k)) {
+        rep(i,1,n) {
+            scanf("%d",h + i);
+        }
+        init(n + 5);
+        sort(h + 1,h + 1 + n);
+        last = 0;
+        rep(i,1,n) if (h[i] <= 1) last = i;
+        ans = 0;
+        while (m --) {
+            scanf("%d%d",&a,&b);
+            idx = lower_bound(h+1,h+1+n,a) - h;
+            if (idx == n + 1 || h[idx] > a) idx --;
+            pls(last+1,idx,1);
+            idx = lower_bound(h+1,h+1+n,b) - h;
+            if (idx == n + 1 || h[idx] > b) idx --;
+            last = idx;
+        }
+        s[0] = 0;
+        rep(i,1,n) {
+            s[i] = s[i - 1] + p[i];
+            if (s[i] >= k) ans ++;
+        }
+        printf("Case %d: %d\n",T ++,ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,w,s;
+    int vis[100];
+    int cnt;
+    int i,j;
+    while (~scanf("%d%d%d",&n,&w,&s)) {
+        memset(vis,0,sizeof vis);
+        i = (w-2+n) % n;
+        j = 0;
+        cnt = 0;
+        while (cnt < n) {
+            i ++;
+            i %= n;
+            if (vis[i]) continue;
+            j ++;
+
+            if (j == s) {
+                vis[i] = 1;
+                printf("%d\n",i + 1);
+                cnt ++;
+                j = 0;
+            }
+
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    Node(){}
+    Node(const char a[],int b):x(b){
+        strcpy(str, a);
+    }
+    char str[20];
+    int x;
+};
+
+int main()
+{
+    int n;
+    char k[20];
+    int x,y;
+    int m;
+    sci(n);
+    map<int,Node> mp;
+    while (n --) {
+        scanf("%s %d %d",k,&x,&y);
+        mp[x] = Node(k,y);
+    }
+    scanf("%d",&m);
+    while (m --) {
+        sci(x);
+        printf("%s %d\n",mp[x].str,mp[x].x);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int j,k = 0;
+    while (cin >> str)
+    {
+        j = 0;
+        for (int i = 0;str[i];i ++)
+        {
+            if (str[i] != str[j])
+            {
+                j = 0;
+                k = i + 1;
+            } else {
+                if (j < k - 1) j ++;
+                else j = 0;
+            }
+        }
+        if (j != 0) k = (int) str.size();
+        printf("%d\n",k);
+    }
+     
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    int type; // 0 - num,1 - op
+    char c;
+    ll num;
+};
+
+int priority[130];
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans;
+        a = a * a;
+        b >>= 1;
+    }
+    return ans;
+}
+
+void getPost(string &str,vector<Node> &post) {
+    post.clear();
+    stack<char> op_stk;
+    ll num = 0;
+    int has_num = 0;
+    
+    for (int i = 0;str[i];i ++) {
+        if (str[i] >= '0' && str[i] <= '9') {
+            num = num * 10 + (str[i] ^ 48);
+            has_num = 1;
+        } else {
+            if (has_num) post.push_back({0,0,num});
+            has_num = num = 0;
+            if (str[i] != ')') {
+                if (str[i] != '(') while (!op_stk.empty() && priority[op_stk.top()] >= priority[str[i]]) {
+                    post.push_back({1,op_stk.top(),0});
+                    op_stk.pop();
+                }
+                op_stk.push(str[i]);
+            } else {
+                while (op_stk.top() != '(') {
+                    post.push_back({1,op_stk.top(),0});
+                    op_stk.pop();
+                }
+                op_stk.pop();
+            }
+        }
+    }
+    if (has_num) post.push_back({0,0,num});
+    while (!op_stk.empty()) {
+        post.push_back({1,op_stk.top(),0});
+        op_stk.pop();
+    }
+}
+
+ll getAns(vector<Node> &post) {
+    ll ans = 0;
+    stack<ll> num_stk;
+    
+    for (auto i : post) {
+        if (!i.type) num_stk.push(i.num);
+        else {
+            switch (i.c) {
+                case '+':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans += num_stk.top();
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '-':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans = num_stk.top() - ans;
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '*':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans *= num_stk.top();
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '/':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans = num_stk.top() / ans;
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '^':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans = quickpow(num_stk.top(),ans);
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return num_stk.top();
+}
+
+int main() {
+    
+    
+    priority['('] = 1;
+    priority['^'] = 4;
+    priority['*'] = priority['/'] = 3;
+    priority['+'] = priority['-'] = 2;
+    
+    string str;
+    cin >> str;
+    vector<Node> post;
+    
+    getPost(str,post);
+    printf("%lld ",getAns(post));
+    
+    priority['*'] = priority['/'] = 2;
+    priority['+'] = priority['-'] = 3;
+    
+    getPost(str,post);
+    printf("%lld\n",getAns(post));
+}
+*/
+
+
+/*
+int main()
+{
+    ll n;
+    scanf("%lld",&n);
+    ll s = -1;
+    ll l = 0;
+    ll lm = 0,sm =-1;
+    ll nn = n;
+    ll ii;
+    for (ll i = 2;i * i <= n;i ++) {
+        nn = n;
+        if (nn % i == 0) {
+            ii = i;
+            s = i;
+            l = 0;
+            while (nn % ii == 0) {
+                l ++;
+                nn /= ii;
+                ii ++;
+            }
+            if (l > lm) {
+                lm = l;
+                sm = s;
+            }
+        }
+        
+    }
+    
+    if (lm == 0) printf("1\n%lld\n",n);
+    else {
+        printf("%lld\n",lm);
+        rep(i,1,lm) {
+            if (i != 1) printf("*");
+            printf("%lld",sm ++);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string x[10] = {"ling","yi","er","san","si","wu","liu","qi","ba","jiu"};
+    string all[150];
+    all['-'] = "fu";
+    rep(i,0,9) all[i + '0'] = x[i];
+    string str;
+    cin >> str;
+    for (int i = 0;str[i];i ++) {
+        if (i != 0) printf(" ");
+        cout << all[str[i]];
+    }
+    puts("");
+}
+*/
+
+/*
+int main()
+{
+    int a,b;
+    scanf("%d%d",&a,&b);
+    int j = 0;
+    ll ans = 0;
+    rep(i,a,b) {
+        ans += i;
+        if (j == 5) {
+            printf("\n");
+            j = 0;
+        }
+        printf("%5d",i);
+        j ++;
+    }
+    printf("\nSum = %lld\n",ans);
+}
+*/
+
+/*
+ll gcd(ll a,ll b)
+{
+    if (a % b == 0) return b;
+    return gcd(b, a % b);
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    ll son[110],mot[110];
+    ll lcm = 1;
+    rep(i,1,n) {
+        scanf("%lld/%lld",son + i,mot + i);
+        lcm = lcm / gcd(lcm,mot[i]) * mot[i];
+    }
+    ll sum = 0;
+    rep(i,1,n) {
+        sum += son[i] * (lcm / mot[i]);
+    }
+    int f = sum < 0;
+    sum = abs(sum);
+    ll z = sum / lcm;
+    sum -= z * lcm;
+    ll g = gcd(sum,lcm);
+    sum /= g;
+    lcm /= g;
+    int p = 0;
+    int k = 1;
+    if (f) printf("-");
+    if (z != 0) {
+        printf("%lld",z);
+        p = 1;
+        k = 0;
+    }
+    if (sum != 0) {
+        if (!k) printf(" ");
+        printf("%lld/%lld",sum,lcm);
+        p = 1;
+    }
+    if (!p) printf("0");
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    set<char> bb;
+    string a,b;
+    getline(cin, a);
+    getline(cin, b);
+    for (int i = 0;b[i];i ++) bb.insert(b[i]);
+    for (int i = 0;a[i];i ++) {
+        if (bb.find(a[i]) != bb.end()) continue;
+        printf("%c",a[i]);
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll a[20];
+    a[1] = 1;
+    rep(i,2,10) a[i] = a[i - 1] * i;
+    int n;
+    scanf("%d",&n);
+    ll ans = 0;
+    rep(i,1,n) ans += a[i];
+    printf("%lld\n",ans);
+}
+*/
+
+/*
+int mp[20][20];
+int mmp[20][20];
+int op[20];
+int ans[20][20];
+int times = -1;
+
+int n,m;
+
+int dx[] = {1,-1,0,0,0};
+int dy[] = {0,0,-1,1,0};
+
+int tmp[20][20];
+
+void go() {
+    int t = 0;
+    
+    rep(i,1,n) {
+        rep(j,1,m) {
+            mmp[i][j] = mp[i][j];
+        }
+    }
+    
+    int ii,jj;
+    rep(i,1,n) {
+        rep(j,1,m) {
+            tmp[i][j] = op[j];
+            if (op[j]) {
+                t ++;
+                rep(k,0,4) {
+                    ii = i + dx[k];
+                    jj = j + dy[k];
+                    if (ii >= 1 && ii <= n && jj >= 1 && jj <= m) {
+                        mmp[ii][jj] = !mmp[ii][jj];
+                    }
+                }
+            }
+        }
+        rep(j,1,m) op[j] = mmp[i][j];
+    }
+    
+    rep(i,1,m) if (mmp[n][i]) return;
+    
+    if (times == -1 || t < times) {
+        times = t;
+        rep(i,1,n) {
+            rep(j,1,m) {
+                ans[i][j] = tmp[i][j];
+            }
+        }
+    }
+}
+
+
+int main()
+{
+    scanf("%d%d",&n,&m);
+    rep(i,1,n) {
+        rep(j,1,m) {
+            scanf("%d",&mp[i][j]);
+        }
+    }
+    int x = 1 << m;
+    int xx;
+    REP(i,0,x) {
+        xx = i;
+        rep(i,1,m) {
+            op[i] = xx & 1;
+            xx >>= 1;
+        }
+        go();
+    }
+    
+    if (times == -1) puts("IMPOSSIBLE");
+    else {
+        rep(i,1,n) {
+            rep(j,1,m) {
+                if (j != 1) printf(" ");
+                printf("%d",ans[i][j]);
+            }
+            puts("");
+        }
+    }
+    return 0;
+}
+*/
+
+///????????
+/// https://vjudge.net/problem/POJ-1426
+/*
+int mod;
+ull ans;
+void dfs(ull n,int dps) {
+    if (ans != 0) return;
+    if (n % mod == 0) {
+        ans = n;
+        return;
+    }
+    if (dps == 19) reutrn;
+    dfs(n * 10,dps + 1);
+    dfs(n * 10 + 1,dps + 1);
+}
+
+int main() {
+    while (~scanf("%d",&mod) && mod) {
+        ans = 0;
+        dfs(1,0);
+        printf("%llu\n",ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    string a,b,str;
+    getline(cin,str);
+    int ok = 0;
+    for (int i = 0;str[i];i ++) {
+        if (!ok && str[i] == ' ') {
+            ok = 1;
+            continue;
+        }
+        if (!ok) a += str[i];
+        else b += str[i];
+    }
+    int num1 = 0,num2 = 0;
+    int has1 = 1,has2 = 1;
+    for (int i = 0;a[i];i ++) {
+        if (!isdigit(a[i])) {
+            has1 = 0;
+            break;
+        }
+        num1 = num1 * 10 + (a[i] ^ 48);
+    }
+    
+    for (int i = 0;b[i];i ++) {
+        if (!isdigit(b[i])) {
+            has2 = 0;
+            break;
+        }
+        num2 = num2 * 10 + (b[i] ^ 48);
+    }
+    
+    if (num1 < 1 || num1 > 1000) has1 = 0;
+    if (num2 < 1 || num2 > 1000) has2 = 0;
+    
+    if (has1) printf("%d",num1);
+    else printf("?");
+    printf(" + ");
+    if (has2) printf("%d",num2);
+    else printf("?");
+    printf(" = ");
+    if (has1 && has2) printf("%d\n",num1 + num2);
+    else printf("?\n");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int aa,bb;
+    int n;
+    scanf("%d%d%d",&aa,&bb,&n);
+    int a,b,c,d;
+    int a1,a2;
+    int ok = 1;
+    while (n --) {
+        scii(a,b);
+        scii(c,d);
+        a1 = 0;
+        a2 = 0;
+        if (b == a + c) a1 = 1;
+        if (d == a + c) a2 = 1;
+        if (a1 && a2) continue;
+        if (!a1 && !a2) continue;
+        if (a1) aa --;
+        if (a2) bb --;
+        if (aa == 0 || bb == 0) {
+            if (ok) {
+                if (aa == 0) {
+                    puts("A");
+                    printf("%d\n",bb);
+                } else {
+                    puts("B");
+                    printf("%d\n",aa);
+                }
+                ok = 0;
+            }
+        }
+    }
+    
+    
+    return 0;
+}
+*/
+
+/*
+struct Node1 {
+    int cur;
+    int to;
+    int len;
+    int time;
+    bool operator<(const Node1 &o) const {
+        return time > o.time;
+    }
+};
+
+struct Node2 {
+    int cur;
+    int to;
+    int len;
+    int time;
+    bool operator<(const Node2 &o) const {
+        return len > o.len;
+    }
+};
+
+vector<Node1> g1[510];
+vector<Node2> g2[510];
+
+int dis[510];
+int num[510];
+int p[510];
+
+void dij1(int s) {
+    mem(dis,-1);
+    mem(num,-1);
+    priority_queue<Node1> q;
+    q.push({-1,s,0,dis[s] = 0});
+    int cost;
+    Node1 top;
+    int n,to;
+    while (!q.empty()) {
+        top = q.top();
+        q.pop();
+        n = top.to;
+
+        if (dis[n] != -1 && dis[n] < top.time) continue;
+        if (dis[n] == top.time) {
+            if (num[n] == -1 || top.len < num[n]) {
+                num[n] = top.len;
+                p[n] = top.cur;
+            }
+            
+        }
+
+        for (auto i : g1[n]) {
+            to = i.to;
+            cost = dis[n] + i.time;
+            if (dis[to] == -1 || dis[to] >= cost) {
+                q.push({n,i.to,top.len + i.len,dis[to] = cost});
+            }
+        }
+    }
+}
+
+void dij2(int s) {
+    mem(dis,-1);
+    mem(num,-1);
+    priority_queue<Node2> q;
+    q.push({-1,s,dis[s] = 0,0});
+    int cost;
+    Node2 top;
+    int n,to;
+    while (!q.empty()) {
+        top = q.top();
+        q.pop();
+        n = top.to;
+
+        if (dis[n] != -1 && dis[n] < top.len) continue;
+        if (dis[n] == top.len) {
+            if (num[n] == -1 || top.time < num[n]) {
+                num[n] = top.time;
+                p[n] = top.cur;
+            }
+            
+        }
+
+        for (auto i : g1[n]) {
+            to = i.to;
+            cost = dis[n] + i.len;
+            if (dis[to] == -1 || dis[to] >= cost) {
+                q.push({n,i.to,dis[to] = cost,top.time + 1});
+            }
+        }
+    }
+}
+
+int main()
+{
+    int n,m;
+    scii(n,m);
+    int u,v,type,l,t;
+    while (m --) {
+        scii(u,v);
+        sci(type);
+        scii(l,t);
+        g1[u].push_back({0,v,l,t});
+        g2[u].push_back({0,v,l,t});
+        if (!type) {
+            g1[v].push_back({0,u,l,t});
+            g2[v].push_back({0,u,l,t});
+        }
+    }
+
+    int s;
+    scii(s,t);
+    dij1(s);
+    printf("Time = %d",dis[t]);
+    vector<int> a1,a2;
+
+    a1.push_back(t);
+    int x = p[t];
+    while (x != s) {
+        a1.push_back(x);
+        x = p[x];
+    }
+    a1.push_back(s);
+
+    dij2(s);
+    a2.push_back(t);
+    x = p[t];
+    while (x != s) {
+        a2.push_back(x);
+        x = p[x];
+    }
+    a2.push_back(s);
+    int f = 1;
+    if (a1 == a2) {
+        printf("; Distance = %d: ",dis[t]);
+    } else {
+        printf(": ");
+        for (vector<int>::reverse_iterator it = a1.rbegin();it != a1.rend();it ++) {
+            if (f) f = 0;
+            else printf(" => ");
+            printf("%d",*it);
+        }
+        printf("\nDistance = %d: ",dis[t]);
+    }
+    f = 1;
+    for (vector<int>::reverse_iterator it = a2.rbegin();it != a2.rend();it ++) {
+        if (f) f = 0;
+        else printf(" => ");
+        printf("%d",*it);
+    }
+    return 0;
+}
+*/
+
+/*
+vector<int> g[510];
+int vis[510];
+int vv[510];
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    while (m --) {
+        scanf("%d%d",&u,&v);
+        g[u].pb(v);
+        g[v].pb(u);
+    }
+    int k;
+    sci(k);
+    queue<int> q;
+    int top;
+    int ok;
+    int nn = n;
+    int has;
+    while (k --) {
+        scanf("%d",&u);
+        q.push(u);
+        while (!q.empty()) {
+            top = q.front();
+            q.pop();
+            if (vis[top] || vv[top]) continue;
+            vis[top] = 1;
+            for (auto i : g[top]) {
+                q.push(i);
+            }
+        }
+        ok = 0;
+        has = 0;
+        for (auto i : g[u]) {
+            if (!vv[i]) {
+                has = 1;
+                q.push(i);
+                break;
+            }
+        }
+        if (has) {
+            vis[u] = 2;
+            while (!q.empty()) {
+                top = q.front();
+                q.pop();
+                if (vis[top] == 2 || vv[top]) continue;
+                vis[top] = 2;
+                for (auto i : g[top]) q.push(i);
+            }
+            rep(i,0,n-1) if (vis[i] == 1) {
+                ok = 1;
+                break;
+            }
+        }
+        vv[u] = 1;
+        if (ok) printf("Red Alert: ");
+        printf("City %d is lost",u);
+        if (ok) puts("!");
+        else puts(".");
+        nn --;
+        mem(vis,0);
+    }
+    if (!nn) printf("Game Over.\n");
+}
+*/
+
+/*
+int isZhi(int n)
+{
+    if (n == 1) return 0;
+    for (int i = 2;i * i <= n;i ++) if (n % i == 0) return 0;
+    return 1;
+}
+
+int get(int k)
+{
+    int ans = 0;
+    int x = k;
+    map<int,int> mp;
+    int kk;
+    do {
+        mp[k] = 1;
+        kk = 0;
+        while (k) {
+            kk += (k % 10) * (k % 10);
+            k /= 10;
+        }
+        k = kk;
+        ans ++;
+        if (k == 1) {
+            break;
+        }
+    } while (!mp[k]);
+    return ans * (isZhi(x) ? 2 : 1);
+}
+
+int main()
+{
+    int a,b;
+    scii(a,b);
+    map<int,int> mp;
+    map<int,int> vis;
+    int ok;
+    int k,kk;
+    rep(i,a,b) {
+        mp.clear();
+        k = i;
+        ok = 0;
+        if (vis[k] == -1) continue;
+        
+        do {
+            mp[k] = 1;
+            kk = 0;
+            while (k) {
+                kk += (k % 10) * (k % 10);
+                k /= 10;
+            }
+            k = kk;
+            if (k == 1) {
+                ok = 1;
+                break;
+            }
+        } while (!mp[k]);
+        mp.clear();
+        
+        k = i;
+        do {
+            if (ok) vis[k] ++;
+            else vis[k] = -1;
+            mp[k] = 1;
+            kk = 0;
+            while (k) {
+                kk += (k % 10) * (k % 10);
+                k /= 10;
+            }
+            k = kk;
+        } while (!mp[k]);
+        
+    }
+    ok = 0;
+    for (auto i : vis) {
+        if (i.first < a) continue;
+        if (i.first > b) break;
+        if (i.second == 1) {
+            ok = 1;
+            printf("%d %d\n",i.first,get(i.first));
+        }
+    }
+    if (!ok) puts("SAD");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m,k;
+    sciii(n,m,k);
+    stack<int> st;
+    int a[1010];
+    int mnt;
+    while (k --) {
+        rep(i,1,n) sci(a[i]);
+        mnt = 0;
+        rep(i,1,n) {
+            if (a[i] == mnt + 1) {
+                mnt ++;
+                while (!st.empty() && st.top() == mnt + 1) {st.pop();mnt ++;}
+            } else {
+                if (st.size() >= m) {
+                    break;
+                }
+                st.push(a[i]);
+            }
+        }
+        if (st.empty()) puts("YES");
+        else {
+            while (!st.empty()) st.pop();
+            puts("NO");
+        }
+    }
+}
+*/
+
+/*int startWith(string a,string b) {
+    if (a.size() < b.size()) return 0;
+    return a.substr(0,b.size()) == b;
+}
+
+int endsWith(string a,string b) {
+    if (a.size() < b.size()) return 0;
+    return a.substr(a.size() - b.size(),b.size()) == b;
+}
+
+map<string,int> mp;
+
+int g[100010];
+int sex[100010];
+
+map<int,int> s1,s2;
+int ok;
+
+int main()
+{
+    int n;
+    sci(n);
+    string uu[100010],vv[100010];
+    string t;
+    rep(i,1,n) {
+        cin >> uu[i] >> vv[i];
+        mp[uu[i]] = i;
+        if (endsWith(vv[i], "sson") || endsWith(vv[i], "m")) {
+            sex[i] = 1;
+        } else if (endsWith(vv[i], "sdottir") || endsWith(vv[i], "f")) {
+            sex[i] = 0;
+        }
+    }
+    string u,v;
+    rep(i,1,n) {
+        u = uu[i];
+        v = vv[i];
+        t = "";
+        if (endsWith(v, "sson")) t = v.substr(0,v.size()-4);
+//        if (endsWith(v, "m")) t = v.substr(0,v.size()-1);
+        if (endsWith(v, "sdottir")) t = v.substr(0,v.size()-7);
+//        if (endsWith(v, "f")) t = v.substr(0,v.size()-1);
+        g[i] = mp[t];
+    }
+    int q;
+    sci(q);
+    string name;
+    string u1,v1,u2,v2;
+    int k,dps;
+    while (q --) {
+        cin >> u1 >> v1 >> u2 >> v2;
+        if (mp[u1] == 0 || mp[u2] == 0) puts("NA");
+        else if (sex[mp[u1]] == sex[mp[u2]]) puts("Whatever");
+        else {
+            ok = 1;
+            s1.clear();
+            s2.clear();
+            
+            k = mp[u1];
+            dps = 1;
+            while (k != 0) {
+                s1[k] = dps ++;
+                k = g[k];
+            }
+            
+            k = mp[u2];
+            dps = 1;
+            while (k != 0) {
+                s2[k] = dps ++;
+                k = g[k];
+            }
+            
+            for (auto i : s1) {
+                if (s2[i.first]) {
+                    if (i.second < 5 || s2[i.first] < 5) {
+                        ok = 0;
+                        break;
+                    }
+                    
+                }
+            }
+            
+            
+            if (ok) puts("Yes");
+            else puts("No");
+        }
+    }
+    return 0;
+}*/
+
+/*
+int isLetter(char c)
+{
+    return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z');
+}
+
+int isDot(char c) {
+    return !isLetter(c) && !isdigit(c);
+}
+
+int main()
+{
+    int n;
+    sci(n);
+    scanf(" ");
+    string str;
+    vector<string> tmp,words;
+    vector<char> dots;
+    string x;
+    int f;
+    rep(i,1,n) {
+        getline(cin,str);
+        _C(str);
+        printf("AI: ");
+        stringstream ss(str);
+        tmp.clear();
+        words.clear();
+        dots.clear();
+        while (ss >> x) {
+            tmp.pb(x);
+        }
+        f = 1;
+        for (auto i : tmp) {
+            if (f) f = 0;
+            else if (!isDot(i[0])) dots.pb(' ');
+            str = "";
+            for (int j = 0;i[j];j ++) {
+                if (isDot(i[j])) {
+                    words.pb(str);
+                    str = "";
+                    dots.pb(i[j]);
+                } else str += i[j];
+            }
+            if (str != "") words.pb(str);
+        }
+        _C(words.size());
+        _C(dots.size());
+        _C("")
+    }
+    return 0;
+}
+*/
+
+/*
+ll ans[1000010][12];
+
+int main()
+{
+    int n,b;
+    int ii;
+    rep(i,1,1000000) {
+        rep(j,2,10) {
+            ii = i;
+            while (ii) {
+                ans[i][j] += (ii % j);
+                ii /= j;
+            }
+            ans[i][j] += ans[i - 1][j];
+        }
+    }
+    int T = 1;
+    __T {
+        scii(n,b);
+        printf("Case #%d: %lld\n",T++,ans[n][b]);
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int l,r;
+    map<int,pair<int,int>> num; // 1,-1
+    ll ans,t;
+    int f;
+    int T = 1;
+    __T {
+        scii(n,m);
+        num.clear();
+        ans = 0;
+        while (m --) {
+            scii(l,r);
+            num[l].first ++;
+            num[r+1].second ++;
+        }
+        t = 0;
+        f = -1;
+        for (auto i : num) {
+            if (f != -1 && (t & 1)) ans += i.first - f;
+            t += i.second.first;
+            t -= i.second.second;
+            f = i.first;
+        }
+        printf("Case #%d: %lld\n",T++,ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int a[1010] = {0};
+    rep(i,1,n) sci(a[i]);
+    int u,v;
+    scanf("%d%d",&u,&v);
+    int cur = u;
+    set<int> x;
+    if (!a[u]) {
+        printf("ERROR: T[%d] is NULL\n",u);
+        return 0;
+    }
+    if (!a[v]) {
+        printf("ERROR: T[%d] is NULL\n",v);
+        return 0;
+    }
+    while (a[cur]) {
+        x.insert(cur);
+        cur >>= 1;
+    }
+    cur = v;
+    while (a[cur]) {
+        if (x.find(cur) != x.end()) {
+            printf("%d %d\n",cur,a[cur]);
+            break;
+        }
+        cur >>= 1;
+    }
+    re0;
+}
+*/
+
+/*
+struct Node {
+    Node(){}
+    Node(ll c,Node *l,Node *r):n(c),l(l),r(r){}
+    ll n;
+    Node *l;
+    Node *r;
+};
+
+void build(Node* &node)
+{
+    ll ch;
+    scanf("%lld",&ch);
+    if (ch == 0) return;
+    node = new Node(ch,NULL,NULL);
+    build(node -> l);
+    build(node -> r);
+}
+
+ll tg;
+
+ll a[110];
+
+vector<vector<ll>> ans;
+
+void dfs(Node *node,int num,int dps)
+{
+    num += node -> n;
+    a[dps] = node -> n;
+    if (num == tg && node -> l == NULL && node -> r == NULL) {
+        vector<ll> k;
+        rep(i,1,dps) k.pb(a[i]);
+        ans.pb(k);
+    }
+    if (node -> l != NULL) dfs(node -> l,num,dps + 1);
+    if (node -> r != NULL) dfs(node -> r,num,dps + 1);
+}
+
+int main()
+{
+    Node *root;
+    build(root);
+    scanf("%lld",&tg);
+    dfs(root,0,1);
+    printf("%lu\n",ans.size());
+    for (auto i : ans) {
+        for (auto j : i) {
+            printf("%lld ",j);
+        }
+        puts("");
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        if (n & 1) {
+            pre(i,n,n/2+2) printf("%d ",i);
+            pre(i,n/2,1) printf("%d ",i);
+            printf("%d",n/2+1);
+        } else {
+            pre(i,n,1) {
+                if (i != n) printf(" ");
+                printf("%d",i);
+            }
+        }
+        puts("");
+    }
+}
+*/
+
+/*
+map<int,int> a;
+map<int,int> b;
+
+int main()
+{
+    int n,t;
+    int ans;
+    __T {
+        a.clear();
+        sci(n);
+        rep(i,1,n) {
+            sci(t);
+            a[t] ++;
+            b[t] = i;
+        }
+        ans = -1;
+        for (auto i : a) {
+            if (i.second == 1) {
+                ans = b[i.first];
+                break;
+            }
+        }
+        printf("%d\n",ans);
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int a[200010];
+map<int,int> pos;
+map<int,int> ans;
+
+int main()
+{
+    int n;
+    int t,l=0;
+    int cnt;
+    int m;
+    __T {
+        sci(n);
+        cnt = 0;
+        pos.clear();
+        ans.clear();
+        rep(i,1,n) {
+            sci(t);
+            if (i != 1) {
+                if (l != t) a[++cnt] = t;
+            } else a[++cnt] = t;
+            l = t;
+        }
+//        rep(i,1,cnt) printf("%d ",a[i]);
+//        puts("");
+        rep(i,1,cnt) {
+            if (pos[a[i]] != i) ans[a[i]] ++;
+            pos[a[i]] = i;
+        }
+        ans[a[cnt]] --;
+        ans[a[1]] --;
+//        _C("----");
+        m = INT_INF;
+        for (auto i : ans) {
+            m = min(m,i.second);
+//            printf("%d %d\n",i.first,i.second);
+        }
+        printf("%d\n",m+1);;
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll n;
+    map<ll,int> a;
+    ll nn;
+    int ans;
+    ll all[100];
+    __T {
+        scl(n);
+        a.clear();
+        nn = n;
+        for (ll i = 2;i * i <= n;i ++) {
+            while (nn % i == 0) {
+                a[i] ++;
+                nn /= i;
+            }
+        }
+        if (nn != 1) a[nn] ++;
+        ans = 1;
+        for (auto i : a) {
+            ans = max(ans,i.second);
+        }
+        rep(i,1,ans) all[i] = 1;
+        for (auto i : a) {
+            for (int j = 1,k = ans;j <= i.second;j ++,k --) {
+                all[k] *= i.first;
+            }
+        }
+        printf("%d\n",ans);
+        rep(i,1,ans) {
+            if (i != 1) printf(" ");
+            printf("%lld",all[i]);
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+vector<int> g[200010];
+int d[100010];
+int vis[100010];
+int c[100010];
+
+int s;
+int mnt;
+
+void find_cir(int u,int dps,int f)
+{
+    if (vis[u]) {
+        if (!c[u]) {
+            s = u;
+            mnt = dps - vis[u];
+        }
+        return;
+    }
+    vis[u] = dps;
+    for (auto i : g[u]) {
+        if (f == i) continue;
+        find_cir(i,dps + 1,u);
+        if (s != -1) {
+            if (s == u) s = -1;
+            c[u] = 1;
+            break;
+        }
+    }
+}
+
+int get(int u,int f) {
+    int cnt = 0;
+    for (auto i : g[u]) {
+        if (f == i) continue;
+        get(i,u);
+    }
+    return cnt + 1;
+}
+
+int main()
+{
+    int n;
+    int u,v;
+    __T {
+        sci(n);
+        rep(i,1,n) {
+            g[i].clear();
+            vis[i] = c[i] = d[i] = 0;
+        }
+        rep(i,1,n) {
+            scii(u,v);
+            g[u].pb(v);
+            g[v].pb(u);
+        }
+        rep(i,1,n) d[i] /= 2;
+        s = -1;
+        find_cir(1,1,-1);
+//        rep(i,1,n) printf("%d ",c[i]);
+//        puts("");
+//        printf("%d\n",mnt);
+        
+    }
+    return 0;
+}
+*/
+
+//const int MAXN = 200010;
+//
+//int ST[MAXN][40];
+//int st[MAXN][40];
+//int a[MAXN];
+//
+//int n;
+//
+//void init() {
+//    // 定义 st[i][j] 是从i开始，到i + 2^j这一段，即[i,i + 2^j]这一段中的最大/小值
+//    rep(i,1,n) ST[i][0] = a[i];
+//
+//    for (int j = 1;(1 << j) <= n;j ++) { // 遍历所有的j，j是一个很小的数字，最大值=log2(n)
+//        rep(i,1,n - (1 << j) + 1) { // 在[1,n]区间范围内，确定j的情况下，把所有的i都遍历求值一遍
+//            ST[i][j] = max(ST[i][j - 1], ST[i + (1 << (j - 1))][j - 1]); // 套公式
+//        }
+//    }
+//
+//    rep(i,1,n) st[i][0] = a[i];
+//
+//    for (int j = 1;(1 << j) <= n;j ++) { // 遍历所有的j，j是一个很小的数字，最大值=log2(n)
+//        rep(i,1,n - (1 << j) + 1) { // 在[1,n]区间范围内，确定j的情况下，把所有的i都遍历求值一遍
+//            st[i][j] = min(st[i][j - 1], st[i + (1 << (j - 1))][j - 1]); // 套公式
+//        }
+//    }
+//}
+//
+//inline int qmax(int l, int r)
+//{
+//    int x = log2(r - l + 1);
+//    return max(ST[l][x],ST[r - (1 << x) + 1][x]);
+//}
+//
+//inline int qmin(int l, int r)
+//{
+//    int x = log2(r - l + 1);
+//    return min(st[l][x],st[r - (1 << x) + 1][x]);
+//}
+//
+//int prefix[MAXN];
+//int sufix[MAXN];
+//
+//int main()
+//{
+//    int l,r;
+//    itn aa,bb,cc;
+//    __T
+//    {
+//        sci(n);
+//        rep(i,1,n) sci(a[i]);
+//        init();
+//        prefix[1] = a[1];
+//        rep(i,2,n) prefix[i] = max(a[i],prefix[i - 1]);
+//        sufix[n] = a[n];
+//        pre(i,n-1,1) sufix[i] = max(a[i], sufix[i + 1]);
+////        rep(i,1,n) printf("%d ",prefix[i]);
+////        puts("");
+////        rep(i,1,n) printf("%d ",sufix[i]);
+////        puts("");
+//        rep(i,1,n) {
+//            l = (int) (lower_bound(sufix + 1, sufix + 1 + n, prefix[i], greater<int>()) - sufix);
+//            r = (int) (upper_bound(sufix + 1, sufix + 1 + n, prefix[i], greater<int>()) - sufix);
+////            _C(l << " " << r)
+//            l = max(l,i+1);
+//            pre(j,r-1,l) {
+//                if (i+1>j-1) break;
+////                _C("[1," << i << "] [" << i + 1 << "," << j - 1 << "] [" << j << "," << n << "]")
+////                _C(prefix[i] << " " << qmin(i+1, j-1) << " " << sufix[j])
+//                if (prefix[i] == sufix[j] && qmin(i+1, j-1) == prefix[i]) {
+//                    aa = i;
+//                    bb = j - i - 1;
+//                    cc = n - j + 1;
+//                    goto end;
+//                }
+//            }
+//        }
+//        puts("NO");
+//        continue;
+//        end:
+//        puts("YES");
+//        printf("%d %d %d\n",aa,bb,cc);
+//    }
+//
+//    return 0;
+//}
+
+/*
+int main()
+{
+    int n;
+    int k;
+    int tg;
+    char x;
+    __T {
+        sci(n);
+        x = 'a';
+        while (n > 0) {
+            k = sqrt(n * 2 + 0.25) - 0.5;
+            tg = (1+k)*k/2;
+            rep(i,1,k) printf("%c",x);
+            n = n - tg;
+            x ++;
+        }
+        puts("");
+    }
+}
+*/
+
+/*
+const int MAXN = 50;
+
+struct Node {
+    Node(){}
+    Node(int n,Node *l,Node *r):n(n),l(l),r(r){}
+
+    int n;
+    Node *l;
+    Node *r;
+} *root;
+
+int gin[MAXN];
+int gpost[MAXN];
+
+void build(int *in,int *post,int len,Node **node)
+{
+    if (len <= 0) return;
+    int mid = post[len-1];
+    int x = 0;
+    REP(i,0,len) {
+        if (in[i] == mid) {
+            x = i;
+            break;
+        }
+    }
+    *node = new Node(mid,NULL,NULL);
+    build(in,post,x,&((*node) -> l));
+    build(in + x + 1, post + x, len - x - 1, &((*node) -> r));
+}
+
+void dfs(Node *node) {
+    printf(" %d",node -> n);
+    if (node -> l != NULL) dfs(node -> l);
+    if (node -> r != NULL) dfs(node -> r);
+}
+
+int main()
+{
+    int n;
+    sci(n);
+    REP(i,0,n) sci(gpost[i]);
+    REP(i,0,n) sci(gin[i]);
+    build(gin, gpost, n, &root);
+    printf("Preorder:");
+    dfs(root);
+    puts("");
+}
+*/
+
+/*
+vector<int> g[100010];
+vector<int> c[100010];
+
+int m = 0;
+
+void dfs(int n,int dps)
+{
+    m = max(m,dps);
+    c[dps].pb(n);
+    for (auto i : g[n]) {
+        dfs(i,dps + 1);
+    }
+}
+
+int main()
+{
+    int n;
+    sci(n);
+    int t;
+    rep(i,1,n) {
+        sci(t);
+        if (t == -1) t = 0;
+        g[t].pb(i);
+    }
+    dfs(0,0);
+    printf("%d\n",m);
+    sort(c[m].begin(),c[m].end());
+    int f = 1;
+    for (auto i : c[m]) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("%d",i);
+    }
+    puts("");
+}
+*/
+
+/*
+struct Node {
+    Node(){}
+    Node(int n,Node *l,Node *r):n(n),l(l),r(r){}
+    int n;
+    Node *l;
+    Node *r;
+} *root;
+
+int n,m;
+
+void build()
+{
+    int t;
+    read(t);
+    root = new Node(t,NULL,NULL);
+    Node *node;
+    rep(i,2,n) {
+        read(t);
+        node = root;
+        while (1) {
+            if (t <= node -> n) {
+                if (node -> l == NULL) {
+                    node -> l = new Node(t,NULL,NULL);
+                    break;
+                }
+                else node = node -> l;
+            } else {
+                if (node -> r == NULL) {
+                    node -> r = new Node(t,NULL,NULL);
+                    break;
+                }
+                else node = node -> r;
+            }
+        }
+    }
+}
+
+int find(int n)
+{
+    Node *node = root;
+    while (node != NULL) {
+        if (node -> n == n) return 1;
+        if (n < node -> n) node = node -> l;
+        else node = node -> r;
+    }
+    return 0;
+}
+
+int main()
+{
+    read(m);
+    read(n);
+    build();
+    int u,v;
+    set<int> f;
+    Node *node;
+    int hasU,hasV;
+    rep(i,1,m) {
+        read(u);
+        read(v);
+        hasU = find(u);
+        hasV = find(v);
+        if (!hasU && !hasV) printf("ERROR: %d and %d are not found.\n",u,v);
+        else if (!hasU) printf("ERROR: %d is not found.\n",u);
+        else if (!hasV) printf("ERROR: %d is not found.\n",v);
+        else {
+            node = root;
+            while (node != NULL) {
+                if (u == node -> n) {
+                    printf("%d is an ancestor of %d.\n",u,v);
+                    break;
+                } else if (v == node -> n) {
+                    printf("%d is an ancestor of %d.\n",v,u);
+                    break;
+                } else if ((u < node -> n && v > node -> n) || (v < node -> n && u > node -> n)) {
+                    printf("LCA of %d and %d is %d.\n",u,v,node -> n);
+                    break;
+                } else {
+                    if (u < node -> n) node = node -> l;
+                    if (u > node -> n) node = node -> r;
+                }
+            }
+        }
+    }
+}
+*/
+
+/*
+int main()
+{
+    int ans = 0;
+    rep(a,1,9) {
+        rep(b,1,9) {
+            rep(c,1,9) {
+                rep(d,1,9) {
+                    rep(e,1,9) {
+                        if (a == b || a == c || a == d || a == e ||
+                            b == c || b == d || b == e ||
+                            c == d || c == e ||
+                            d == e) continue;
+                        if ((a * 10 + b) * (c * 100 + d * 10 + e) == (a * 100 + d * 10 + b) * (c * 10 + e)) ans ++;
+                    }
+                }
+            }
+        }
+    }
+    printf("%d\n",ans);
+    return 0;
+}
+*/
+
+/*
+int get(int x) {
+    int ans = 0;
+    while (x) {
+        ans += x /= 5;
+    }
+    return ans;
+}
+
+int main()
+{
+    int n;
+    int l,r;
+    int m,k;
+    int f;
+    int x = 0;
+    __T {
+        sci(n);
+        l = 1;
+        f = 0;
+        r = 1000000000;
+        
+        while (l <= r) {
+            m = (l + r) / 2;
+            k = get(m);
+            if (k < n) l = m + 1;
+            else if (k > n) r = m - 1;
+            else {
+                r = m - 1;
+                x = m;
+                f = 1;
+            }
+        }
+        if (f) printf("%d\n",x);
+        else puts("QAQ");
+    }
+    
+}
+*/
+
+/*
+int dp[3010][5010];
+int main()
+{
+    int n;
+    int a[3010];
+    int sum;
+    int ans;
+    __T {
+        sci(n);
+        sum = 0;
+        rep(i,1,n) {
+            sci(a[i]);
+            sum += a[i];
+        }
+        ans = 0;
+        rep(i,1,n) {
+            for (int j = 0;j <= sum;j ++) {
+                if (j >= a[i]) dp[i][j] = max(dp[i-1][j],min(dp[i - 1][j - a[i]] + a[i],sum - dp[i - 1][j - a[i]] - a[i]));
+                else dp[i][j] = dp[i-1][j];
+                ans = max(dp[i][j],ans);
+            }
+        }
+        printf("%d\n",ans);
+        
+    }
+}
+*/
+
+/*
+struct Node {
+    Node *nxt[10];
+    Node() {
+        rep(i,0,9) nxt[i] = NULL;
+    }
+};
+
+Node *root;
+
+void add(ll num) {
+    vector<int> k;
+    Node *node = root;
+    while (num) {
+        k.pb(num % 10);
+        num /= 10;
+    }
+    while (k.size() < 10) k.pb(0);
+    for (vector<int>::reverse_iterator i = k.rbegin();i != k.rend();i ++) {
+        if (node -> nxt[*i] == NULL) {
+            node -> nxt[*i] = new Node();
+        }
+        node = node -> nxt[*i];
+    }
+}
+
+void dfs(Node *node,int num)
+{
+    printf("%d ",num);
+    rep(i,0,9) {
+        if (node -> nxt[i] != NULL) dfs(node -> nxt[i],i);
+    }
+}
+
+int main()
+{
+    int n,r;
+    scii(n,r);
+    root = new Node();
+    ll t;
+    rep(i,1,n) {
+        scl(t);
+        add(t);
+    }
+    
+    int q;
+    sci(q);
+    vector<int> k;
+    Node *node;
+    int mx,mj;
+    Node *pm = NULL;
+    ll num;
+    ll ans;
+    while (q --) {
+        k.clear();
+        scl(t);
+        node = root;
+        ans = 0;
+        while (t) {
+            k.pb(t % 10);
+            t /= 10;
+        }
+        while (k.size() < 10) k.pb(0);
+        num = 0;
+        for (vector<int>::reverse_iterator i = k.rbegin();i != k.rend();i ++) {
+            mx = -1;
+            mj = -1;
+            rep(j,0,9) {
+                if (node -> nxt[j] != NULL) {
+                    if (((j + *i) % r) > mx) {
+                        mx = (j + *i) % r;
+                        pm = node -> nxt[j];
+                        mj = j;
+                    }
+                }
+            }
+            num *= 10;
+            num += mj;
+            node = pm;
+            ans *= 10;
+            ans += mx;
+        }
+        _C(ans)
+    }
+}
+*/
+
+/*
+const int MAXN = 2e5 + 10;
+
+struct Node {
+    int l,r;
+    ll sum;
+    ll lazy;
+} tree[MAXN << 2];
+void push_up(int i)
+{
+    tree[i].sum = tree[i << 1].sum + tree[i << 1 | 1].sum;
+}
+
+void push_down(int i) //下推标记
+{
+    if (tree[i].lazy) {
+        tree[i << 1].sum = tree[i << 1].r - tree[i << 1].l + 1 - tree[i << 1].sum;
+        tree[i << 1 | 1].sum = tree[i << 1 | 1].r - tree[i << 1 | 1].l + 1 - tree[i << 1 | 1].sum;
+
+        tree[i << 1].lazy = !tree[i << 1].lazy;
+        tree[i << 1 | 1].lazy = !tree[i << 1 | 1].lazy;
+
+        tree[i].lazy = 0;
+    }
+}
+
+// i - 二叉树节点编号，调用时取1
+// l，r 区间左右端下标，调用的时候取最大范围即可 build(1,n,1);
+void build(int l,int r,int i)
+{
+    tree[i].l = l;
+    tree[i].r = r;
+    tree[i].lazy = 0;
+    if (l == r) {
+        tree[i].sum = 0;
+        return;
+    }
+    int m = (l + r) >> 1;
+    build(l,m,i << 1);
+    build(m + 1,r,i << 1 | 1);
+    push_up(i);
+}
+
+void add(int l,int r,int i) // 将区间[l,r]整个加上x，调用(l,r,x,1)
+{
+    if (l <= tree[i].l && r >= tree[i].r) {
+        tree[i].sum = tree[i].r - tree[i].l + 1 - tree[i].sum;
+        tree[i].lazy = !tree[i].lazy;
+        return;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    if (l <= m) add(l,r,i << 1);
+    if (r > m) add(l,r,i << 1 | 1);
+    push_up(i);
+}
+
+ll query(int l,int r,int i) //查询
+{
+    if (l <= tree[i].l && r >= tree[i].r){
+        return tree[i].sum;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    ll sum = 0;
+    if (l <= m) {
+         sum += query(l,r,i << 1);
+    }
+    if (r > m) {
+        sum += query(l,r,i << 1 | 1);
+    }
+    return sum;
+}
+
+vector<int> g[MAXN];
+
+int dfn = 0;
+int in[MAXN],out[MAXN];
+
+void dfs(int k,int f)
+{
+    in[k] = ++ dfn;
+    for (vector<int>::iterator i = g[k].begin();i != g[k].end();i ++)
+    {
+        if (*i != f) {
+            dfs(*i,k);
+        }
+    }
+    out[k] = dfn;
+}
+
+int main() {
+    int n,q;
+    scii(n,q);
+    int u,v;
+    rep(i,1,n-1) {
+        scii(u,v);
+        g[u].pb(v);
+    }
+    dfs(1,-1);
+    build(1, n, 1);
+    while (q --) {
+        scii(u,v);
+        if (u == 1) {
+            add(in[v], out[v], 1);
+        } else {
+            printf("%lld\n",query(in[v], out[v], 1));
+        }
+    }
+}
+*/
+
+/*
+int main()
+{
+    const int mod = 1e9 + 7;
+    ll n,m,na,ma,nb,mb,a,b;
+    __T {
+        scll(n,m);
+        na = n + 1;
+        nb = n;
+        ma = m + 1;
+        mb = m;
+        if (na % 2 == 0) na /= 2;
+        if (nb % 2 == 0) nb /= 2;
+        if (ma % 2 == 0) ma /= 2;
+        if (mb % 2 == 0) mb /= 2;
+        na %= mod;
+        nb %= mod;
+        ma %= mod;
+        mb %= mod;
+        a = na * nb % mod;
+        b = ma * mb % mod;
+        printf("%lld\n",a * b % mod);
+    }
+}*/
+
+/*
+struct Node {
+    int n;
+    Node *l;
+    Node *r;
+    Node(){}
+    Node(int n,Node *l,Node *r):n(n),l(l),r(r){}
+} *root;
+
+Node* RR(Node *node)
+{
+    Node *l = node -> l;
+    node -> l = l -> r;
+    l -> r = node;
+    return l;
+}
+
+Node* LL(Node *node)
+{
+    Node *r = node -> r;
+    node -> r = r -> l;
+    r -> l = node;
+    return r;
+}
+
+Node* LR(Node *node)
+{
+    node -> l = LL(node -> l);
+    return RR(node);
+}
+
+Node* RL(Node *node)
+{
+    node -> r = RR(node -> r);
+    return LL(node);
+}
+
+int getHeight(Node *n) {
+    if (n == NULL) return 0;
+    int x = 0;
+    x = max(x,getHeight(n -> l));
+    x = max(x,getHeight(n -> r));
+    return x + 1;
+}
+
+int getF(Node *node)
+{
+    return getHeight(node -> l) - getHeight(node -> r);
+}
+
+Node* insert(Node *node,int n)
+{
+    if (node == NULL) {
+        node = new Node(n,NULL,NULL);
+    } else if (n < node -> n) {
+        node -> l = insert(node -> l, n);
+        if (getF(node) == 2) {
+            if (n < node -> l -> n) node = RR(node);
+            else node = LR(node);
+        }
+    } else if (n > node -> n) {
+        node -> r = insert(node -> r, n);
+        if (getF(node) == -2) {
+            if (n > node -> r -> n) node = LL(node);
+            else node = RL(node);
+        }
+    }
+    return node;
+}
+
+void dfs(Node *node)
+{
+    if (node == NULL) return;
+    printf("%d ",node -> n);
+    dfs(node -> l);
+    dfs(node -> r);
+}
+
+int main()
+{
+    int n;
+    sci(n);
+    int t;
+    rep(i,1,n) {
+        sci(t);
+        root = insert(root,t);
+    }
+    printf("%d\n",root -> n);
+}
+*/
+
+/*
+int a[100010]; // 从1开始
+int n = 0;
+
+void up(int i)
+{
+    int p = i / 2;
+    while (p != 0 && a[i] > a[p])
+    {
+        swap(a[i], a[p]);
+        i = p;
+        p /= 2;
+    }
+}
+
+void down(int i)
+{
+    int k = i * 2;
+    if (k + 1 <= n && a[k + 1] > a[k]) k ++;
+    while (k <= n && a[i] < a[k])
+    {
+        swap(a[i], a[k]);
+        i = k;
+        k *= 2;
+        if (k + 1 <= n && a[k + 1] > a[k]) k ++;
+    }
+}
+
+void push(int num)
+{
+    a[++ n] = num;
+    up(n);
+}
+
+void pop()
+{
+    if (n > 0)
+    {
+        swap(a[1], a[n --]);
+        down(1);
+    }
+}
+
+void heapify()
+{
+    for (int i = n / 2;i >= 1;i --)
+    {
+        down(i);
+    }
+}
+
+int main() {
+    int m;
+    scanf("%d%d",&n,&m);
+    rep(i,1,n) sci(a[i]);
+    heapify();
+    int t,x;
+    while (m --) {
+        sci(t);
+        if (t == 0) {
+            pop();
+        } else if (t == 1) {
+            sci(x);
+            push(x);
+        } else if (t == 2) {
+            sci(x);
+            printf("%d\n",a[x]);
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e5 + 10;
+
+int find_set[MAXN];
+int depth[MAXN];
+
+int find(int a)
+{
+    if (find_set[a] == a) return a;
+    return find_set[a] = find(find_set[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (depth[x] >= depth[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        find_set[y] = x; // 改变b节点的根的根为a的根
+        if (depth[x] == depth[y]) { // 俩根深度一样
+            if (x != y) depth[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else find_set[x] = y;
+}
+
+void init(int n)
+{
+    rep(i,0,n) {
+        find_set[i] = i;  // 每个种类初始状态只有自己一个点
+        depth[i] = 1;  // 初始化秩
+    }
+}
+
+int main()
+{
+    int n,m;
+    int a[MAXN];
+    scii(n,m);
+    rep(i,1,m) {
+        sci(a[i]);
+    }
+    int k;
+    sci(k);
+    int u,v;
+    init(n + 5);
+    rep(i,1,k) {
+        scii(u,v);
+        bind(u,v);
+    }
+    int ok = 0;
+    int x = find(1);
+    rep(i,1,m) {
+        if (x == find(a[i])) {
+            ok = 1;
+            break;
+        }
+    }
+    puts(ok ? "YES" : "NO");
+    return 0;
+}
+*/
+
+/*
+int a[100010]; // 从1开始
+int n = 0;
+
+void up(int i)
+{
+    int p = i / 2;
+    while (p != 0 && a[i] < a[p])
+    {
+        swap(a[i], a[p]);
+        i = p;
+        p /= 2;
+    }
+}
+
+void down(int i)
+{
+    int k = i * 2;
+    if (k + 1 <= n && a[k + 1] < a[k]) k ++;
+    while (k <= n && a[i] > a[k])
+    {
+        swap(a[i], a[k]);
+        i = k;
+        k *= 2;
+        if (k + 1 <= n && a[k + 1] < a[k]) k ++;
+    }
+}
+
+void push(int num)
+{
+    a[++ n] = num;
+    up(n);
+}
+
+void pop()
+{
+    if (n > 0)
+    {
+        swap(a[1], a[n --]);
+        down(1);
+    }
+}
+
+void heapify()
+{
+    for (int i = n / 2;i >= 1;i --)
+    {
+        down(i);
+    }
+}
+
+int main() {
+    int n,m;
+    scii(n,m);
+    int t;
+    rep(i,1,n) {
+        sci(t);
+        push(t);
+    }
+    int f;
+    rep(i,1,m) {
+        sci(t);
+        f = 1;
+        while (t > 0) {
+            if (f) f = 0;
+            else printf(" ");
+            printf("%d",a[t]);
+            t >>= 1;
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    ll t;
+    priority_queue<ll,vector<ll>,greater<ll>> q;
+    rep(i,1,n) {
+        scl(t);
+        q.push(t);
+    }
+    ll sum;
+    ll ans = 0;
+    while (q.size() >= 2) {
+        sum = q.top();
+        q.pop();
+        sum += q.top();
+        q.pop();
+        q.push(sum);
+        ans += sum;
+    }
+//    ans += q.top();
+    printf("%lld\n",ans);
+}
+*/
+
+//int a[1000010];
+//
+//int main()
+//{
+//    int m,n;
+//    while (~scii(m,n)) {
+//        rep(i,1,n) sci(a[i]);
+//
+//    }
+//
+//    return 0;
+//}
+
+/*
+struct Node {
+    int type; // 0 - num,1 - op
+    char c;
+    ll num;
+};
+
+int priority[130];
+
+void getPost(string &str,vector<Node> &post) {
+    post.clear();
+    stack<char> op_stk;
+    ll num = 0;
+    int has_num = 0;
+    
+    for (int i = 0;str[i];i ++) {
+        if (str[i] >= '0' && str[i] <= '9') {
+            num = num * 10 + (str[i] ^ 48);
+            has_num = 1;
+        } else {
+            if (has_num) post.push_back({0,0,num});
+            has_num = num = 0;
+            if (str[i] != ')') {
+                if (str[i] != '(') while (!op_stk.empty() && priority[op_stk.top()] >= priority[str[i]]) {
+                    post.push_back({1,op_stk.top(),0});
+                    op_stk.pop();
+                }
+                op_stk.push(str[i]);
+            } else {
+                while (op_stk.top() != '(') {
+                    post.push_back({1,op_stk.top(),0});
+                    op_stk.pop();
+                }
+                op_stk.pop();
+            }
+        }
+    }
+    if (has_num) post.push_back({0,0,num});
+    while (!op_stk.empty()) {
+        post.push_back({1,op_stk.top(),0});
+        op_stk.pop();
+    }
+}
+
+ll getAns(vector<Node> &post) {
+    ll ans = 0;
+    stack<ll> num_stk;
+    
+    for (auto i : post) {
+        if (!i.type) num_stk.push(i.num);
+        else {
+            switch (i.c) {
+                case '+':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans += num_stk.top();
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '-':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans = num_stk.top() - ans;
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                case '*':
+                    ans = num_stk.top();
+                    num_stk.pop();
+                    ans *= num_stk.top();
+                    num_stk.pop();
+                    num_stk.push(ans);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    return num_stk.top();
+}
+
+vector<Node> post;
+set<ll> ans;
+ll t;
+void dfs(int i,string str)
+{
+    if (i == str.size()) {
+        if (str.size() == 4) return;
+        post.clear();
+        getPost(str,post);
+        t = getAns(post);
+        if (t >= 0) ans.insert(t);
+        return;
+    }
+    dfs(i + 1,str);
+    dfs(i + 2,str.substr(0,i) + '+' + str.substr(i));
+    dfs(i + 2,str.substr(0,i) + '-' + str.substr(i));
+    dfs(i + 2,str.substr(0,i) + '*' + str.substr(i));
+}
+
+inline void getStr(string &str,int a)
+{
+    str += (char)(a + '0');
+}
+
+int main()
+{
+    int a[4];
+    scii(a[0],a[1]);
+    scii(a[2],a[3]);
+    // 4
+    int p[] = {0,1,2,3};
+    
+    priority['('] = 1;
+    priority['*'] = 3;
+    priority['+'] = priority['-'] = 2;
+    string str;
+    do {
+        str = "";
+        getStr(str,a[p[0]]);
+        getStr(str,a[p[1]]);
+        getStr(str,a[p[2]]);
+        getStr(str,a[p[3]]);
+        dfs(1,str);
+    } while (next_permutation(p, p + 4));
+    printf("%lu\n",ans.size());
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    int t;
+    __T {
+        scii(n,m);
+        rep(i,1,n) {
+            sci(t);
+        }
+        rep(i,1,m) {
+            sci(t);
+        }
+        if (n == 1 && m == 1) puts("1");
+        else if (n == 1 && m == 2) puts("1");
+        else if (n == 2 && m == 1) puts("1");
+        else puts("7");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e4 + 10;
+
+int find_set[MAXN];
+int depth[MAXN];
+
+int find(int a)
+{
+    if (find_set[a] == a) return a;
+    return find_set[a] = find(find_set[a]);
+}
+
+inline void bind(int a,int b)
+{
+    int x = find(a), y = find(b);
+    if (depth[x] >= depth[y]) { // 如果a的 根的子树深度 比b的 根的子树深度 大，那a的根继续做根
+        find_set[y] = x; // 改变b节点的根的根为a的根
+        if (depth[x] == depth[y]) { // 俩根深度一样
+            if (x != y) depth[x] ++; // 作为a的根，自然子树的深度++
+        }
+    } else find_set[x] = y;
+}
+
+void init(int n)
+{
+    rep(i,0,n) {
+        find_set[i] = i;  // 每个种类初始状态只有自己一个点
+        depth[i] = 1;  // 初始化秩
+    }
+}
+
+struct Edge {
+    int u,v;
+    ll w;
+};
+
+bool cmp(const Edge &a,const Edge &b) {
+    return a.w > b.w;
+}
+
+bool cmp1(const Edge &a,const Edge &b) {
+    return a.w < b.w;
+}
+
+Edge ed[500010];
+
+struct Eg {
+    int to;
+    ll w;
+    int nxt;
+} e[500010 * 2];
+int g[MAXN]; // Please call init() to memset it to -1!
+int cnt = 0;
+
+void init_g(int n)
+{
+    cnt = 0;
+    memn(g,-1,int,n);
+}
+
+void add_edge(int u,int v,ll w)
+{
+    e[cnt] = {v,w,g[u]};
+    g[u] = cnt ++;
+}
+
+ll ans = 0;
+
+void dfs(int u,int f,ll m)
+{
+    ll k;
+    if (m != -1) ans += m;
+    for (int i = g[u];~i;i = e[i].nxt) {
+        if (e[i].to == f) continue;
+        k = m;
+        if (m == -1 || e[i].w < m) k = e[i].w;
+        dfs(e[i].to,u,k);
+    }
+}
+
+int main()
+{
+    int n,m;
+    scii(n,m);
+    int u,v;
+    ll w;
+    init(n + 5);
+    
+    rep(i,1,m) {
+        scii(u,v);
+        scl(w);
+        ed[i] = {u,v,w};
+    }
+    sort(ed + 1,ed + 1 + m,cmp);
+    ll k = 0;
+    for (auto i : ed) {
+        u = find(i.u);
+        v = find(i.v);
+        if (u != v) {
+            bind(u,v);
+            k = i.w;
+        }
+    }
+    sort(ed + 1,ed + 1 + m,cmp1);
+    init(n + 5);
+    init_g(n + 5);
+    rep(i,1,m) {
+        if (ed[i].w == k) k = -1;
+        if (k != -1) continue;
+        u = find(ed[i].u);
+        v = find(ed[i].v);
+        if (u != v) {
+            bind(ed[i].u,ed[i].v);
+            add_edge(ed[i].u, ed[i].v, ed[i].w);
+            add_edge(ed[i].v, ed[i].u, ed[i].w);
+        }
+    }
+    rep(i,1,n) dfs(i,-1,-1);
+    printf("%lld\n",ans / 2);
+    return 0;
+}
+*/
+
+/*
+int a[10010][10010];
+
+int main()
+{
+    int n,k,x,y;
+    __T {
+        scii(n,k);
+        if (n == 1) {
+            printf("%d\n",0);
+            continue;
+        }
+        a[0][0] = k - 1;
+        REP(i,0,n - 1) {
+            rep(j,0,i) {
+                a[i + 1][j] = 0;
+                a[i + 1][j + 1] = 0;
+            }
+            rep(j,0,i) {
+                a[i + 1][j] += a[i][j] / 2;
+                a[i + 1][j + 1] += a[i][j] / 2;
+                if (a[i][j] & 1) a[i + 1][j] ++;
+            }
+        }
+        x = y = 0;
+        do {
+            if (a[x][y] & 1) y ++;
+            x ++;
+        } while (x < n - 1);
+        printf("%d\n",y);
+    }
+}
+*/
+
+/*
+int main()
+{
+    double n;
+    double ans;
+    int i,j;
+    __T {
+        scd(n);
+        ans = 0;
+        i = 1;
+        j = 1;
+        while (1.0 / i >= n) {
+            ans += pow(-1,j + 1) * 1 / i;
+            i += 2;
+            j ++;
+        }
+        printf("%.6f\n",ans);
+    }
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int num,ans;
+    char type;
+    __T {
+        cin >> str;
+        num = 0;
+        ans = 0;
+        type = '+';
+        for (int i = 0;str[i];i ++) {
+            if (isdigit(str[i])) {
+                num *= 10;
+                num += str[i] ^ 48;
+            } else {
+                switch (type) {
+                    case '+':
+                        ans += num;
+                        break;
+                    case '-':
+                        ans -= num;
+                        break;
+                    case '*':
+                        ans *= num;
+                        break;
+                    case '/':
+                        ans /= num;
+                        break;
+                }
+                num = 0;
+                type = str[i];
+            }
+        }
+        printf("%d\n",ans);
+    }
+}
+*/
+
+/*
+int check(int n)
+{
+    int k = 0;
+    int nn = n;
+    while (n) {
+        k += (n % 10) * (n % 10) * (n % 10);
+        n /= 10;
+    }
+    return k == nn;
+}
+
+int main()
+{
+    int u,v;
+    __T {
+        scii(u,v);
+        rep(i,u,v) {
+            if (check(i)) printf("%d\n",i);
+        }
+    }
+    return 0;
+}
+*/
+
+/*int main()
+{
+    int n,m;
+    string str;
+    int k;
+    __T {
+        scii(n,m);
+        cin >> str;
+        k = 0;
+        rep(i,1,n) {
+            rep(j,1,m) {
+                printf("%c",str[k ++]);
+            }
+            puts("");
+        }
+        
+    }
+}
+*/
+
+/*
+int a[35][35];
+int b[35][35];
+
+int main()
+{
+    int n,mx;
+    int cnt;
+    while (~scanf("%d",&n)) {
+        if (n == 0) break;
+        rep(i,1,n) {
+            rep(j,1,n) sci(a[i][j]);
+        }
+        cnt = mx = 0;
+        rep(i,1,n) {
+            rep(j,1,n) {
+                sci(b[i][j]);
+                if (a[i][j] == b[i][j]) cnt ++;
+            }
+        }
+        mx = max(cnt,mx);
+        cnt = 0;
+        rep(i,1,n) {
+            rep(j,1,n) {
+                if (a[i][j] == b[j][n-i+1]) cnt ++;
+            }
+        }
+        mx = max(cnt,mx);
+        cnt = 0;
+        rep(i,1,n) {
+            rep(j,1,n) {
+                if (a[i][j] == b[n-i+1][n-j+1]) cnt ++;
+            }
+        }
+        mx = max(cnt,mx);
+        cnt = 0;
+        rep(i,1,n) {
+            rep(j,1,n) {
+                if (a[i][j] == b[n-j+1][i]) cnt ++;
+            }
+        }
+        mx = max(cnt,mx);
+        printf("%d\n",mx);
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    Node(const string &name,int type):name(name),type(type){}
+    Node(){}
+    string name;
+    map<string,Node*> pNxt;
+    int type;
+};
+
+Node *root;
+
+void insert(string &str,vector<string> &pv,int t)
+{
+    string x;
+    pv.clear();
+    x = "";
+    for (int i = 0;str[i];i ++) {
+        if (str[i] == '/') {
+            pv.pb(x);
+            x = "";
+        } else x += str[i];
+    }
+    pv.pb(x);
+    Node *node = root;
+    Node *p;
+    int tt;
+    for (auto i = pv.begin();i != pv.end();i ++) {
+        p = node -> pNxt[*i];
+        if (p != NULL) {
+            node = p;
+        } else {
+            if (i == pv.end() - 1) tt = t;
+            else tt = 0;
+            p = new Node(*i,tt);
+            node -> pNxt[*i] = p;
+            node = p;
+        }
+    }
+}
+
+int dfs(Node *node)
+{
+    if (node == NULL) return 0;
+    int size = (int) node -> pNxt.size();
+    int sum = 0;
+    for (auto i : node -> pNxt) {
+        sum += dfs(i.second);
+    }
+//    _C(node -> name << "=" << node -> type << " " << sum << "/" << size);
+    if (node -> type == 0 && sum == size && node -> pNxt.size() != 0 && node -> name != "/") {
+        node -> type = 1;
+    }
+    return node -> type;
+}
+
+int ans;
+
+void pre_dfs(Node *node)
+{
+    if (node == NULL) return;
+//    _C(node -> name << " " << node -> type)
+    if (node -> type) {
+        ans ++;
+        return;
+    }
+    for (auto i : node -> pNxt) {
+        pre_dfs(i.second);
+    }
+}
+
+int main()
+{
+    int n,m;
+    string str;
+    vector<string> p;
+    string x;
+    __T {
+        scii(n,m);
+        root = new Node("/",0);
+        rep(i,1,n) {
+            cin >> str;
+            insert(str,p,1);
+        }
+        rep(i,1,m) {
+            cin >> str;
+            insert(str,p,0);
+        }
+        dfs(root);
+//        _C("=========")
+        ans = 0;
+        pre_dfs(root);
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    ll n;
+    scanf("%lld",&n);
+    ll k = n / 3;
+    printf("%lld\n",(k - 1) * k + k * (n % 3) + (1 + k * 3) * k / 2);
+}
+*/
+
+/*
+char a[1010][1010];
+char b[1010][1010];
+
+int main()
+{
+    int n,m;
+    scii(n,m);
+    REP(i,0,n) {
+        scanf("%s",a[i]);
+    }
+    REP(i,0,n) {
+        scanf("%s",b[i]);
+    }
+    int sum = 0;
+    REP(i,0,n) {
+        REP(j,0,m) {
+            if (a[i][j] != b[i][j]) sum ++;
+        }
+    }
+    if (sum <= m * n / 2) REP(i,0,n) puts(a[i]);
+    else REP(i,0,n) {
+        REP(j,0,m) {
+            if (a[i][j] == '.') printf("X");
+            else printf(".");
+        }
+        puts("");
+    }
+
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    double n,p1,v1,p2,v2,ans;
+    double l,r,m,t1,t2;
+    __T {
+        scd(n);
+        scdd(p1,v1);
+        scdd(p2,v2);
+        if (p1 > p2) {
+            swap(p1,p2);
+            swap(v1,v2);
+        }
+        // <->
+        ans = (n + p1 + n - p2) / (v1 + v2);
+        // -><-
+        ans = min(ans,(n + p2 - p1) / (v1 + v2));
+        // full
+        ans = min(ans,(n + p1) / v1); // <- 1
+        ans = min(ans,(n + n - p1) / v1); // 1 ->
+        
+        ans = min(ans,(n + p2) / v2); // <- 2
+        ans = min(ans,(n + n - p2) / v2); // 2 ->
+        // common
+        l = p1;
+        r = p2;
+        rep(i,1,500) {
+            m = (l + r) / 2;
+            t1 = (m + m - p1) / v1;
+            t2 = (n + n - m - p2) / v2;
+            if (t1 > t2) r = m;
+            else l = m;
+        }
+        ans = min(ans,t1);
+        l = p1;
+        r = p2;
+        rep(i,1,500) {
+            m = (l + r) / 2;
+            t1 = (m + p1) / v1;
+            t2 = (n - m + p2 - m) / v2;
+            if (t1 > t2) r = m;
+            else l = m;
+        }
+        ans = min(ans,t1);
+        printf("%.10f\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    int n;
+    int i;
+} a[100010];
+
+inline bool cmp(const Node &a,const Node &b) {
+    return a.n < b.n;
+}
+
+int main()
+{
+    int n,m;
+    Node t;
+    ll sum1,sum2;
+    ll ans;
+    while (~scanf("%d",&n)) {
+        rep(i,1,n) {
+            scanf("%d",&a[i].n);
+            a[i].i = i;
+        }
+        scanf("%d",&m);
+        sort(a + 1,a + 1 + n,cmp);
+        sum1 = sum2 = 0;
+        while (m --) {
+            scanf("%d",&t.n);
+            ans = lower_bound(a + 1, a + 1 + n,t,cmp) -> i;
+            sum1 += ans;
+            sum2 += n - ans + 1;
+//            _C(ans << " " << n - ans + 1)
+        }
+        printf("%lld %lld\n",sum1,sum2);
+    }
+}
+*/
+
+/*
+const int MAXN = 1e2 + 10;
+
+struct Node {
+    Node (int to,int step):to(to),step(step){}
+    int to;
+    int step;
+};
+
+vector<Node> g[MAXN];
+int vis[MAXN][2];
+
+int s,t;
+int ok = 0;
+
+void dfs(int u,int s)
+{
+    if (vis[u][s]) return;
+    vis[u][s] = 1;
+    if (u == t) ok = 1;
+    if (ok) return;
+    vis[u][s] = 1;
+    for (auto i : g[u]) {
+        if (i.step == s) {
+            dfs(i.to,!s);
+        }
+    }
+}
+
+int main()
+{
+    int n,m;
+    int u,v;
+    int T;
+    scanf("%d",&T);
+    while (T --) {
+        scanf("%d%d",&n,&m);
+        scanf("%d%d",&s,&t);
+        for (int i = 1;i <= n;i ++) g[i].clear();
+        memset(vis,0,sizeof vis);
+        ok = 0;
+        while (m --) {
+            scanf("%d%d",&u,&v);
+            g[u].pb(Node(v,0));
+            g[v].pb(Node(u,1));
+        }
+        dfs(s,0);
+        puts(ok ? "YES" : "NO");
+    }
+    return 0;
+}
+*/
+
+/*
+const int MAXN = 1e2 + 10;
+
+vector<int> g[MAXN << 1];
+int vis[MAXN << 1];
+
+int s,t,n,m;
+int ok = 0;
+
+void dfs(int u)
+{
+    if (vis[u]) return;
+    vis[u] = 1;
+    if (u == t || u == t + n) ok = 1;
+    if (ok) return;
+    vis[u] = 1;
+    for (auto i : g[u]) {
+        dfs(i);
+    }
+}
+
+int main()
+{
+    int u,v;
+    int T;
+    scanf("%d",&T);
+    while (T --) {
+        scanf("%d%d",&n,&m);
+        scanf("%d%d",&s,&t);
+        for (int i = 1;i <= n * 2;i ++) g[i].clear();
+        memset(vis,0,sizeof vis);
+        ok = 0;
+        while (m --) {
+            scanf("%d%d",&u,&v);
+            g[u].pb(v + n);
+            g[v + n].pb(u);
+        }
+        dfs(s);
+        puts(ok ? "YES" : "NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    scanf("%d%d",&n,&k);
+    int a[110];
+    rep(i,1,n) sci(a[i]);
+    rep(i,1,k) {
+        rep(j,1,n-i) {
+            if (a[j] > a[j + 1]) swap(a[j],a[j + 1]);
+        }
+    }
+    rep(i,1,n) {
+        if (i != 1) printf(" ");
+        printf("%d",a[i]);
+    }
+    puts("");
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int a,b;
+    scii(a,b);
+    int k,kk;
+    map<int,int> p;
+    int n,ans;
+    int ok;
+    int kok = 0;
+    rep(i,a,b) {
+        k = i * i + 1;
+        kk = k;
+        p.clear();
+        for (int j = 2;j * j <= kk;j ++) {
+            while (k % j == 0) {
+                p[j] ++;
+                k /= j;
+            }
+        }
+        if (k != 1) p[k] ++;
+        ok = 1;
+        for (auto j : p) {
+            n = i;
+            ans = 0;
+            while (n) {
+                n /= j.first;
+                ans += n;
+            }
+            if (ans < j.second) {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok) {
+            printf("%d\n",i);
+            kok = 1;
+        }
+    }
+    if (!kok) puts("None");
+}
+*/
+
+/*
+int main()
+{
+    int a,b;
+    __T {
+        scii(a,b);
+        if (a > b) swap(a,b);
+        if (a == 1 && b == 3) puts("1 sheng 3");
+        else if (a == 1 && b == 5) puts("5 sheng 1");
+        else if (a == 2 && b == 4) puts("2 sheng 4");
+        else if (a == 2 && b == 3) puts("3 sheng 2");
+        else if (a == 4 && b == 5) puts("4 sheng 5");
+        else {
+            if (a == 1 && b == 4) swap(a,b);
+            if (a == 3 && b == 5) swap(a,b);
+            printf("%d ke %d\n",a,b);
+        }
+    }
+    return 0;
+}
+*/
+
+//int main()
+//{
+//    int n;
+//    scanf("%d",&n);
+//    int a[1010];
+//    rep(i,1,n) sci(a[i]);
+//    int ed = n;
+//    vector<int> ans;
+//    rep(i,1,ed) {
+//        if (a[i] != a[ed]) ans.pb(a[i]);
+//        else ed --;
+//    }
+//    int f = 1;
+//    for (auto i = ans.rbegin();i != ans.rend();i ++) {
+//        if (f) f = 0;
+//        else printf(" ");
+//        printf("%d",*i);
+//    }
+//    if (f) rep(i,1,n) {
+//        if (f) f = 0;
+//        else printf(" ");
+//        printf("%d",a[i]);
+//    }
+//    puts("");
+//    return 0;
+//}
+
+
+
+/*
+int a[10010];
+int n;
+
+inline bool judge(int s)
+{
+    for (int i = s;i <= (n + s) / 2;i ++) {
+        if (a[i] != a[n + s - i]) return 0;
+    }
+    return 1;
+}
+
+
+int main()
+{
+    scanf("%d",&n);
+    for (int i = 1;i <= n;i ++) scanf("%d",a + i);
+    for (int i = 1;i <= n;i ++) {
+        if (judge(i)) {
+            if (i == 1) {
+                for (int j = 1;j <= n;j ++) {
+                    if (j != 1) printf(" ");
+                    printf("%d",a[j]);
+                }
+            } else {
+                for (int j = i - 1;j >= 1;j --) {
+                    if (j != i - 1) printf(" ");
+                    printf("%d",a[j]);
+                }
+            }
+            break;
+        }
+    }
+    puts("");
+}
+*/
+
+/*
+int main()
+{
+    ll n,a,b;
+    __T {
+        sclll(n,a,b);
+        if (b / 2.0 < a) {
+            if (n & 1) printf("%lld\n",n / 2 * b + a);
+            else printf("%lld\n",n / 2 * b);
+        } else printf("%lld\n",a * n);
+    }
+    
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    scii(n,m);
+    int p[20];;
+    rep(i,1,n + m) p[i] = i;
+    int a[20];
+    int cnt = 0;
+    rep(i,1,n) a[++ cnt] = 0;
+    rep(i,1,m) a[++ cnt] = 1;
+    int base = 0;
+    int x[20] = {0};
+    do {
+        base ++;
+        rep(i,1,n + m) {
+            if (a[p[i]]) {
+                x[i] ++;
+                break;
+            }
+        }
+    } while (next_permutation(p + 1, p + 1 + n + m));
+    int ans = 0;
+    rep(i,1,n + m) {
+        ans += x[i] * i;
+    }
+    printf("%.6f\n",ans / (double) base);
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        if (n <= 2) puts("Hugin");
+        else puts("Steve");
+    }
+}
+*/
+
+/*
+struct Node {
+    int id;
+    int s;
+    int p;
+} s[110];
+
+inline int cmp(const Node &a,const Node &b) {
+    if (a.s == b.s) return a.id < b.id;
+    return a.s > b.s;
+}
+
+int main()
+{
+    int n,R,L;
+    sciii(n,R,L);
+    rep(i,1,n) sci(s[i].id);
+    rep(i,1,n) sci(s[i].s);
+    rep(i,1,n) sci(s[i].p);
+    while (n > 1) {
+        sort(s + 1,s + 1 + n,cmp);
+        n = n - n / 2;
+        rep(i,1,min(n,10)) {
+            s[i].s += R;
+        }
+        if (n >= 6) rep(i,1,3) {
+            s[i].s -= L;
+        }
+        if (n == 1) break;
+        rep(i,1,n) {
+            s[i].s += s[i].p;
+        }
+    }
+    printf("%d %d\n",s[1].id,s[1].s);
+}
+*/
+
+/*
+ll sum[2][500010];
+
+int main()
+{
+    int k;
+    string str;
+    cin >> k >> str;
+    for (int i = 0;str[i];i ++) {
+        sum[str[i] ^ 48][i + 1] ++;
+    }
+    int n = (int) str.size();
+    rep(i,1,n) {
+        sum[0][i] += sum[0][i - 1];
+        sum[1][i] += sum[1][i - 1];
+    }
+    ll ans = 0;
+    for (int i = 0;str[i];i ++) {
+        ans += sum[!(str[i] ^ 48)][min(n,i + k + 1)] - sum[!(str[i] ^ 48)][i];
+    }
+    printf("%lld\n",ans);
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int p;
+    int f;
+    __T {
+        sci(n);
+        p = n;
+        for (int i = 2;i * i <= n;i ++) {
+            if (n % i == 0) {
+                p = i;
+                break;
+            }
+        }
+        f = 1;
+        printf("%d\n",n - 1);
+        for (int i = 1,num = 1;i <= n - 1;) {
+            for (int j = num + p - 2,jj = p - 1;jj >= 1;j --,jj --) {
+                if (f) f = 0;
+                else printf(" ");
+                printf("%d",j);
+                i ++;
+            }
+            if (i <= n - 1) {
+                if (f) f = 0;
+                else printf(" ");
+                printf("1");
+                i ++;
+            }
+//            _C(i)
+            num = i;
+        }
+        puts("");
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    int a,d,k;
+} p[100010];
+
+inline int cmp(const Node &a,const Node &b) {
+    return a.k < b.k;
+}
+
+int main()
+{
+    int n,m;
+    ll c1,k1,c2,k2;
+    int ans = 0;
+    __T {
+        scii(n,m);
+        scll(c1,k1);
+        scll(c2,k2);
+        rep(i,1,n) sci(p[i].a);
+        rep(i,1,n) sci(p[i].d);
+        rep(i,1,n) {
+            p[i].k = INT_INF;
+            if (c1 - p[i].d * k1 > 0) {
+                p[i].k = min((int)ceil((double) p[i].a / (c1 - p[i].d * k1)),p[i].k);
+            }
+            if (c2 - p[i].d * k2 > 0) {
+                p[i].k = min((int)ceil((double) p[i].a / (c2 - p[i].d * k2)),p[i].k);
+            }
+        }
+        sort(p + 1,p + 1 + n,cmp);
+        ans = 0;
+        rep(i,1,n) {
+            if (p[i].k <= m) {
+                ans ++;
+                m -= p[i].k;
+            }
+        }
+        printf("%d\n",ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    __T {
+        sci(n);
+        if (n == 1) puts("0.5");
+        else puts("1.0");
+    }
+    return 0;
+}
+*/
+
+//int main()
+//{
+//    int xa,ya,xb,yb;
+//    int xc,yc,xd,yd;
+//    int x0,y0,a,b,c,k;
+//    int da,db;
+//    double ans;
+//    double t;
+//    __T {
+//        scii(xa,ya);
+//        scii(xb,yb);
+//        scii(xc,yc);
+//        scii(xd,yd);
+//
+//        if (xb == xa) {
+//            swap(xa,xc);
+//            swap(ya,yc);
+//            swap(xb,xd);
+//            swap(yb,yd);
+//        }
+//
+//        da = (xb - xa) / abs(xb - xa);
+//        db = (yd - yc) / abs(yd - yc);
+//        x0 = xc;
+//        y0 = ya;
+//        a = xa - x0;
+//        b = yc - y0;
+//        c = a * da + b * db;
+//        k = min(abs(xb - xa),abs(yd - yc));
+//        if (c / 2.0 >= 0) ans = sqrt(a * a + b * b);
+//        else {
+//            if (fabs(c / 2.0) > k) {
+//                t = min((c * c / 4.0),(k + c / 2.0) * (k + c / 2.0));
+//                ans = sqrt(2 * t * t + a * a + b * b - c * c / 2.0);
+//            } else ans = sqrt(a * a + b * b - c * c / 2.0);
+//        }
+//        printf("%.2f\n",ans);
+//    }
+//}
+
+/*
+struct Node {
+    string name;
+    int cnt;
+    double k;
+};
+
+int cmp(const Node &a,const Node &b)
+{
+    if (a.cnt == b.cnt) return a.k < b.k;
+    return a.cnt > b.cnt;
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    Node p[110];
+    int k;
+    int a[1010];
+    rep(i,1,n) {
+        cin >> p[i].name >> k;
+        rep(j,1,k) {
+            scanf("%d",a + j);
+        }
+        sort(a + 1,a + 1 + k);
+        p[i].cnt = (int) (unique(a + 1, a + 1 + k) - a - 1);
+        p[i].k = (double) k / p[i].cnt;
+    }
+    sort(p + 1,p + 1 + n,cmp);
+    int f = 1;
+    rep(i,1,min(n,3)) {
+        if (f) f = 0;
+        else printf(" ");
+        cout << p[i].name;
+    }
+    REP(i,n,3) {
+        if (f) f = 0;
+        else printf(" ");
+        printf("-");
+    }
+    puts("");
+}
+*/
+
+/*
+struct Node {
+    string id;
+    int num;
+    int which;
+    int ps;
+    int p;
+} x[100000];
+
+int cmp(const Node &a,const Node &b) {
+    if (a.num == b.num) return a.id < b.id;
+    return a.num > b.num;
+}
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    int k,l,j;
+    int cnt = 0;
+    rep(ii,1,n) {
+        scanf("%d",&k);
+        rep(i,1,k) {
+            cnt ++;
+            cin >> x[cnt].id >> x[cnt].num;
+            x[cnt].which = ii;
+        }
+        sort(x + 1 + cnt - k,x + 1 + cnt,cmp);
+        l = -1;
+        j = 1;
+//        _C(1 + cnt - k << " " << cnt << " " << k)
+        rep(i,1 + cnt - k,cnt) {
+            if (x[i].num == l) x[i].ps = x[i - 1].ps;
+            else x[i].ps = j;
+            l = x[i].num;
+            j ++;
+        }
+    }
+    sort(x + 1,x + 1 + cnt,cmp);
+    printf("%d\n",cnt);
+    l = -1;
+    rep(i,1,cnt) {
+        if (x[i].num == l) x[i].p = x[i - 1].p;
+        else x[i].p = i;
+        l = x[i].num;
+    }
+    rep(i,1,cnt) {
+        cout << x[i].id << " " << x[i].p << " " << x[i].which << " " << x[i].ps << endl;
+    }
+    return 0;
+}
+*/
+
+/*
+int a[100010];
+int sum[100010][3];
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    rep(i,1,n) {
+        scanf("%d",a + i);
+        a[i] %= 3;
+    }
+    sum[n + 1][0] = sum[n + 1][1] = sum[n + 1][2] = 0;
+    pre(i,n,1) {
+        rep(j,0,2) {
+            sum[i][j] = sum[i + 1][j] + (a[i] == j);
+        }
+    }
+    ll ans = 0;
+    rep(i,1,n) {
+        rep(j,a[i],2) {
+            ans += sum[i + 1][j];
+        }
+    }
+    printf("%lld\n",ans);
+}
+*/
+
+/*
+struct Node {
+    ll b,j;
+} x[10010];
+
+int cmp(const Node &a,const Node &b) {
+    return a.j > b.j;
+}
+
+int main()
+{
+    int n;
+    int T = 1;
+    ll ans = 0;
+    while (~scanf("%d",&n) && n != 0) {
+        rep(i,1,n) {
+            scanf("%lld%lld",&x[i].b,&x[i].j);
+        }
+        sort(x + 1, x + 1 + n, cmp);
+        ans = 0;
+        rep(i,1,n) {
+            ans += x[i].b;
+        }
+        ans += x[n].j;
+        printf("Case %d: %lld\n",T ++,ans);
+    }
+    
+    
+}
+*/
+
+/*
+struct Node {
+    ll x,y;
+    ll j;
+} x[100010];
+
+int cmp(const Node &a,const Node &b)
+{
+    return a.x * a.x + a.y * a.y < b.x * b.x + b.y * b.y;
+}
+
+const int mod = 1e9 + 7;
+
+int main()
+{
+    int n;
+    scanf("%d",&n);
+    rep(i,1,n) {
+        scanf("%lld%lld",&x[i].x,&x[i].y);
+        x[i].j = i;
+    }
+    sort(x + 1,x + 1 + n,cmp);
+    ll ans = 0;
+    ll k;
+    rep(i,1,n) {
+        k = (x[i].x * x[i].x % mod + x[i].y * x[i].y % mod) % mod;
+        k *= (i + x[i].j) % mod;
+        k %= mod;
+        ans += k;
+        ans %= mod;
+    }
+    _C(ans)
+}
+*/
+
+/*
+int main() {
+    int n,ans;
+    __T {
+        sci(n);
+        switch(n) {
+            case 1:
+                puts("9");
+                break;
+            case 2:
+                puts("98");
+                break;
+            case 3:
+                puts("989");
+                break;
+            default:
+                printf("989");
+                ans = 0;
+                rep(i,0,n - 4) {
+                    printf("%d",ans ++);
+                    ans %= 10;
+                }
+                puts("");
+                break;
+        }
+    }
+}
+*/
+
+/*
+const int MAXN = 3e5 + 10;
+
+int a[MAXN];
+int n;
+
+int is(int i)
+{
+    if (i - 1 >= 1 && i + 1 <= n && a[i] > a[i - 1] && a[i] > a[i + 1]) return 1;
+    if (i - 1 >= 1 && i + 1 <= n && a[i] < a[i - 1] && a[i] < a[i + 1]) return 1;
+    return 0;
+}
+
+int main()
+{
+    int ans;
+    int t;
+    int m,o,x;
+    __T {
+        sci(n);
+        rep(i,1,n) sci(a[i]);
+        ans = 0;
+        rep(i,2,n - 1) {
+            ans += is(i);
+        }
+//        _C(ans);
+        m = ans;
+        rep(i,1,n) {
+            t = a[i];
+            o = 0;
+            if (i - 1 >= 1) o += is(i - 1);
+            o += is(i);
+            if (i + 1 <= n) o += is(i + 1);
+//            _C(">" << o)
+            if (i - 1 >= 1) {
+                a[i] = a[i - 1];
+                x = 0;
+                if (i - 1 >= 1) x += is(i - 1);
+                x += is(i);
+                if (i + 1 <= n) x += is(i + 1);
+                m = min(m,ans - o + x);
+            }
+            if (i + 1 <= n) {
+                a[i] = a[i + 1];
+                x = 0;
+                if (i - 1 >= 1) x += is(i - 1);
+                x += is(i);
+                if (i + 1 <= n) x += is(i + 1);
+                m = min(m,ans - o + x);
+            }
+            a[i] = t;
+        }
+        printf("%d\n",m);
+    }
+}
+*/
+
+/*
+struct Node {
+    Node(){}
+    Node(const Node &o) {
+        m = o.m;
+        sum = o.sum;
+    }
+    ll m;
+    ll sum;
+} x[5],o[5];
+
+int cmp(const Node &a,const Node &b) {
+    if (a.m == b.m) return a.sum < b.sum;
+    return a.m < b.m;
+}
+
+int main()
+{
+    int n[5];
+    ll t;
+    rep(i,1,3) sci(n[i]);
+    rep(i,1,3) {
+        x[i].sum = 0;
+        rep(j,1,n[i]) {
+            scl(t);
+            x[i].sum += t;
+            if (j == 1) x[i].m = t;
+            else x[i].m = min(x[i].m,t);
+        }
+        x[i].sum -= x[i].m;
+    }
+    o[1] = x[1];
+    o[2] = x[2];
+    o[3] = x[3];
+    int a[] = {1,2,3};
+    ll ans = -1;
+    do {
+        x[1] = o[1];
+        x[2] = o[2];
+        x[3] = o[3];
+        x[a[0]].m -= x[a[1]].sum + x[a[2]].sum;
+        x[a[1]].m -= x[a[0]].sum;
+        if (x[1].m >= 0 && x[2].m >= 0 && x[3].m >= 0) {
+            sort(x + 1,x + 1 + 3,cmp);
+            ans = max(ans,x[2].m + x[3].m - x[1].m);
+        } else {
+            ans = max(ans,abs(x[1].m) + abs(x[2].m) + abs(x[3].m));
+        }
+    } while (next_permutation(a, a + 3));
+    printf("%lld\n",ans);
+}
+*/
+
+/*
+struct Node {
+    int s;
+    int l;
+};
+
+int main()
+{
+    int n;
+    sci(n);
+    n = 1 << n;
+    vector<Node> s[2];
+    int t;
+    int k = 0;
+    rep(i,1,n) {
+        sci(t);
+        s[k].pb({t,i});
+        s[!k].pb({t,i});
+    }
+    int w,wi;
+    int m;
+    while (n > 2) {
+        m = 0;
+        for (int i = 0;i < n;i += 2) {
+            w = s[k][i].s;
+            wi = s[k][i].l;
+            if (s[k][i + 1].s > w) {
+                w = s[k][i + 1].s;
+                wi = s[k][i + 1].l;
+            }
+            s[!k][m ++] = {w,wi};
+        }
+        k = !k;
+        n /= 2;
+//        REP(i,0,n) printf("%d ",s[k][i].s);
+//        puts("");
+    }
+    int ans;
+    if (s[k][0].s < s[k][1].s) ans = s[k][0].l;
+    else ans = s[k][1].l;
+    printf("%d\n",ans);
+    
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    ll C;
+    sci(n);
+    scl(C);
+    map<int,ll> k;
+    int a,b,c;
+    rep(i,1,n) {
+        sciii(a,b,c);
+        k[a] += c;
+        k[b + 1] -= c;
+    }
+    ll ans = 0;
+    ll base = 0;
+    int last = 0;
+    ll x;
+    for (auto i : k) {
+        x = min(base,C);
+        ans += x * (i.first - last);
+        base += i.second;
+        last = i.first;
+    }
+    _C(ans)
+}
+*/
+
+/*
+int val[200010];
+int mn[200010];
+int vis[200010];
+int in[200010];
+
+vector<int> g[200010];
+int n,m;
+
+void tuopu()
+{
+    queue<int> q;
+    rep(i,1,n) {
+        if (!in[i]) q.push(i);
+    }
+    int top;
+    while (!q.empty()) {
+        top = q.front();
+        q.pop();
+        for (auto i : g[top]) {
+            in[i] --;
+            if (!in[i]) q.push(i);
+            mn[i] = min(mn[i],min(mn[top],val[top]));
+        }
+    }
+}
+
+
+int main()
+{
+    scii(n,m);
+    rep(i,1,n) {
+        sci(val[i]);
+        mn[i] = INT_INF;
+    }
+    int u,v;
+    rep(i,1,m) {
+        scii(u,v);
+        g[u].pb(v);
+        in[v] ++;
+    }
+    tuopu();
+    int ans = -INT_INF;
+    rep(i,1,n) ans = max(ans,val[i] - mn[i]);
+    _C(ans)
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int x[10];
+    scanf("%d%d%d",&x[1],&x[2],&x[3]);
+    rep(i,1,3) x[i] %= 10;
+     
+    rep(i,1,10) {
+        rep(i,1,3) {
+            x[i] ++;
+            x[i] %= 10;
+        }
+        sort(x + 1,x + 4);
+        if (x[1] == 3 && x[2] == 6 && x[3] == 9) {
+            printf("%d\n",i);
+            return 0;
+        }
+    }
+    printf("so sad!\n");
+}
+*/
+
+
+
+//// 特点&稳定性
+//const int MAXN = 100010;
+//
+///**
+// * features:
+// *  1. 时间复杂度O(n^2)
+// *  2. 空间复杂度O(1)
+// *  3. 稳定排序
+// *  4. 可用作链式储存结构排序
+// *  5. 移动较多，平均时间性能比插入排序差
+// */
+//void bubble_sort(int *s,int *e)
+//{
+//    for (int *i = s;i < e - 1;i ++) {
+//        for (int *j = e - 1;j > i;j --) {
+//            if (*j < *(j - 1)) swap(*j,*(j - 1));
+//        }
+////        for (int *i = s;i < e;i ++) printf("%d ",*i);
+////        puts("");
+//    }
+//}
+//
+///**
+// * features:
+// *  1. 时间复杂度O(n^2)
+// *  2. 空间复杂度O(1)
+// *  3. 稳定排序
+// *  4. 可用作链式储存结构排序
+// *  5. 移动较少，平均时间性能比插入排序好
+// */
+//void select_sort(int *s,int *e)
+//{
+//    int mx;
+//    int *x;
+//    for (int *i = s;i < e;i ++) {
+//        mx = *i;
+//        x = i;
+//        for (int *j = i + 1;j < e;j ++) {
+//            if (*j < mx) {
+//                mx = *j;
+//                x = j;
+//            }
+//        }
+//        swap(*i,*x);
+////        for (int *i = s;i < e;i ++) printf("%d ",*i);
+////        puts("");
+//    }
+//}
+//
+///**
+// * features:
+// *  1. 时间复杂度O(n^2)
+// *  2. 空间复杂度O(1)
+// *  3. 稳定排序
+// *  4. 可用作链式储存结构排序
+// *  5. 更适合基本有序的数列
+//*/
+//void insert_sort(int *s,int *e)
+//{
+//    int num;
+//    int *j;
+//    for (int *i = s + 1;i < e;i ++) {
+//        num = *i;
+//        for (j = i - 1;j >= s;j --) {
+//            if (num < *j) *(j + 1) = *j;
+//            else break;
+//        }
+//        *(j + 1) = num;
+//    }
+//}
+//
+//void shell_insert(int *s,int *e,int dk)
+//{
+//    int num;
+//    int *j;
+//    for (int *i = s + dk;i < e;i ++) {
+//        num = *i;
+//        for (j = i - dk;j >= s;j -= dk) {
+//            if (num < *j) *(j + dk) = *j;
+//            else break;
+//        }
+//        *(j + dk) = num;
+//    }
+//}
+//
+///**
+// * features:
+// *  1. 时间复杂度O(n^(3/2))
+// *  2. 空间复杂度O(1)
+// *  3. 不稳定排序
+// *  4. 不可用作链式储存结构排序
+// *  5. 适合 无序 和 n较大 的数列
+//*/
+//void shell_sort(int *s,int *e)
+//{
+//    for (int d = (int) (e - s) >> 1;d > 0;d >>= 1) shell_insert(s, e, d);
+//}
+//
+//void quick_sort(int *s,int *e)
+//{
+//    // partition
+//    int base = *s;
+//    int *l = s,*r = e - 1;
+//
+//    while (l < r) {
+//        while (l < r && *r >= base) r --;
+//        *l = *r;
+//        while (l < r && *l <= base) l ++;
+//        *r = *l;
+//    }
+//    *l = base;
+////    for (int *i = s;i < e;i ++) printf("%d ",*i);
+////    puts("");
+//
+//    // sort
+//    if (s >= e) return;
+//    quick_sort(s, l);
+//    quick_sort(l + 1, e);
+//}
+//
+//int tmp[MAXN];
+//int a[MAXN];
+//
+//void merge_sort(int *s,int *e) {
+//    int n = (int) (e - s);
+//    int m = n >> 1;
+//    if (n == 1) return;
+//    merge_sort(s, s + m);
+//    merge_sort(s + m, e);
+//    int cnt = 0;
+//    int *i,*j;
+//    for (i = s,j = s + m;i < s + m && j < e;) {
+//        if (*i < *j) {
+//            tmp[cnt ++] = *i;
+//            i ++;
+//        } else {
+//            tmp[cnt ++] = *j;
+//            j ++;
+//        }
+//    }
+//    for (;i < s + m;i ++) tmp[cnt ++] = *i;
+//    for (;j < e;j ++) tmp[cnt ++] = *j;
+//    for (int *i = s,j = 0;i < e;i ++,j ++) {
+//        *i = tmp[j];
+//    }
+//}
+//
+//int main()
+//{
+//
+//    int n;
+//    scanf("%d",&n);
+//    rep(i,1,n) scanf("%d",a + i);
+////    shell_sort(a + 1,a + 1 + n);
+////    insert_sort(a + 1,a + 1 + n);
+////    quick_sort(a + 1, a + 1 + n);
+////    merge_sort(a + 1, a + 1 + n);
+////    select_sort(a + 1, a + 1 + n);
+//    bubble_sort(a + 1,a + 1 + n);
+//    rep(i,1,n) {
+//        if (i != 1) printf(" ");
+//        printf("%d",a[i]);
+//    }
+//    puts("");
+//}
+
+/*
+vector<char> g[150];
+int in[150];
+set<char> s;
+vector<char> ans;
+void bfs()
+{
+    priority_queue<char,vector<char>,greater<char> > q;
+    for (set<char>::iterator i = s.begin();i != s.end();i ++) {
+        if (!in[*i]) q.push(*i);
+    }
+    char top;
+    while (!q.empty()) {
+        top = q.top();
+        ans.pb(top);
+        q.pop();
+        for (vector<char>::iterator i = g[top].begin();i != g[top].end();i ++) {
+            in[*i] --;
+            if (!in[*i]) q.push(*i);
+        }
+    }
+}
+
+int main()
+{
+    char a,b,type;
+    while (~scanf(" %c%c%c",&a,&type,&b)) {
+        s.insert(a);
+        s.insert(b);
+        if (type == '>') {
+            g[a].pb(b);
+            in[b] ++;
+        } else {
+            g[b].pb(a);
+            in[a] ++;
+        }
+    }
+    bfs();
+    if (ans.size() == s.size()) {
+        for (vector<char>::iterator i = ans.begin();i != ans.end();i ++) {
+            printf("%c",*i);
+        }
+    } else printf("No Answer!");
+    puts("");
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int s,ans;
+    __T {
+        cin >> str;
+        ans = 0;
+        s = 1;
+        for (int i = 0;str[i];i ++) {
+            if (str[i] == 'O') {
+                ans += s ++;
+            } else s = 1;
+        }
+        printf("%d\n",ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main() {
+    string str;
+    double ans,x;
+    int cnt;
+    __T {
+        cin >> str;
+        ans = 0;
+        cnt = 0;
+        x = 0;
+        for (int i = 0;str[i];i ++) {
+            if (str[i] >= '0' && str[i] <= '9') {
+                cnt = cnt * 10 + str[i] - '0';
+            } else {
+                if (cnt == 0) cnt ++;
+                ans += x * cnt;
+                cnt = 0;
+                if (str[i] == 'C') {
+                    x = 12.01;
+                } else if (str[i] == 'H') {
+                    x = 1.008;
+                } else if (str[i] == 'O') {
+                    x = 16;
+                } else if (str[i] == 'N') {
+                    x = 14.01;
+                }
+            }
+        }
+        if (cnt == 0) cnt ++;
+        ans += x * cnt;
+        printf("%.3f\n",ans);
+    }
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    int n;
+    int a[15];
+    __T {
+        scanf("%d",&n);
+        str = "";
+        rep(i,1,n) {
+            str += to_string(i);
+        }
+        rep(i,0,9) a[i] = 0;
+        for (int i = 0;str[i];i ++) {
+            a[str[i] ^ 48] ++;
+        }
+        rep(i,0,9) {
+            if (i != 0) printf(" ");
+            printf("%d",a[i]);
+        }
+        puts("");
+    }
+    
+    
+    return 0;
+}
+*/
+
+/*
+char str[100010];
+
+int main()
+{
+    int k;
+    int ans;
+    int len;
+    int T;
+    scanf("%d",&T);
+    rep(x,1,T) {
+        scanf("%s",str);
+        len = (int) strlen(str);
+        ans = len;
+        for (int i = 0;i < len;i ++) {
+            k = 1;
+            if (len % (i + 1)) continue;
+            for (int j = 0;j < len - i;j += i + 1) {
+                for (int x = j,y = 0;y <= i;x ++,y ++) {
+                    if (str[x] != str[y]) {
+                        k = 0;
+                        goto end;
+                    }
+                }
+            }
+        end:
+            if (k) {
+                ans = i + 1;
+                break;
+            }
+        }
+        printf("%d\n",ans);
+        if (x != T) printf("\n");
+    }
+}
+*/
+
+/*
+ll gcd(ll a,ll b) {
+    return b ? gcd(b,a % b) : a;
+}
+
+void simplify(ll &a,ll &b) {
+    ll x = gcd(a,b);
+    a /= x;
+    b /= x;
+}
+
+ll ans[1000010];
+ll tmp[1000010];
+int n;
+int found;
+
+ int dfs(int d,int cur,ll a,ll b)
+ {
+     simplify(a,b);
+     if (b <= cur) return 0;
+     if (d == 1) {
+         if (a == 1) {
+             if (found && ans[d] <= b) return 0;
+             found = 1;
+             tmp[d] = b;
+             rep(i,1,n) ans[i] = tmp[i];
+             return 1;
+         }
+         return 0;
+     }
+     int x = ceil(b * d / (double) a);
+     for (int i = cur;i <= x;i ++) {
+         tmp[d] = i;
+         dfs(d - 1,i,a * i - b,b * i);
+     }
+     return found;
+ }
+
+int main()
+{
+    int a,b;
+    while (~scanf("%d%d",&a,&b)) {
+         printf("%d/%d=",a,b);
+        found = n = 0;
+        while (!dfs(++ n,1,a,b));
+         pre(i,n,1) printf("%s1/%lld",i == n ? "" : "+",ans[i]);
+        printf("\n");
+//        pre(i,n,1) printf("%lld%c",ans[i]," \n"[i == 1]);
+        
+
+
+
+        // 埃及分数，斐波那契解法，不是最优解
+        // int q,r;
+        //
+        // while (1) {
+        //     q = b / a;
+        //     r = b % a;
+        //     printf("%d/%d+",1,q + 1);
+        //     a -= r;
+        //     b *= q + 1;
+        //     if (b % a == 0) {
+        //         printf("%d/%d\n",1,b / a);
+        //         break;
+        //     }
+        // }
+    }
+    return 0;
+}
+*/
+
+//
+//ll gcd(ll a,ll b) {
+//    return b ? gcd(b,a % b) : a;
+//}
+//
+//int main()
+//{
+//    int n;
+//    scanf("%d",&n);
+//    int a[10000];
+//    rep(i,1,n) scanf("%d",a + i);
+//    ll ansa,ansb;
+//    ansa = 1;
+//    ansb = 0;
+//    rep(i,1,n) {
+//        ansa *= a[i];
+//    }
+//    rep(i,1,n) ansb += ansa / a[i];
+//    ll t = gcd(ansa,ansb);
+//    ansa /= t;
+//    ansb /= t;
+//    printf("%lld/%lld",ansb,ansa);
+//}
+
+/*
+int main() {
+    ll n;
+    __T {
+        scl(n);
+        for (;!(n & 1);n /= 2);
+        puts(n != 1 ? "YES" : "NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int l,k;
+    __T {
+        scanf("%d",&n);
+        l = n % 2020;
+        k = n / 2020;
+        puts(l <= k ? "YES" : "NO");
+    }
+}
+*/
+
+/*
+const int MAXN = 200010;
+
+ll a[MAXN],b[MAXN];
+ll ta[MAXN],tb[MAXN];
+pair<ll,ll> p[MAXN];
+
+int main() {
+    ll na,nb,k,ans;
+    map<pair<ll,ll>,ll> ps;
+    __T {
+        sclll(na,nb,k);
+        rep(i,1,na) ta[i] = 0;
+        rep(i,1,nb) tb[i] = 0;
+        ps.clear();
+        ans = 0;
+        rep(i,1,k) {
+            scl(a[i]);
+            ta[a[i]] ++;
+        }
+        rep(i,1,k) {
+            scl(b[i]);
+            tb[b[i]] ++;
+            ps[p[i] = mpair(a[i],b[i])] ++;
+        }
+        rep(i,1,k) {
+            ans += k - i + 1;
+            ans -= ta[a[i]] -- + tb[b[i]] --;
+            ans += ps[p[i]] --;
+        }
+        printf("%lld\n",ans);
+    }
+}
+*/
+
+/*
+const int MAXN = 200010;
+
+ll tmp[MAXN];
+ll a[3][MAXN];
+
+int main()
+{
+    int n,m;
+    ll k,ans;
+    int nq[3],t;
+    int i,j;
+    __T {
+        scanf("%d%d",&n,&m);
+        nq[1] = nq[2] = 0;
+        rep(i,1,n) scanf("%lld",tmp + i);
+        rep(i,1,n) {
+            scanf("%d",&t);
+            a[t][++ nq[t]] = tmp[i];
+        }
+        sort(a[1] + 1,a[1] + 1 + nq[1],greater<ll>());
+        sort(a[2] + 1,a[2] + 1 + nq[2],greater<ll>());
+        ans = k = 0;
+        
+        for (i = 1,j = 1;k < m && i <= nq[1] && j <= nq[2];) {
+            if (a[1][i] >= a[2][j]) {
+                k += a[1][i ++];
+                ans ++;
+            } else {
+                if (k + a[1][i] >= m) {
+                    k += a[1][i ++];
+                    ans ++;
+                    break;
+                }
+                if (i <= nq[1] - 1) {
+                    if (a[1][i] + a[1][i + 1] > a[2][j]) {
+                        k += a[1][i ++];
+                        ans ++;
+                    } else {
+                        k += a[2][j ++];
+                        ans += 2;
+                    }
+                } else {
+                    k += a[2][j ++];
+                    ans += 2;
+                }
+            }
+        }
+        for (;k < m && i <= nq[1];i ++) {
+            k += a[1][i];
+            ans ++;
+        }
+        for (;k < m && j <= nq[2];j ++) {
+            k += a[2][j];
+            ans += 2;
+        }
+        if (k < m) puts("-1");
+        else printf("%lld\n",ans);
+    }
+}
+*/
+
+/*
+map<ll,ll> mp;
+ll a[1010];
+
+const int mod = 1e9 + 7;
+const int MAXN = 1010;
+
+ll fac[MAXN],invfac[MAXN],invn[MAXN];
+ll C(ll n,ll m){
+    if (n < 0 || m < 0 || n < m) return 0;
+    return fac[n] * invfac[m] % mod * invfac[n - m] % mod;
+}
+void init() {
+    fac[0] = fac[1] = invn[0] = invn[1] = invfac[0] = invfac[1] = 1;
+    REP(i,2,MAXN){
+        fac[i] = fac[i - 1] * i % mod;
+        invn[i] = (mod - mod / i) * invn[mod % i] % mod;
+        invfac[i] = invfac[i - 1] * invn[i] % mod;
+    }
+}
+
+int main()
+{
+    int n,k;
+    ll ans;
+    int x;
+    ll t;
+    init();
+    __T {
+        ans = 0;
+        scanf("%d%d",&n,&k);
+        mp.clear();
+        rep(i,1,n) {
+            scanf("%lld",a + i);
+            mp[a[i]] ++;
+        }
+        sort(a + 1,a + 1 + n,greater<ll>());
+        x = 1;
+        t = a[1];
+        rep(i,2,k) {
+            if (a[i] != t) {
+                x = 1;
+                t = a[i];
+            } else x ++;
+        }
+        printf("%lld\n",C(mp[t],x));
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    const int n = 5;
+    char mp[10][10];
+    char t;
+    int j = 0;
+    char oper[100010];
+    int x,y;
+    int ok;
+    int T = 1;
+    while (1)
+    {
+        y = x = -1;
+        REP(i,0,n) {
+            
+            REP(j,0,n) {
+                if ((t = getchar()) == '\n') {
+                    j --;
+                    continue;
+                }
+                if (t == 'Z') return 0;
+                mp[i][j] = t;
+                if (t == ' ') {
+                    x = i;
+                    y = j;
+                }
+            }
+        }
+        for (j = 0;(t = getchar()) != '0';j ++) {
+            if (t == '\n') {
+                j --;
+                continue;
+            }
+            oper[j] = t;
+        }
+        ok = 1;
+        if (x != -1 && y != -1)
+        {
+            for (int i = 0;i < j;i ++) {
+                switch (oper[i]) {
+                    case 'A':
+                        if (x > 0) {
+                            swap(mp[x - 1][y],mp[x][y]);
+                            x --;
+                        } else ok = 0;
+                        break;
+                    case 'B':
+                        if (x < n - 1) {
+                            swap(mp[x + 1][y],mp[x][y]);
+                            x ++;
+                        } else ok = 0;
+                        break;
+                    case 'L':
+                        if (y > 0) {
+                            swap(mp[x][y - 1],mp[x][y]);
+                            y --;
+                        } else ok = 0;
+                        break;
+                    case 'R':
+                        if (y < n - 1) {
+                            swap(mp[x][y + 1],mp[x][y]);
+                            y ++;
+                        } else ok = 0;
+                        break;
+                }
+                if (!ok) break;
+            }
+        } else ok = 0;
+        if (T != 1) puts("");
+        printf("Puzzle #%d:\n",T ++);
+        if (!ok) puts("This puzzle has no final configuration.");
+        else {
+            REP(i,0,n) {
+                REP(j,0,n) {
+                    printf(j == 0 ? "%c" : " %c",mp[i][j]);
+                }
+                printf("\n");
+            }
+        }
+        
+    }
+}
+*/
+
+/*
+char mp[20][20];
+int vis[20][20];
+int im[20][20];
+
+int main()
+{
+    int n,m;
+    char t;
+    pair<int,int> st[110];
+    int is,k;
+    int T = 0;
+    while (~scanf("%d",&n)) {
+        if (n == 0) break;
+        scanf("%d",&m);
+        k = is = 0;
+        rep(i,1,n) {
+            rep(j,1,m) {
+                t = getchar();
+                if (t == '\n') {
+                    j --;
+                    continue;
+                }
+                mp[i][j] = t;
+                if (t != '*' && (i == 1 || j == 1 || mp[i - 1][j] == '*' || mp[i][j - 1] == '*')) {
+                    st[++ is] = mpair(i,j);
+                    im[i][j] = ++ k;
+                }
+            }
+        }
+        if (T) puts("");
+        printf("puzzle #%d:\n",++ T);
+        rep(i,1,n)
+            rep(j,1,m) vis[i][j] = 0;
+        printf("Across\n");
+        rep(i,1,is) {
+            if (vis[st[i].first][st[i].second]) continue;
+            printf("%3d.",im[st[i].first][st[i].second]);
+            for (int j = st[i].second;j <= m && mp[st[i].first][j] != '*';j ++) {
+                vis[st[i].first][j] = 1;
+                printf("%c",mp[st[i].first][j]);
+            }
+            puts("");
+        }
+        rep(i,1,n)
+            rep(j,1,m) vis[i][j] = 0;
+        printf("Down\n");
+        rep(i,1,is) {
+            if (vis[st[i].first][st[i].second]) continue;
+            printf("%3d.",im[st[i].first][st[i].second]);
+            for (int j = st[i].first;j <= n && mp[j][st[i].second] != '*';j ++) {
+                vis[j][st[i].second] = 1;
+                printf("%c",mp[j][st[i].second]);
+            }
+            puts("");
+        }
+    }
+    
+    
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n,m;
+    char str[60][1010];
+    char ans[1010];
+    int a;
+    map<char,int> t;
+    int mx;
+    char ch;
+    __T {
+        a = 0;
+        scanf("%d%d",&n,&m);
+        rep(i,1,n) scanf("%s",str[i]);
+        REP(i,0,m) {
+            mx = -1;
+            ch = 'A';
+            t.clear();
+            rep(j,1,n) {
+                t[str[j][i]] ++;
+            }
+            for (auto j : t) {
+                if (j.second > mx) {
+                    ch = j.first;
+                    mx = j.second;
+                }
+            }
+            ans[i] = ch;
+            a += n - mx;
+        }
+        ans[m] = 0;
+        puts(ans);
+        printf("%d\n",a);
+    }
+    return 0;
+}
+*/
+
+/*
+int n;
+int str[30];
+int cnt;
+
+int tmp[30];
+int sub[30];
+
+int ans[30];
+int fd;
+
+void dfs(int i)
+{
+    int m = 0;
+    if (i > cnt) {
+        if (!fd) pre(j,cnt,1) ans[j] = tmp[j];
+        else {
+            pre(j,cnt,1) {
+                if (tmp[j] < ans[j]) {
+                    m = 1;
+                    break;
+                }
+                else if (tmp[j] > ans[j]) break;
+            }
+            if (m) {
+                pre(j,cnt,1) ans[j] = tmp[j];
+            }
+        }
+        fd = 1;
+        return;
+    }
+    rep(x,0,9) {
+        if ((x * tmp[1] * 2 + sub[i]) % 10 != str[i] % 10) continue;
+        tmp[i] = x;
+        sub[i + 1] += (x * tmp[1] * 2 + sub[i]) / 10;
+        for (int j = 2,k = i + 1;j < i && k <= cnt;j ++,k ++) {
+            sub[k] += tmp[i] * tmp[j] * 2;
+        }
+        if (i * 2 - 1 <= cnt) {
+            sub[i * 2 - 1] += tmp[i] * tmp[i];
+        }
+        
+        dfs(i + 1);
+        
+        sub[i + 1] -= (x * tmp[1] * 2 + sub[i]) / 10;
+        for (int j = 2,k = i + 1;j < i && k <= cnt;j ++,k ++) {
+            sub[k] -= tmp[i] * tmp[j] * 2;
+        }
+        if (i * 2 - 1 <= cnt) {
+            sub[i * 2 - 1] -= tmp[i] * tmp[i];
+        }
+    }
+}
+
+void call(int x) {
+    tmp[1] = x;
+    sub[2] = (x * x) / 10;
+    dfs(2);
+}
+
+int main()
+{
+    int f;
+    __T {
+        scanf("%d",&n);
+        fd = 0;
+        cnt = 0;
+        while (n) {
+            str[++ cnt] = n % 10;
+            n /= 10;
+        }
+        switch (str[1]) {
+            case 0:
+                call(0);
+                break;
+            case 1:
+                call(1);
+                call(9);
+                break;
+            case 4:
+                call(2);
+                call(8);
+                break;
+            case 5:
+                call(5);
+                break;
+            case 6:
+                call(4);
+                call(6);
+                break;
+            case 9:
+                call(3);
+                call(7);
+                break;
+            default:
+                break;
+        }
+        f = 1;
+        if (!fd) printf("None");
+        else pre(i,cnt,1) {
+            if (ans[i] != 0) f = 0;
+            if (!f) printf("%d",ans[i]);
+        }
+        printf("\n");
+    }
+    return 0;
+}
+*/
+
+
+/*
+int a[1000000];
+
+ll cal(ll s,ll t) {
+    ll n = t - s + 1;
+    return (1 + n) * n / 2;
+}
+
+int main()
+{
+    int n;
+    sci(n);
+    rep(i,1,n) {
+        scanf("%d",a + i);
+    }
+    int s = 1;
+    ll ans = 0;
+    rep(i,2,n) {
+        if (a[i] < a[i - 1]) {
+            ans += cal(s,i - 1);
+//            _C(s << " " << i - 1 << " " << cal(s,i - 1))
+            s = i;
+        }
+    }
+    ans += cal(s,n);
+    printf("%lld\n",ans);
+}
+*/
+
+/*
+int a[100010];
+int m[100010];
+
+map<int,pair<int,int>> mp;
+
+int main()
+{
+    int n,k;
+    int ans;
+    __T {
+        scanf("%d%d",&n,&k);
+        mp.clear();
+        m[0] = 0;
+        rep(i,1,n) {
+            scanf("%d",a + i);
+            m[i] = (m[i - 1] + a[i]) % k;
+            if (mp[m[i]].first == 0) mp[m[i]].first = i;
+            else mp[m[i]].second = i;
+        }
+        ans = max(mp[0].first,mp[0].second);
+        for (auto i : mp) {
+            ans = max(ans,i.second.second - i.second.first);
+        }
+        printf("%d\n",ans == 0 ? -1 : ans);
+
+        
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    int ok;
+    __T {
+        scanf("%d",&n);
+        ok = 0;
+        rep(i,2,15) {
+            if (n % ((ll)pow(2,i) - 1) == 0) {
+                ok = 1;
+                break;
+            }
+        }
+        puts(ok ? "YE5" : "N0");
+    }
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    __T {
+        scanf("%d%d",&n,&k);
+        puts(n % (k + 1) != 1 ? "yo xi no forever!" : "ma la se mi no.1!");
+    }
+}
+*/
+
+/*
+ll pos[100010];
+
+int n,k;
+
+int check(ll ans)
+{
+    int x = 0;
+    ll len;
+    rep(i,2,n) {
+        len = pos[i] - pos[i - 1];
+        x += len / ans - ((len % ans) ? 0 : 1);
+    }
+//    _C(ans << " " << x)
+    return x <= k;
+}
+
+int main()
+{
+    scanf("%d%d",&n,&k);
+    rep(i,1,n) scanf("%lld",pos + i);
+    sort(pos + 1,pos + 1 + n);
+    ll l = 1,r = 1e12;
+    ll m;
+    while (l < r) {
+        m = (l + r) >> 1;
+        if (check(m)) {
+            r = m;
+        } else l = m + 1;
+    }
+    printf("%lld\n",r);
+    
+}
+*/
+
+/*
+const int mod = 998244353;
+
+ll quickpow(ll a, ll b)
+{
+    ll ans = 1;
+    while (b)
+    {
+        if (b & 1) ans = a * ans % mod;
+        a = a * a % mod;
+        b >>= 1;
+    }
+    return ans;
+}
+
+int main()
+{
+    int n,m;
+    __T {
+        scanf("%d%d",&n,&m);
+        if (n == 0) printf("1\n");
+        else {
+            if (m == 0) {
+                if (n == 1) printf("2\n");
+                else if (n >= 2) printf("%d\n",(n + 2) % mod);
+            } else if (m == 1) {
+                printf("%lld\n",(n * 2ll) % mod);
+            } else if (m == 2) {
+                printf("%lld\n",quickpow(2, n));
+            }
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    int to;
+    ll w;
+};
+
+vector<Node> g[1000];
+int vis[1000];
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    int u,v;
+    ll w;
+    while (m --) {
+        scanf("%d%d%lld",&u,&v,&w);
+        g[u].pb({v,w});
+        g[v].pb({u,w});
+    }
+    int k;
+    scanf("%d",&k);
+    ll ans = -1;
+    int ok;
+    int has;
+    int nn;
+    while (k --) {
+        scanf("%d",&nn);
+        w = 0;
+        ok = 1;
+        v = 0; // cur
+        
+        if (nn != n) ok = 0;
+        rep(i,1,n) vis[i] = 0;
+        
+        while (nn --) {
+            scanf("%d",&u);
+            vis[u] ++;
+            has = 0;
+            for (auto i : g[v]) {
+                if (i.to == u) {
+                    has = 1;
+                    w += i.w;
+                    break;
+                }
+            }
+            if (!has) ok = 0;
+            v = u;
+        }
+        has = 0;
+        for (auto i : g[v]) {
+            if (i.to == 0) {
+                has = 1;
+                w += i.w;
+                break;
+            }
+        }
+        if (!has) ok = 0;
+        rep(i,1,n) {
+            if (vis[i] != 1) {
+                ok = 0;
+                break;
+            }
+        }
+        if (ok) {
+            if (ans == -1) ans = w;
+            else ans = min(ans,w);
+        }
+    }
+    printf("%lld\n",ans);
+    return 0;
+}
+*/
+
+/*
+struct Node {
+    int grade,sex,id;
+};
+
+vector<string> a[110];
+unordered_map<string,Node> mp;
+
+int main()
+{
+    cio
+    int n;
+    cin >> n;
+    string name;
+    int grade,sex,id;
+    rep(i,1,n) {
+        cin >> name >> grade >> sex >> id;
+        a[grade].pb(name);
+        mp[name] = {grade,sex,id};
+    }
+    rep(i,0,100) {
+        sort(a[i].begin(),a[i].end());
+    }
+    
+    int T;
+    cin >> T;
+    int m;
+    string nm;
+    Node node;
+    while (T --) {
+        cin >> m;
+        if (m == 1) {
+            cin >> nm;
+            if (mp.find(nm) == mp.end()) continue;
+            node = mp[nm];
+            cout << node.grade << " " << node.id << " " << node.sex << endl;
+        } else {
+            cin >> grade;
+            for (auto i : a[grade]) {
+                cout << i << endl;
+            }
+        }
+    }
+}
+*/
+
+/*
+int vis[3000010];
+int base[3000010];
+
+int main()
+{
+    int n,x;
+    int a,b;
+    int ok;
+    int j = 0,i = 0;
+    for (i = 0;i <= 3000000;i ++) {
+        while (vis[j]) j ++;
+        vis[j] = 1;
+        vis[j + i] = 1;
+        base[i] = j;
+        if (i + j > 3000000) break;
+    }
+    int p1;
+    __T {
+        scanf("%d%d",&n,&x);
+        a = x - 1;
+        b = n - x;
+        if (a > b) swap(a,b);
+        p1 = (int) (lower_bound(base, base + i + 1, a) - base);
+        ok = 1;
+        if (base[p1] == a && b == base[p1] + p1) ok = 0;
+        
+        puts(ok ? "yo xi no forever!" : "ma la se mi no.1!");
+    }
+}
+*/
+
+/*
+int main()
+{
+    string str;
+    cin >> str;
+    string a,b;
+    for (int i = 0;str[i];i ++) {
+        if (isdigit(str[i])) a += str[i];
+        else b += str[i];
+    }
+    for (int i = 0;b[i];i ++) {
+        for (int j = '0';j < a[i];j ++) {
+            if (b[i] == 'z') b[i] = 'A';
+            if (b[i] == 'Z') b[i] = 'a';
+            b[i] ++;
+        }
+    }
+    pre(i,3,0) printf("%c",b[i]);
+    pre(i,7,4) printf("%c",b[i]);
+    pre(i,11,8) printf("%c",b[i]);
+    pre(i,15,12) printf("%c",b[i]);
+    puts("");
+}
+*/
+
+/*
+int main()
+{
+    int n,k;
+    int arr[100010];
+    int mx;
+    int mi;
+    ll l,r,a,b;
+    ll sum;
+    ll m;
+    int ok;
+    __T {
+        scii(n,k);
+        mx = -1;
+        mi = 1;
+        sum = 0;
+        rep(i,1,n) {
+            scanf("%d",arr + i);
+            if (arr[i] > mx) {
+                mx = arr[i];
+                mi = i;
+            }
+            sum += arr[i];
+        }
+        l = n - 1 + mx;
+        r = sum;
+        
+        a = mi - 1;
+        b = 0;
+        rep(i,1,mi-1) b += arr[i];
+//        _C(l << " " << r)
+//        _C(a << " " << b)
+        ok = 0;
+        m = 0;
+        while (1) {
+            if (a + l * m >= k) break;
+            if (b + r * m >= k) {
+                ok = 1;
+                break;
+            }
+            m ++;
+        }
+        
+        puts(ok ? "YES" : "NO");
+    }
+}
+*/
+
+/*
+int num[100000];
+map<int,int> vis;
+
+int main()
+{
+    int a,b;
+    int st;
+    int i;
+    while (~scanf("%d%d",&a,&b))
+    {
+        printf("%d/%d = %d.",a,b,a / b);
+        a = a % b;
+        i = 0;
+        vis.clear();
+        while (1)  {
+            a *= 10;
+            if (vis[a]) {
+                st = vis[a];
+                break;
+            }
+            vis[a] = ++ i;
+            num[i] = a / b;
+            a = a % b;
+        }
+        rep(j,1,min(50,i)) {
+            if (j == st) {
+                printf("(");
+            }
+            printf("%d",num[j]);
+        }
+        if (i > 50) printf("...");
+        printf(")\n   %d = number of digits in repeating cycle\n\n",i - st + 1);
+    }
+}
+*/
+
+/*
+int main()
+{
+    string a,b;
+    int j;
+    while (cin >> a >> b)
+    {
+        j = 0;
+        for (int i = 0;b[i];i ++) {
+            if (b[i] == a[j]) {
+                j ++;
+            }
+        }
+        puts(j == a.size() ? "Yes" : "No");
+    }
+    
+}
+*/
+
+/*
+int main()
+{
+    pair<int,int> ab[10];
+    map<pair<int,int>,int> vis;
+    pair<int,int> x[10];
+    int cnt;
+    int k;
+    int y[10];
+    int iy[] = {1,2,3,4,5,6};
+    int ok;
+    while (~scanf("%d%d",&ab[1].first,&ab[1].second)) {
+        vis.clear();
+        if (ab[1].first > ab[1].second) swap(ab[1].first, ab[1].second);
+        rep(i,2,6) {
+            scanf("%d%d",&(ab + i) -> first,&(ab + i) -> second);
+            if (ab[i].first > ab[i].second) swap(ab[i].first,ab[i].second);
+        }
+        
+        cnt = 0;
+        rep(i,1,6) {
+            if (vis[ab[i]]) {
+                vis[ab[i]] = 0;
+                x[++ cnt] = ab[i];
+                continue;
+            }
+            vis[ab[i]] = 1;
+        }
+        
+        if (cnt != 3) {
+            puts("IMPOSSIBLE");
+        } else {
+            k = 0;
+            rep(i,1,cnt) {
+                y[++ k] = x[i].first;
+                y[++ k] = x[i].second;
+            }
+            ok = 0;
+            rep(i,0,5) iy[i] = i + 1;
+            do {
+                if (y[iy[0]] == y[iy[2]] && y[iy[3]] == y[iy[5]] && y[iy[1]] == y[iy[4]]) {
+                    ok = 1;
+                    break;
+                }
+            } while (next_permutation(iy, iy + 6));
+            puts(ok ? "POSSIBLE" : "IMPOSSIBLE");
+        }
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string a,b;
+    int n,ok;
+    int ans,x;
+    while (cin >> a >> b) {
+        if (a.size() > b.size()) swap(a, b);
+        n = (int) (a.size() + b.size() - 1);
+        ans = -1;
+        for (int j = 0;j < n;j ++) {
+            ok = 1;
+            for (int i = max(0,(int) a.size() - j - 1),k = max(0,j - (int)a.size() + 1);a[i] && b[k];i ++,k ++) {
+                if (a[i] == '2' && b[k] == '2') {
+                    ok = 0;
+                    break;
+                }
+            }
+            if (ok) {
+                x = max((int) b.size() - 1,j) - min(0,j - (int) a.size() + 1) + 1;
+                if (ans == -1 || x < ans) ans = x;
+            }
+        }
+        printf("%d\n",ans == -1 ? (int) (a.size() + b.size()) : ans);
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    string a,b;
+    map<char,int> vis;
+    map<char,int> vis2;
+    int ok;
+    int cnt1,cnt2;
+    int aa[50],bb[50];
+    while (cin >> a >> b) {
+        vis.clear();
+        vis2.clear();
+        for (int i = 0;a[i];i ++) {
+            vis[a[i]] ++;
+        }
+        for (int i = 0;b[i];i ++) {
+            vis2[b[i]] ++;
+        }
+        ok = 1;
+        cnt1 = cnt2 = 0;
+        for (auto i : vis) {
+            aa[++ cnt1] = i.second;
+        }
+        for (auto i : vis2) {
+            bb[++ cnt2] = i.second;
+        }
+        sort(aa + 1,aa + 1 + cnt1);
+        sort(bb + 1,bb + 1 + cnt2);
+        if (cnt1 != cnt2) ok = 0;
+        rep(i,1,cnt1) {
+            if (aa[i] != bb[i]) {
+                ok = 0;
+                break;
+            }
+        }
+        puts(ok ? "YES" : "NO");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int T;
+    string a,b;
+    set<char> all;
+    int vis['z' + 1];
+    int cnt;
+    int ans;
+    while (~scanf("%d",&T))
+    {
+        if (T == -1) break;
+        cin >> a >> b;
+        rep(i,'a','z') vis[i] = 0;
+        all.clear();
+        for (int i = 0;a[i];i ++) {
+            all.insert(a[i]);
+        }
+        ans = cnt = 0;
+        for (int i = 0;b[i];i ++) {
+            if (all.find(b[i]) != all.end()) {
+                if (!vis[b[i]]) ans ++;
+                vis[b[i]] = 1;
+            } else cnt ++;
+            if (cnt == 7 || ans == all.size()) break;
+        }
+//        _C(cnt)
+        printf("Round %d\n",T);
+        if (cnt != 7) {
+            if (ans == all.size()) puts("You win.");
+            else puts("You chickened out.");
+        } else puts("You lose.");
+    }
+    return 0;
+}
+*/
+
+/*
+int main()
+{
+    int n;
+    sci(n);
+    char a[110];
+    char b[110];
+    rep(i,1,n) scanf(" %c",a + i);
+    rep(i,1,n) scanf(" %c",b + i);
+    int mn = 0,mx = 0;
+    rep(i,1,n) {
+        if (a[i] != b[i]) mx ++;
+        else mx += 2;
+    }
+    printf("%d %d\n",mx,mn);
+}
+*/
+
+
+/*
+int main()
+{
+    int k;
+    scanf("%d",&k);
+    if (k == 0) {
+        puts(")(");
+        return 0;
+    }
+    int l = k;
+    map<int,int> a;
+    while (l > 1) {
+        k = sqrt(l);
+        l -= k * k;
+        a[k] ++;
+    }
+    a[l] ++;
+    int j = 1;
+    for (auto i : a) {
+        for (;j <= i.first;j ++) printf("(");
+        rep(p,1,i.second * i.first) printf(")");
+    }
+}
+*/
+
+/*
+const int MAXN = 26;
+const int mod = 1e9 + 7;
+
+ll aa[1000010];
+
+int main()
+{
+    ll n;
+    scl(n);
+    ll ans = 1;
+    ll k = MAXN - 1;
+    aa[1] = ans;
+    rep(i,2,n - 1) {
+        ans *= MAXN;
+        ans %= mod;
+        
+        ans += k * i % mod;
+        ans %= mod;
+        
+        k *= (MAXN - 1);
+        k %= mod;
+        
+        aa[i] = ans;
+    }
+    aa[0] = 0;
+    rep(i,1,n - 1)
+    {
+        aa[i] += aa[i - 1];
+        aa[i] %= mod;
+    }
+    printf("%lld\n",aa[n - 1]);
+}
+*/
+
+/*
+int vis[100010];
+int main()
+{
+    int n,k;
+    scii(n,k);
+    if (n < 6 && k == n / 2) puts("-1");
+    else {
+        int f = 1;
+        
+        if (k == n / 2) {
+            for (int i = 2;i <= n;i += 2) {
+                if (i == 6) continue;
+                if (f) f = 0;
+                else printf(" ");
+                printf("%d",i);
+            }
+            if (f) f = 0;
+            else printf(" ");
+            printf("6 3");
+            for (int i = 1;i <= n;i += 2) {
+                if (i == 3) continue;
+                if (f) f = 0;
+                else printf(" ");
+                printf("%d",i);
+            }
+        } else {
+            for (int i = 2,j = 1;j <= k + 1;i += 2,j ++) {
+                if (f) f = 0;
+                else printf(" ");
+                printf("%d",i);
+                vis[i] = 1;
+            }
+            rep(i,1,n) {
+                if (!vis[i]) {
+                    if (f) f = 0;
+                    else printf(" ");
+                    printf("%d",i);
+                }
+            }
+        }
+        puts("");
+    }
 }
 */

@@ -28,6 +28,7 @@
 		A4E3517322EAC3B700F966B4 /* acm */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = acm; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4E3517622EAC3B700F966B4 /* main.cpp */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.cpp; path = main.cpp; sourceTree = "<group>"; };
 		A4E3517D22EAC45600F966B4 /* header_useful.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = header_useful.h; sourceTree = "<group>"; };
+		A4E3770A24DB9F8600FC905B /* Model by VoidJackLee.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "Model by VoidJackLee.md"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -44,6 +45,7 @@
 		A4E3516A22EAC3B700F966B4 = {
 			isa = PBXGroup;
 			children = (
+				A4E3770A24DB9F8600FC905B /* Model by VoidJackLee.md */,
 				A4E3517522EAC3B700F966B4 /* acm */,
 				A4E3517422EAC3B700F966B4 /* Products */,
 			);
@@ -93,7 +95,7 @@
 		A4E3516B22EAC3B700F966B4 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 1120;
+				LastUpgradeCheck = 1220;
 				ORGANIZATIONNAME = "李弘辰";
 				TargetAttributes = {
 					A4E3517222EAC3B700F966B4 = {
@@ -158,6 +160,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -216,6 +219,7 @@
 				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
 				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
