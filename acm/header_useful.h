@@ -66,18 +66,18 @@ using namespace std;
 #define readall(a,s,n) rep(i,s,n)scanf("%lld",a + i);
 #define READall(a,s,n) REP(i,s,n)scanf("%lld",a + i);
 
-template <typename _Tp> inline void read(_Tp&x) {
-    char ch;bool flag=0;x=0;
-    ch=getchar();
-    while(!isdigit(ch)){if(ch=='-')flag=1;ch=getchar();}
-    while(isdigit(ch))x=x*10+ch-'0',ch=getchar();
-    if(flag)x=-x;
-}
-inline void print_lll(lll x) {
-    if(x<0) {x=-x;putchar('-');}
-    if(x>9) print_lll(x/10);
-    putchar(x%10+'0');
-}
+//template <typename _Tp> inline void read(_Tp&x) {
+//    char ch;bool flag=0;x=0;
+//    ch=getchar();
+//    while(!isdigit(ch)){if(ch=='-')flag=1;ch=getchar();}
+//    while(isdigit(ch))x=x*10+ch-'0',ch=getchar();
+//    if(flag)x=-x;
+//}
+//inline void print_lll(lll x) {
+//    if(x<0) {x=-x;putchar('-');}
+//    if(x>9) print_lll(x/10);
+//    putchar(x%10+'0');
+//}
 
 
 //#define _T_(T) int T;scanf("%d",&T);while(T--)

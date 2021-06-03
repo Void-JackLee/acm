@@ -556,6 +556,7 @@ int main()
 
 修改和增加不能同时使用
 
+#### 添加树(add)
 ```c++
 // 线段树 - 二叉树，节点存的是一个 l，r，区间的内容n
 const int MAXN = 1e5 + 10;
@@ -577,9 +578,10 @@ void push_up(int i)
     tree[i].mx = max(tree[i << 1].mx,tree[i << 1 | 1].mx);
 }
 
-void push_down(int i) //下推标记
+// 下推标记(Add)
+void push_down(int i)
 {
-    if (tree[i].lazy == 1) {
+    if (tree[i].lazy) {
         tree[i << 1].sum += (tree[i << 1].r - tree[i << 1].l + 1) * tree[i].lzn;
         tree[i << 1 | 1].sum += (tree[i << 1 | 1].r - tree[i << 1 | 1].l + 1) * tree[i].lzn;
         
@@ -591,24 +593,6 @@ void push_down(int i) //下推标记
         
         tree[i << 1].lzn += tree[i].lzn;
         tree[i << 1 | 1].lzn += tree[i].lzn;
-        
-        tree[i << 1].lazy = tree[i].lazy;
-        tree[i << 1 | 1].lazy = tree[i].lazy;
-        
-        tree[i].lazy = 0;
-        tree[i].lzn = 0;
-    } else if (tree[i].lazy == 2) {
-        tree[i << 1].sum = (tree[i << 1].r - tree[i << 1].l + 1) * tree[i].lzn;
-        tree[i << 1 | 1].sum = (tree[i << 1 | 1].r - tree[i << 1 | 1].l + 1) * tree[i].lzn;
-        
-        tree[i << 1].mx = tree[i].lzn;
-        tree[i << 1 | 1].mx = tree[i].lzn;
-        
-        tree[i << 1].mn = tree[i].lzn;
-        tree[i << 1 | 1].mn = tree[i].lzn;
-        
-        tree[i << 1].lzn = tree[i].lzn;
-        tree[i << 1 | 1].lzn = tree[i].lzn;
         
         tree[i << 1].lazy = tree[i].lazy;
         tree[i << 1 | 1].lazy = tree[i].lazy;
@@ -656,24 +640,6 @@ void add(int l,int r,ll x,int i) // 将区间[l,r]整个加上x，调用(l,r,x,1
     push_up(i);
 }
 
-void modify(int l,int r,ll x,int i) // 将区间[l,r]直接变成x，调用(l,r,x,1)
-{
-    if (l <= tree[i].l && r >= tree[i].r) {
-        tree[i].sum = (tree[i].r - tree[i].l + 1) * x;
-        tree[i].mx = x;
-        tree[i].mn = x;
-        tree[i].lzn = x;
-        
-        tree[i].lazy = 2;
-        return;
-    }
-    push_down(i);
-    int m = (tree[i].l + tree[i].r) >> 1;
-    if (l <= m) modify(l,r,x,i << 1);
-    if (r > m) modify(l,r,x,i << 1 | 1);
-    push_up(i);
-}
-
 ll query(int l,int r,int i) //查询
 {
     if (l <= tree[i].l && r >= tree[i].r){
@@ -711,14 +677,140 @@ int main()
     while (m --) {
         sciii(k,a,b);
         if (k == 1) {
-            printf("%lld\n",query(a, b, 1));
+            printf("%lld\n", query(a, b, 1));
         } else if (k == 2) {
             scl(c);
-            modify(a, b, c, 1);
+            add(a, b, c, 1);
             rep(i,1,n) printf("a[%d]=%lld\n",i,query(i, i, 1));
         }
     }
     re0;
+}
+```
+
+#### 修改树(Modify)
+```c++
+// 下推标记(Modify)
+void push_down(int i)
+{
+    if (tree[i].lazy) {
+        tree[i << 1].sum = (tree[i << 1].r - tree[i << 1].l + 1) * tree[i].lzn;
+        tree[i << 1 | 1].sum = (tree[i << 1 | 1].r - tree[i << 1 | 1].l + 1) * tree[i].lzn;
+        
+        tree[i << 1].mx = tree[i].lzn;
+        tree[i << 1 | 1].mx = tree[i].lzn;
+        
+        tree[i << 1].mn = tree[i].lzn;
+        tree[i << 1 | 1].mn = tree[i].lzn;
+        
+        tree[i << 1].lzn = tree[i].lzn;
+        tree[i << 1 | 1].lzn = tree[i].lzn;
+        
+        tree[i << 1].lazy = tree[i].lazy;
+        tree[i << 1 | 1].lazy = tree[i].lazy;
+        
+        tree[i].lazy = 0;
+        tree[i].lzn = 0;
+    }
+}
+
+void modify(int l,int r,ll x,int i) // 将区间[l,r]直接变成x，调用(l,r,x,1)
+{
+    if (l <= tree[i].l && r >= tree[i].r) {
+        tree[i].sum = (tree[i].r - tree[i].l + 1) * x;
+        tree[i].mx = x;
+        tree[i].mn = x;
+        tree[i].lzn = x;
+
+        tree[i].lazy = 1;
+        return;
+    }
+    push_down(i);
+    int m = (tree[i].l + tree[i].r) >> 1;
+    if (l <= m) modify(l,r,x,i << 1);
+    if (r > m) modify(l,r,x,i << 1 | 1);
+    push_up(i);
+}
+```
+
+### 主席树
+
+求区间第k小
+
+```c++
+// 主席树求区间第k小
+
+const int maxn 1000007
+const int MAXN  18600007
+
+int L[MAXN],R[MAXN],Sum[MAXN],T[maxn],TP; // 左右子树，总和，树根，指针
+void Add(int &rt,int l,int r,int x) { // 建立新树
+    ++TP;L[TP]=L[rt];R[TP]=R[rt];Sum[TP]=Sum[rt]+1;rt=TP; // 复制&新建
+    if(l==r) return;
+    int m=(l+r)>>1;
+    if(x <= m) Add(L[rt],l,m,x);
+    else  Add(R[rt],m+1,r,x);
+}
+int Search(int TL,int TR,int l,int r,int k){ // 区间查询第k大
+    if(l==r) return l; // 返回第k大的下标
+    int m=(l+r)>>1;
+    if(Sum[L[TR]]-Sum[L[TL]]>=k) return Search(L[TL],L[TR],l,m,k);
+    else return Search(R[TL],R[TR],m+1,r,k-Sum[L[TR]]+Sum[L[TL]]);
+}
+
+// 常规
+
+int a[maxn];
+// 离散化
+struct A{
+    int x,id;
+    bool operator<(const A&B)const{return x<B.x;} // TODO: <是区间第k小，>是区间第k大
+}ID[maxn];
+map<int,int> mp;
+int Rank[maxn];
+
+void build(int n) {
+    rep(i, 1, n) {
+        ID[i].x = a[i];
+        ID[i].id = i;
+    }
+    sort(ID+1,ID+n+1);
+    mp.clear();
+    rep(i,1,n) {
+        Rank[i]=ID[i].x;
+        mp[ID[i].x]=i;
+    }
+    // 初始化主席树
+    L[0]=R[0]=Sum[0]=T[0]=TP=0;
+    // 建主席树
+    rep(i,1,n) Add(T[i]=T[i-1],1,n,mp[a[i]]);
+}
+
+inline int query(int l,int r,int k,int n)
+{
+    return Rank[Search(T[l-1],T[r],1,n,k)];
+}
+
+int main()
+{
+    int q;
+    int l,r,k;
+    int n;
+    while(~scanf("%d%d",&n,&q)){
+        // 读取输入+离散化
+        rep(i,1,n) {
+            scanf("%d",a + i);
+        }
+
+        build(n);
+
+        // 开始计算
+        while (q --) {
+            scanf("%d%d%d",&l,&r,&k);
+            printf("%d\n",query(l,r,k,n));
+        }
+    }
+    return 0;
 }
 ```
 
@@ -988,6 +1080,22 @@ substr(pos,x); //提取pos开始x个
 at(x); //访问第x个元素
 
 [x] //访问第x个元素
+```
+
+## 约瑟夫环
+
+n个人围成一圈，第一个人从1开始报数，报m的将被杀掉，下一个人接着从1开始报。如此反复，最后剩下一个，求最后的胜利者。
+
+```c++
+int cir(int n,int m)
+{
+    int p = 0;
+    for (int i = 2;i <= n;i ++)
+    {
+        p = (p + m) % i;
+    }
+    return p + 1;
+}
 ```
 
 # Math
@@ -1837,7 +1945,7 @@ public:
             rep(j,1,B.w) {
                 rep(k,1,w) {
 //                    ans[i][j] = (ans[i][j] + a[i][k] * B[k][j]); // Not Moduled
-                    ans[i][j] = (ans[i][j] + a[i][k] * B[k][j] % mod) % mod; // Moduled
+                    ans[i][j] = (ans[i][j] + a[i][k] * B[k][j] % mod + mod) % mod; // Moduled
                 }
             }
         }
@@ -2516,7 +2624,7 @@ const int MAXN = 1e5 + 10;
 
 struct Edge {
     int to;
-    int w;
+    ll w;
     int nxt;
 } e[MAXN * 2];
 int g[MAXN]; // Please call init() to memset it to -1!
@@ -2528,21 +2636,21 @@ void init(int n)
     memn(g,-1,int,n);
 }
 
-void add_edge(int u,int v,int w)
+void add_edge(int u,int v,ll w)
 {
     e[cnt] = {v,w,g[u]};
     g[u] = cnt ++;
 }
 
 
-int dis[MAXN];
+ll dis[MAXN];
 int vis[MAXN];
 
-struct ST {
+struct Node {
     int n;
-    int w;
+    ll w;
 
-    bool operator< (const ST &other) const {
+    bool operator< (const Node &other) const {
         return w > other.w;
     }
 };
@@ -2551,11 +2659,12 @@ void dij(int s) {
     mem(dis,-1);
     mem(vis,0);
 
-    priority_queue<ST> q;
+    priority_queue<Node> q;
     q.push({s,dis[s] = 0});
 
-    ST current;
-    int k,to;
+    Node current;
+    ll k;
+    int to;
     while (!q.empty()) {
         current = q.top();
         q.pop();
@@ -2575,19 +2684,20 @@ void dij(int s) {
 int main()
 {
     int n,m;
-    int u,v,w;
+    int u,v;
+    ll w;
     int s,t;
     __T {
         scanf("%d%d",&n,&m);
         init(n + 5);
         while (m --) {
-            scanf("%d%d%d",&u,&v,&w);
+            scanf("%d%d%lld",&u,&v,&w);
             add_edge(u,v,w);
             add_edge(v,u,w);
         }
         scanf("%d%d",&s,&t);
         dij(s);
-        printf("%d\n",dis[t]);
+        printf("%lld\n",dis[t]);
     }
     return 0;
 }
