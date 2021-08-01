@@ -182,8 +182,8 @@ void pls(int a,int b,int x,int y,int k)
 {
     p[a][b] += k;
     p[x + 1][y + 1] += k;
-    p[x][y + 1] -= k;
-    p[x + 1][y] -= k;
+    p[a][y + 1] -= k;
+    p[x + 1][b] -= k;
 }
 
 int main()
@@ -1049,6 +1049,39 @@ int main()
 }
 ```
 
+## 01字典树
+```c++
+const int maxn = 1e5 + 10;
+
+struct Tire {
+
+    int tree[maxn * 32][2];
+    int val[maxn * 32];
+    int cnt;
+
+    void init() {
+        tree[0][0] = tree[0][1] = 0;
+        cnt = 0; // 只有root节点
+    }
+
+
+    // x为插入字典树的数字，v是每个01节点的值
+    inline void insert(int x,int v) {
+        int node = 0; // root节点
+        int t;
+        pre(i,bit,0) {
+            t = x >> i & 1;
+            if (!tree[node][t]) {
+                tree[node][t] = ++ cnt;
+                tree[cnt][0] = tree[cnt][1] = 0;
+            }
+            node = tree[node][t];
+            val[node] = v;
+        }
+    }
+};
+```
+
 ## rope
 
 **奇淫怪巧：rope是一种类似块状链表操作的东西，速度很快，底层是可持续化平衡树实现。**
@@ -1098,6 +1131,79 @@ int cir(int n,int m)
 }
 ```
 
+# DP
+
+## 背包
+
+
+## 悬线法
+
+求最大符合条件的矩阵/正方形的周长/面积
+
+```c++
+// 求满足01交替的最大矩阵面积
+// https://www.luogu.com.cn/problem/P1169
+const int maxn = 2e3 + 10;
+int a[maxn][maxn];
+
+int l[maxn][maxn]; // 代表从当前点(i,j)能到达的最左位置(列号)
+int r[maxn][maxn]; // 代表从当前点(i,j)能到达的最右位置(列号)
+int up[maxn][maxn]; // 代表从当前点(i,j)向上扩展最长长度
+
+int main()
+{
+    int n,m;
+    scanf("%d%d",&n,&m);
+    rep(i,1,n) {
+        rep(j,1,m) {
+            scanf("%d",&a[i][j]);
+        }
+    }
+
+    // 初始化
+    rep(i,1,n) {
+        rep(j,1,m) {
+            l[i][j] = r[i][j] = j;
+            up[i][j] = 1;
+        }
+    }
+
+    // 预处理行
+    rep(i,1,n) {
+        rep(j,2,m) {
+            if (a[i][j - 1] != a[i][j]) // 满足的条件01不同
+                l[i][j] = l[i][j - 1]; // 从左到右，l[i][j] = 满足条件的最左端的列号
+        }
+        pre(j,m - 1,1) {
+            if (a[i][j + 1] != a[i][j]) // 满足的条件01不同
+                r[i][j] = r[i][j + 1]; // 从右到左，r[i][j] = 满足条件的最右端的列号
+        }
+    }
+
+    int sf = 0,sj = 0;
+    int len;
+
+    // 预处理列 & 递推
+    rep(i,2,n) { // 因为条件是两个元素进行比对，故从第二行开始
+        rep(j,1,m) {
+            if (a[i][j] != a[i - 1][j]) { // 满足的条件01不同
+                // 递推公式
+                up[i][j] = up[i - 1][j] + 1; // 代表从当前点(i,j)向上扩展最长长度
+                l[i][j] = max(l[i - 1][j],l[i][j]); // 代表从当前点(i,j)能到达的最左位置(列号)
+                r[i][j] = min(r[i - 1][j],r[i][j]); // 代表从当前点(i,j)能到达的最右位置(列号)
+            }
+            len = r[i][j] - l[i][j] + 1; // 符合条件的最长的横向长度
+
+            sf = max(sf,min(up[i][j],len)); // 求正方形的边长，为横向边长和纵向边长的min
+            sj = max(sj,up[i][j] * len); // 求矩阵面积，长 * 宽
+        }
+    }
+
+    _C(sf * sf)
+    _C(sj)
+}
+```
+
 # Math
 
 ## 杂论
@@ -1111,8 +1217,7 @@ int cir(int n,int m)
 ```c++
 ll gcd(ll a,ll b)
 {
-    if (a % b == 0) return b;
-    return gcd(b, a % b);
+    return b ? gcd(b,a % b) : a;
 }
 ```
 
@@ -1181,7 +1286,7 @@ ll quickpow(ll a, ll b)
         a = a * a % mod;
         b >>= 1;
     }
-    return ans;
+    return ans % mod; // 可加可不加，加了应对mod=1的情况
 }
 ```
 
@@ -1197,6 +1302,15 @@ ll quickpow(ll a, ll b)
 * 考虑顺序不可重复：$\frac{n!}{m!}$
 * 不考虑顺序且可重复：$C_{n+m-1}^m=\frac{(n+m-1)!}{m!(n-1)!}$
 * 不考虑顺序不可重复：$C_n^m=\frac{n!}{m!(n-m)!}$
+
+
+### 性质&公式
+
+$$C_n^m=\frac{n!}{m!(n-m)!}$$
+
+$$C_n^r + C_n^{r+1}=C_{n+1}^{r+1}$$
+
+$$\sum_{i=0}^n C_n^i = 2^n$$
 
 ### 快速求C(n,m)
 
@@ -1679,6 +1793,44 @@ namespace Min25 {
 }
 ```
 
+### 丑数列（由2、3、5因子组成的数列）
+
+丑数指只由分解后只由若干个2,3,5相乘，默认1为第一个丑数。例：`1 2 3 4 5 6 8 9 10 12 15 16 18 20 24...`
+
+```c++
+const int MAXN = 5e4 + 10;
+
+lll ugly[MAXN];
+
+lll minist(lll a, lll b, lll c) {
+    lll temp;
+    temp = (a < b) ? a : b;
+    temp = (temp < c) ? temp : c;
+    return temp;
+}
+
+void uglyNumber(int n) {
+    // 分别指向乘以2、3、5之后最小丑数的位置
+    int p2 = 0, p3 = 0, p5 = 0;
+    // 定义一个数组存放丑数
+    ugly[0] = 1;
+    for (int i = 1; i < n; i++) {
+        // 这个地方是关键，三个索引是保证每个数都会乘以2、3、5一遍的关键
+        ugly[i] = minist(ugly[p2] * 2, ugly[p3] * 3, ugly[p5] * 5);
+        if (ugly[i] == ugly[p2] * 2) p2 ++;
+        if (ugly[i] == ugly[p3] * 3) p3 ++;
+        if (ugly[i] == ugly[p5] * 5) p5 ++;
+    }
+}
+
+int main() {
+    uglyNumber(50000); // 再下去要爆__int128了5e4差不多是极限了
+    int n;
+    scanf("%d",&n);
+    print_lll(ugly[n - 1]); // 求第n个丑数
+}
+```
+
 ## Euler Function
 
 $\varphi(x)=x(1-\frac1{p_1})(1-\frac1{p_2})...(1-\frac1{p_n})$
@@ -1782,6 +1934,59 @@ int main()
     printf("%.10f\n%.10f %.10f\n",r,o.x,o.y); // 半径，圆心坐标
 }
 ```
+
+## 快速xxx变换
+
+### 快速傅立叶变换FFT
+
+
+
+```c++
+
+```
+
+### 快速莫比乌斯/沃尔什变换FWT
+
+求形如$$C_i=\sum_{j | k=i}A_j \times B_k$$的式子。
+
+```c++
+void FWT_or(int *a,int opt)
+{
+    for(int i=1;i<N;i<<=1)
+        for(int p=i<<1,j=0;j<N;j+=p)
+            for(int k=0;k<i;++k)
+                if(opt==1)a[i+j+k]=(a[j+k]+a[i+j+k])%mod;
+                else a[i+j+k]=(a[i+j+k]+mod-a[j+k])%mod;
+}
+```
+求形如$$C_i=\sum_{j \& k=i}A_j \times B_k$$的式子。
+```c++
+void FWT_and(int *a,int opt)
+{
+    for(int i=1;i<N;i<<=1)
+        for(int p=i<<1,j=0;j<N;j+=p)
+            for(int k=0;k<i;++k)
+                if(opt==1)a[j+k]=(a[j+k]+a[i+j+k])%mod;
+                else a[j+k]=(a[j+k]+mod-a[i+j+k])%mod;
+}
+```
+求形如$$C_i=\sum_{j \oplus k=i}A_j \times B_k$$的式子。
+```c++
+void FWT_xor(int *a,int opt)
+{
+    int inv2=qpow(2,mod-2);
+    for(int i=1;i<N;i<<=1)
+        for(int p=i<<1,j=0;j<N;j+=p)
+            for(int k=0;k<i;++k)
+            {
+                int X=a[j+k],Y=a[i+j+k];
+                a[j+k]=(X+Y)%mod;a[i+j+k]=(X+mod-Y)%mod;
+                if(opt==-1)a[j+k]=1ll*a[j+k]*inv2%mod,a[i+j+k]=1ll*a[i+j+k]*inv2%mod;
+            }
+}
+```
+
+
 
 ## 规律
 
@@ -2296,6 +2501,117 @@ int main()
         printf("%d\n",ac.query(str));
     }
     return 0;
+}
+```
+
+## 后缀数组
+
+$sa[maxn]$: sa[后缀从短到长的顺序index] = 后缀经过字典序排序之后的顺序rk
+
+$rank[maxn]$: rank[后缀经过字典序排序之后的顺序rk] = 后缀从短到长的顺序index
+
+$height[maxn]$: 后缀按字典序排序之后，每个字符串与之前的最长前缀长度
+
+
+倍增算法求解上述数组$O(nlog(n))$:
+
+```c++
+const int maxn = 1e5 + 10;
+
+struct SuffixArray {
+private:
+    char *str;
+    int n, m; // 字符串长度，字符集大小(有多少个字符，一般char128个)
+    int t[maxn], t1[maxn], c[maxn];
+
+    inline void rankSort() {
+        for (int i = 1; i <= m; i++) c[i] = 0;
+        for (int i = 1; i <= n; i++) c[t[i] = str[i]]++;
+        for (int i = 1; i <= m; i++) c[i] += c[i - 1];
+        for (int i = n; i >= 1; i--) sa[c[t[i]]--] = i;
+    }
+
+    inline void calc() { // 字符串下标从1开始
+        int *x = t, *y = t1;
+        rankSort();
+
+        for (int k = 1; k <= n; k <<= 1) {
+            int p = 0;
+            for (int i = n - k + 1; i <= n; i++) y[++p] = i;
+            for (int i = 1; i <= n; i++) if(sa[i] > k) y[++p] = sa[i] - k;
+            for (int i = 1; i <= m; i++) c[i] = 0;
+            for (int i = 1; i <= n; i++) c[x[y[i]]]++;
+            for (int i = 1; i <= m; i++) c[i] += c[i - 1];
+            for (int i = n; i >= 1; i--) sa[c[x[y[i]]]--] = y[i];
+            swap(x, y);
+            p = x[sa[1]] = 1;
+            for (int i = 2; i <= n; i++) {
+                x[sa[i]] = (y[sa[i - 1]] == y[sa[i]] && y[sa[i - 1] + k] == y[sa[i] + k])
+                           ? p : ++p;
+            }
+            if (p >= n) break;
+            m = p;
+        }
+
+        // 求height
+        memcpy(rank, x, sizeof(rank));
+        int k = 0;
+        for(int i = 1; i <= n; i++) {
+            int j = sa[rank[i] + 1];
+            if (k) k--;
+            if (!j) continue;
+            while (str[i + k] == str[j + k]) k++;
+            height[rank[i] + 1] = k;
+        }
+    }
+
+public:
+    int sa[maxn]; // sa[后缀从短到长的顺序index] = 后缀经过字典序排序之后的顺序rk
+    int rank[maxn]; // rank[后缀经过字典序排序之后的顺序rk] = 后缀从短到长的顺序index
+    int height[maxn]; // 后缀按字典序排序之后，每个字符串与之前的最长前缀长度
+
+    inline void build(char *str,int n,int m = 128) { // 字符串，下标从1开始
+        memset(this, 0, sizeof(SuffixArray));
+        this -> str = str;
+        this -> n = n;
+        this -> m = m;
+        calc();
+    }
+};
+
+```
+
+### 求解不同子串的个数
+
+ans=所有子串的数量-重复子串的数量
+
+重复子串的数量$=\sum height[i]$
+
+
+```c++
+char str[maxn];
+
+SuffixArray sa;
+
+// 不同子串个数 https://www.luogu.com.cn/problem/P2408
+// 输入长度n和str，求不同子串的个数
+int main() {
+    ll n;
+    scanf("%lld%s",&n,str + 1);
+    sa.build(str, n);
+
+//    rep(i,1,n) printf("%d ",sa.sa[i]);
+//    puts("");
+//    rep(i,1,n) printf("%d ",sa.rank[i]);
+//    puts("");
+//    rep(i,1,n) printf("%d ",sa.height[i]);
+//    puts("");
+
+    ll ans = (n + 1) * n / 2;
+    rep(i,1,n) {
+        ans -= sa.height[i];
+    }
+    printf("%lld\n",ans);
 }
 ```
 

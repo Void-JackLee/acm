@@ -28,7 +28,7 @@
 #include <fstream>
 #include <bitset>
 
-//#include <unordered_map>
+#include <unordered_map>
 //#include <unordered_set>
 
 using namespace std;
@@ -130,5 +130,6 @@ using namespace std;
 #define re0 return 0
 #define re1 return 1
 
+//#pragma GCC optimize(2)
 
 /* header_useful_h */
